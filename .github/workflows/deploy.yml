@@ -1,0 +1,39 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.123.0'
+          extended: true
+      - name: Build
+        run: hugo --minify -d build
+      - name: Push build results to separate branch # purely for debuggability
+        if: ${{ github.event_name == 'push' }}
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          publish_branch: build
+      # - uses: burnett01/rsync-deployments@c04732dab25a8b2c000b7198a067bf26e93959e2 # v6.0.0
+      #   if: ${{ github.event_name == 'push' }}
+      #   with:
+      #     switches: -avzr --delete
+      #     path: ./build/
+      #     remote_path: / # rrsync configuration points this to the correct path
+      #     remote_host: ${{ secrets.DEPLOY_HOST }}
+      #     remote_port: ${{ secrets.DEPLOY_PORT }}
+      #     remote_user: ${{ secrets.DEPLOY_USER }}
+      #     remote_key: ${{ secrets.DEPLOY_KEY }}
