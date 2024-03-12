@@ -43,4 +43,4 @@ params:
       index: content
   editURL:
     enable: true
-    base: "https://github.com/quic-go/docs"
+    base: "https://github.com/quic-go/docs/tree/master/content"
