@@ -1,0 +1,46 @@
+baseURL: https://docs.quic-go.net
+languageCode: en-us
+title: quic-go docs
+
+module:
+  imports:
+  - path: github.com/imfing/hextra
+
+markup:
+  # allow raw html
+  goldmark:
+    renderer:
+      unsafe: true
+
+  # enable hextra syntax highlight
+  highlight:
+    noClasses: false
+
+menu:
+  main:
+    - name: Docs
+      pageRef: /docs
+      weight: 1
+    - name: Sponsor ↗
+      url: "https://github.com/sponsors/marten-seemann"
+      weight: 2
+
+params:
+  theme:
+    default: system
+    displayToggle: true
+  navbar:
+    displayTitle: true
+    displayLogo: false
+  footer:
+    displayCopyright: false
+    displayPoweredBy: false
+  search:
+    enable: true
+    type: flexsearch
+    flexsearch:
+      # index page by: content | summary | heading | title
+      index: content
+  editURL:
+    enable: true
+    base: "https://github.com/quic-go/docs"
