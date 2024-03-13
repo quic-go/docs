@@ -32,3 +32,11 @@ ln, err := quic.Listen(udpConn, tlsConf, quicConf)
 ```
 
 When using the shortcut, it's not possible to reuse the same UDP socket for outgoing connections.
+
+
+## Certificate Size Considerations
+
+During the initial phase of the QUIC handshake, before validating the client's address, server response size is restricted to thrice the bytes received from the client, as outlined in [RFC 9000, Section 8](https://datatracker.ietf.org/doc/html/rfc9000#name-address-validation). This limitation helps prevent the use of QUIC servers in DDoS attack amplifications by ensuring a server cannot send an excessively large response to a potentially spoofed packet.
+
+Given that the initial client packet is typically 1200 bytes, the server's response is capped at 3600 bytes. This cap includes the server's TLS certificate in its first response, and an oversized certificate can extend the handshake by an additional RTT. As large certificates are commonplace, optimizing the certificate chain's size is advisable to avoid handshake delays, supported by insights from [Fastly's research](https://www.fastly.com/blog/quic-handshake-tls-compression-certificates-extension-study).
+
