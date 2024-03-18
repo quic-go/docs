@@ -33,7 +33,7 @@ params:
     displayTitle: true
     displayLogo: false
   footer:
-    displayCopyright: false
+    displayCopyright: true
     displayPoweredBy: false
   search:
     enable: true
