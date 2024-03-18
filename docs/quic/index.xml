@@ -154,10 +154,10 @@ title="Copy code"
 &lt;p>Generic Segmentation Offload (GSO) allows applications to pass a large (up to 64 kB) buffer to the kernel, and have the kernel chop this buffer up into smaller pieces. This comes with a few requirements: all packets are sent to the same receiver address, and all packets except the last one need to have exactly the same size. quic-go handles all this complexity, and is able to optimize the creation of new packets by creating them in GSO-sized batched.&lt;/p>
 &lt;p>GSO is currently only available on Linux for kernel versions from 4.18. On certain systems, GSO might still fail, which is why quic-go comes with GSO detection logic, and falls back to the non-GSO send path if GSO doesn&amp;rsquo;t properly work.&lt;/p>
 &lt;p>There is no config flag to disable GSO support, and it is not expected that users would ever want to disable GSO support. If you run into any GSO-related problem, please open an issue. It is however possible to globally disable GSO by setting the &lt;code>QUIC_GO_DISABLE_GSO&lt;/code> environment variable to &lt;code>true&lt;/code>.&lt;/p>
-&lt;h3>Future Work&lt;span class="absolute -mt-20" id="future-work">&lt;/span>
-&lt;a href="#future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
-&lt;li>GSO on Windows&lt;/li>
-&lt;li>amortize header protection cost&lt;/li>
+&lt;h3>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
+&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>GSO on Windows: &lt;a href="https://github.com/quic-go/quic-go/issues/4325" target="_blank" rel="noopener">#4325&lt;/a>&lt;/li>
+&lt;li>amortize header protection cost by batching: &lt;a href="https://github.com/quic-go/quic-go/issues/4371" target="_blank" rel="noopener">#4371&lt;/a>&lt;/li>
 &lt;/ul>
 &lt;h2>Path MTU Discovery (DPLPMTUD)&lt;span class="absolute -mt-20" id="path-mtu-discovery-dplpmtud">&lt;/span>
 &lt;a href="#path-mtu-discovery-dplpmtud" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>RFC 9000 requires any QUIC path to support MTUs of at least 1200 bytes, but many paths on the internet support larger MTUs, some up to 1500 bytes. On some path, even larger MTUs are possible.&lt;/p>
@@ -176,9 +176,10 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;p>DPLPMTUD works by occasionally sending larger &amp;ldquo;probe packets&amp;rdquo;. If these packets are received and acknowledged, this confirms that the network path is capable of handling higher MTUs, and allows quic-go to increase the size of packets sent out. In terms of bandwidth consumption, DPLPMTUD is exceedingly cheap: over the lifetime of a connection, less than 10 probe packets are sent.&lt;/p>
-&lt;h3>Future Work&lt;span class="absolute -mt-20" id="future-work-1">&lt;/span>
-&lt;a href="#future-work-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
-&lt;li>Handle decreasing MTUs&lt;/li>
+&lt;h3>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work-1">&lt;/span>
+&lt;a href="#-future-work-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>Handle decreasing MTUs: &lt;a href="https://github.com/quic-go/quic-go/issues/3955" target="_blank" rel="noopener">#3955&lt;/a>&lt;/li>
+&lt;li>Make the maximum packet size configurable: &lt;a href="https://github.com/quic-go/quic-go/issues/3385" target="_blank" rel="noopener">#3385&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Datagrams</title><link>https://docs.quic-go.net/docs/quic/datagrams/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/datagrams/</guid><description>
 &lt;p>Unreliable datagrams are a QUIC extension (&lt;a href="https://datatracker.ietf.org/doc/html/rfc9221" target="_blank" rel="noopener">RFC 9221&lt;/a>) that is negotiated during the handshake. Support can be enabled by setting the &lt;code>quic.Config.EnableDatagram&lt;/code> flag. Note that this doesn&amp;rsquo;t guarantee that the peer also supports datagrams. Whether or not the feature negotiation succeeded can be learned from the &lt;code>quic.ConnectionState.SupportsDatagrams&lt;/code> obtained from &lt;code>quic.Connection.ConnectionState()&lt;/code>.&lt;/p>
 &lt;p>QUIC DATAGRAMs are a new QUIC frame type sent in QUIC 1-RTT packets (i.e. after completion of the handshake). Therefore, they&amp;rsquo;re end-to-end encrypted and congestion-controlled. However, if a DATAGRAM frame is deemed lost by QUIC&amp;rsquo;s loss detection mechanism, they are not retransmitted.&lt;/p>
