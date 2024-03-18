@@ -14,10 +14,10 @@ GSO is currently only available on Linux for kernel versions from 4.18. On certa
 
 There is no config flag to disable GSO support, and it is not expected that users would ever want to disable GSO support. If you run into any GSO-related problem, please open an issue. It is however possible to globally disable GSO by setting the `QUIC_GO_DISABLE_GSO` environment variable to `true`.
 
-### Future Work
+### 📝 Future Work
 
-* GSO on Windows
-* amortize header protection cost
+* GSO on Windows: [#4325](https://github.com/quic-go/quic-go/issues/4325)
+* amortize header protection cost by batching: [#4371](https://github.com/quic-go/quic-go/issues/4371)
 
 ## Path MTU Discovery (DPLPMTUD)
 
@@ -34,6 +34,7 @@ quic.Config{
 
 DPLPMTUD works by occasionally sending larger "probe packets". If these packets are received and acknowledged, this confirms that the network path is capable of handling higher MTUs, and allows quic-go to increase the size of packets sent out. In terms of bandwidth consumption, DPLPMTUD is exceedingly cheap: over the lifetime of a connection, less than 10 probe packets are sent.
 
-### Future Work
+### 📝 Future Work
 
-* Handle decreasing MTUs
+* Handle decreasing MTUs: [#3955](https://github.com/quic-go/quic-go/issues/3955)
+* Make the maximum packet size configurable: [#3385](https://github.com/quic-go/quic-go/issues/3385)
