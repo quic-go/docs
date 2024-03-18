@@ -70,7 +70,58 @@ title="Copy code"
 &lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
-&lt;/div></description></item><item><title>Dialing HTTP/3</title><link>https://docs.quic-go.net/docs/http3/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/http3/client/</guid><description>
+&lt;/div></description></item><item><title>Transport</title><link>https://docs.quic-go.net/docs/quic/transport/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/transport/</guid><description>
+&lt;h2>Initializing a Transport&lt;span class="absolute -mt-20" id="initializing-a-transport">&lt;/span>
+&lt;a href="#initializing-a-transport" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>The central entrypoint into quic-go is the &lt;code>quic.Transport&lt;/code>. It used both when running a QUIC server and when dialing QUIC connections.&lt;/p>
+&lt;p>Other than TCP, which identifies connections by their 4-tuple (i.e. the combination of the client&amp;rsquo;s and server&amp;rsquo;s IP address and port), QUIC uses connection IDs to demultiplex connections. That means that an arbitrary number of QUIC connections can be run on the same UDP socket. It is even possible to run a server (accepting incoming connections) and clients (establishing outgoing connections) on the socket.&lt;/p>
+&lt;p>The following code creates a new &lt;code>quic.Transport&lt;/code> that uses UDP port 6121 on all available interfaces.&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">addr&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">net&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ResolveUDPAddr&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;udp&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;0.0.0.0:6121&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">net&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ListenUDP&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;udp&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">addr&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">tr&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Transport&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Conn&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">conn&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>As a rule of thumb, it is only necessary to create separate &lt;code>quic.Transport&lt;/code>s when listening on multiple UPD ports, or when binding sockets to different network interfaces.&lt;/p>
+&lt;h2>Using a &lt;code>net.PacketConn&lt;/code> that&amp;rsquo;s not a &lt;code>*net.UDPConn&lt;/code>&lt;span class="absolute -mt-20" id="using-a-netpacketconn-thats-not-a-netudpconn">&lt;/span>
+&lt;a href="#using-a-netpacketconn-thats-not-a-netudpconn" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;code>Transport.Conn&lt;/code> is a &lt;code>net.PacketConn&lt;/code>, allowing applications to use their own implementation of the &lt;code>net.PacketConn&lt;/code> interface. With this, it is possible to do QUIC over transports other than UDP.&lt;/p>
+&lt;p>However, if the &lt;code>net.PacketConn&lt;/code> is indeed a wrapped &lt;code>*net.UDPConn&lt;/code>, this could prevent quic-go from accessing kernel-based optimizations, leading to reduced transfer performance. For example, using ECN is only possible if the packets sent are actual UDP packets.&lt;/p>
+&lt;p>Applications can test if their &lt;code>net.PacketConn&lt;/code> implementation provides the required methods to enable these optimizations by using the &lt;code>OOBCapablePacketConn&lt;/code> interface:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">type&lt;/span> &lt;span class="nx">myPacketConn&lt;/span> &lt;span class="kd">struct&lt;/span>&lt;span class="p">{}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">_&lt;/span> &lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">OOBCapablePacketConn&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">myPacketConn&lt;/span>&lt;span class="p">{}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h2>Handling non-QUIC packets&lt;span class="absolute -mt-20" id="handling-non-quic-packets">&lt;/span>
+&lt;a href="#handling-non-quic-packets" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>QUIC was designed to be demultiplexed with a number of common UDP-based protocols (see &lt;a href="https://datatracker.ietf.org/doc/html/rfc9443" target="_blank" rel="noopener">RFC 9443&lt;/a> for details). This is achieved by inspecting the first few bits of every incoming UDP packet.&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">tr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ReadNonQUICPacket&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Context&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">b&lt;/span> &lt;span class="p">[]&lt;/span>&lt;span class="kt">byte&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">net&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Addr&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">error&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>Using the &lt;code>ReadNonQUICPacket&lt;/code> method is preferable over implementation this inspection logic outside of quic-go, and passing a wrapped &lt;code>net.PacketConn&lt;/code> to the &lt;code>Transport&lt;/code>, as it allows quic-go to use a number of kernel-based optimization (e.g. GSO) that massively speed up QUIC transfers (see &lt;a href="https://docs.quic-go.net/docs/quic/optimizations/#GSO" >Optimizations&lt;/a>).&lt;/p></description></item><item><title>Dialing HTTP/3</title><link>https://docs.quic-go.net/docs/http3/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/http3/client/</guid><description>
 &lt;p>This package provides a &lt;code>http.RoundTripper&lt;/code> implementation that can be used on the &lt;code>http.Client&lt;/code>:&lt;/p>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">http3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">RoundTripper&lt;/span>&lt;span class="p">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">TLSClientConfig&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{},&lt;/span> &lt;span class="c1">// set a TLS client config, if desired
