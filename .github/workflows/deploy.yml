@@ -27,13 +27,13 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
           publish_branch: build
-      # - uses: burnett01/rsync-deployments@c04732dab25a8b2c000b7198a067bf26e93959e2 # v6.0.0
-      #   if: ${{ github.event_name == 'push' }}
-      #   with:
-      #     switches: -avzr --delete
-      #     path: ./build/
-      #     remote_path: / # rrsync configuration points this to the correct path
-      #     remote_host: ${{ secrets.DEPLOY_HOST }}
-      #     remote_port: ${{ secrets.DEPLOY_PORT }}
-      #     remote_user: ${{ secrets.DEPLOY_USER }}
-      #     remote_key: ${{ secrets.DEPLOY_KEY }}
+      - uses: burnett01/rsync-deployments@93f02b856fbeaf9a8fbfdd8ce1a4adfd0843f849 # v7.0.0
+        if: ${{ github.event_name == 'push' }}
+        with:
+          switches: -avzr --delete
+          path: ./build/
+          remote_path: / # rrsync configuration points this to the correct path
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          remote_port: ${{ secrets.DEPLOY_PORT }}
+          remote_user: ${{ secrets.DEPLOY_USER }}
+          remote_key: ${{ secrets.DEPLOY_KEY }}
