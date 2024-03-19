@@ -1,7 +1,7 @@
 ---
 title: Event Logging using qlog
 toc: true
-weight: 99
+weight: 90
 ---
 
 quic-go logs a wide range of events defined in [draft-ietf-quic-qlog-quic-events](https://datatracker.ietf.org/doc/draft-ietf-quic-qlog-quic-events/), providing comprehensive insights in the internals of a QUIC connection. 
@@ -35,6 +35,19 @@ quic.Config{
 The `context.Context` passed to this callback is never closed, but it carries a `quic.ConnectionTracingKey` value. This value is also set on the context returned from `Connection.Context`.
 
 It is valid to return `nil` for the `*logging.ConnectionTracer` from this callback. In this case, qlogging will be disabled for this connection.
+
+## Events not associated with a Connection
+
+When listening for QUIC packets on a UDP socket, there are a couple of events that can happen before an incoming packet can be associated with a QUIC connection. For example, the QUIC packet header might be invalid, forcing us to drop the packet. Or the server might be overloaded and reject a new connection attempt.
+
+qlogging for these events can be enabled by configuring a `Tracer` on the [`Transport`]({{< relref path="transport.md" >}}):
+```go
+f, err := os.Create("events.qlog")
+// ... error handling
+quic.Transport{
+  Tracer: qlog.NewTracer(f),
+}
+```
 
 ## 📝 Future Work
 
