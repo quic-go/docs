@@ -276,8 +276,7 @@ title="Copy code"
 &lt;li>notify the application when a DATAGRAM frame is acked / lost: &lt;a href="https://github.com/quic-go/quic-go/issues/4273" target="_blank" rel="noopener">#4273&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Multipath</title><link>https://docs.quic-go.net/docs/quic/multipath/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/multipath/</guid><description>
 &lt;p>&lt;a href="https://datatracker.ietf.org/doc/draft-ietf-quic-multipath/" target="_blank" rel="noopener">Multipath QUIC&lt;/a> is a QUIC extension currently under development in the IETF QUIC working group. It allows the simultaneous use of multiple path for transferring application data.&lt;/p>
-&lt;p>The implementation status in quic-go is tracked in &lt;a href="https://github.com/quic-go/quic-go/issues/3343" target="_blank" rel="noopener">#3343&lt;/a>.&lt;/p></description></item><item><title>Prometheus Metrics</title><link>https://docs.quic-go.net/docs/quic/metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/metrics/</guid><description>
-&lt;p>It would be nice if it was easier to monitor quic-go internals using Prometheus. Currently this is not yet possible. Work on Prometheus integration is tracked in &lt;a href="https://github.com/quic-go/quic-go/issues/4077" target="_blank" rel="noopener">#4077&lt;/a>.&lt;/p></description></item><item><title>Event Logging using qlog</title><link>https://docs.quic-go.net/docs/quic/qlog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/qlog/</guid><description>
+&lt;p>The implementation status in quic-go is tracked in &lt;a href="https://github.com/quic-go/quic-go/issues/3343" target="_blank" rel="noopener">#3343&lt;/a>.&lt;/p></description></item><item><title>Event Logging using qlog</title><link>https://docs.quic-go.net/docs/quic/qlog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/qlog/</guid><description>
 &lt;p>quic-go logs a wide range of events defined in &lt;a href="https://datatracker.ietf.org/doc/draft-ietf-quic-qlog-quic-events/" target="_blank" rel="noopener">draft-ietf-quic-qlog-quic-events&lt;/a>, providing comprehensive insights in the internals of a QUIC connection.&lt;/p>
 &lt;p>qlog files can be processed by a number of 3rd-party tools. &lt;a href="https://qvis.quictools.info/" target="_blank" rel="noopener">qviz&lt;/a> has proven very useful for debugging all kinds of QUIC connection failures.&lt;/p>
 &lt;h2>Events associated with a Connection&lt;span class="absolute -mt-20" id="events-associated-with-a-connection">&lt;/span>
@@ -317,8 +316,26 @@ title="Copy code"
 &lt;/div>
 &lt;p>The &lt;code>context.Context&lt;/code> passed to this callback is never closed, but it carries a &lt;code>quic.ConnectionTracingKey&lt;/code> value. This value is also set on the context returned from &lt;code>Connection.Context&lt;/code>.&lt;/p>
 &lt;p>It is valid to return &lt;code>nil&lt;/code> for the &lt;code>*logging.ConnectionTracer&lt;/code> from this callback. In this case, qlogging will be disabled for this connection.&lt;/p>
+&lt;h2>Events not associated with a Connection&lt;span class="absolute -mt-20" id="events-not-associated-with-a-connection">&lt;/span>
+&lt;a href="#events-not-associated-with-a-connection" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>When listening for QUIC packets on a UDP socket, there are a couple of events that can happen before an incoming packet can be associated with a QUIC connection. For example, the QUIC packet header might be invalid, forcing us to drop the packet. Or the server might be overloaded and reject a new connection attempt.&lt;/p>
+&lt;p>qlogging for these events can be enabled by configuring a &lt;code>Tracer&lt;/code> on the &lt;a href="https://docs.quic-go.net/docs/quic/transport/" >&lt;code>Transport&lt;/code>&lt;/a>:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">f&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">os&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Create&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;events.qlog&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Transport&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Tracer&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">qlog&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewTracer&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">f&lt;/span>&lt;span class="p">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
 &lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
 &lt;li>qlog support for HTTP/3: &lt;a href="https://github.com/quic-go/quic-go/issues/4124" target="_blank" rel="noopener">#4124&lt;/a>&lt;/li>
 &lt;li>move to a different JSON serializer: &lt;a href="https://github.com/quic-go/quic-go/issues/3373" target="_blank" rel="noopener">#3373&lt;/a>&lt;/li>
-&lt;/ul></description></item></channel></rss>
+&lt;/ul></description></item><item><title>Prometheus Metrics</title><link>https://docs.quic-go.net/docs/quic/metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/metrics/</guid><description>
+&lt;p>It would be nice if it was easier to monitor quic-go internals using Prometheus. Currently this is not yet possible. Work on Prometheus integration is tracked in &lt;a href="https://github.com/quic-go/quic-go/issues/4077" target="_blank" rel="noopener">#4077&lt;/a>.&lt;/p></description></item></channel></rss>
