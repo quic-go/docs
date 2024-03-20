@@ -398,6 +398,25 @@ title="Copy code"
 &lt;li>general performance improvements in the DATAGRAM send and receive path&lt;/li>
 &lt;li>introduce an API to query the current DATAGRAM size limit: &lt;a href="https://github.com/quic-go/quic-go/issues/4259" target="_blank" rel="noopener">#4259&lt;/a>&lt;/li>
 &lt;li>notify the application when a DATAGRAM frame is acked / lost: &lt;a href="https://github.com/quic-go/quic-go/issues/4273" target="_blank" rel="noopener">#4273&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Connection Migration</title><link>https://docs.quic-go.net/docs/quic/connection-migration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/connection-migration/</guid><description>
+&lt;p>Whereas TCP identifies connection by their 4-tuple (i.e. the combination of the client&amp;rsquo;s and server&amp;rsquo;s IP address and port), QUIC uses connection IDs to demultiplex connections. This allows QUIC connections to migrate between paths.&lt;/p>
+&lt;p>This can be useful when a mobile phone moves away from a WiFi networks, and wishes to use the cellular connection instead. Connection migration is completely transparent to the application, as the entire connection, including all streams, is migrated to the new path.&lt;/p>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
+⚠️
+&lt;/div>&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+&lt;p>Note that this is not equivalent to multipath support. Using connection migration as defined in RFC 9000, only a single path can be used to send application at a time.&lt;/p>
+&lt;p>See &lt;a href="https://docs.quic-go.net/docs/quic/multipath/" >Multipath&lt;/a> for the QUIC Multipath extension.&lt;/p>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
+&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>quic-go currently doesn&amp;rsquo;t implement connection migration at this point.&lt;/p>
+&lt;ul>
+&lt;li>Tracking Issue: &lt;a href="https://github.com/quic-go/quic-go/issues/234" target="_blank" rel="noopener">#234&lt;/a>&lt;/li>
+&lt;li>API Proposal: &lt;a href="https://github.com/quic-go/quic-go/issues/3990" target="_blank" rel="noopener">#3990&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Multipath</title><link>https://docs.quic-go.net/docs/quic/multipath/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/multipath/</guid><description>
 &lt;p>&lt;a href="https://datatracker.ietf.org/doc/draft-ietf-quic-multipath/" target="_blank" rel="noopener">Multipath QUIC&lt;/a> is a QUIC extension currently under development in the IETF QUIC working group. It allows the simultaneous use of multiple path for transferring application data.&lt;/p>
 &lt;p>The implementation status in quic-go is tracked in &lt;a href="https://github.com/quic-go/quic-go/issues/3343" target="_blank" rel="noopener">#3343&lt;/a>.&lt;/p></description></item><item><title>Event Logging using qlog</title><link>https://docs.quic-go.net/docs/quic/qlog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/qlog/</guid><description>
