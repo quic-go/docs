@@ -333,39 +333,7 @@ title="Copy code"
 &lt;p>Calling &lt;code>Close&lt;/code> on a &lt;code>quic.SendStream&lt;/code> or a &lt;code>quic.Stream&lt;/code> closes the send side of the stream. On the receiver side, this will be surfaced as an &lt;code>io.EOF&lt;/code> returned from the &lt;code>io.Reader&lt;/code> once all data has been consumed. Note that for bidirectional streams, &lt;code>Close&lt;/code> &lt;em>only&lt;/em> closes the send side of the stream. It is still possible to read from the stream until the peer closes or resets the stream.&lt;/p>
 &lt;p>In case the application wishes to abort sending on a &lt;code>quic.SendStream&lt;/code> or a &lt;code>quic.Stream&lt;/code> , it can reset the send side by calling &lt;code>CancelWrite&lt;/code> with an application-defined error code (an unsigned 62-bit number). On the receiver side, this surfaced as a &lt;code>quic.StreamError&lt;/code> containing that error code on the &lt;code>io.Reader&lt;/code>. Note that for bidirectional streams, &lt;code>CancelWrite&lt;/code> &lt;em>only&lt;/em> resets the send side of the stream. It is still possible to read from the stream until the peer closes or resets the stream.&lt;/p>
 &lt;p>Conversely, in case the application wishes to abort receiving from a &lt;code>quic.ReceiveStream&lt;/code> or a &lt;code>quic.Stream&lt;/code>, it can ask the sender to abort data transmission by calling &lt;code>CancelRead&lt;/code> with an application-defined error code (an unsigned 62-bit number). On the receiver side, this surfaced as a &lt;code>quic.StreamError&lt;/code> containing that error code on the &lt;code>io.Writer&lt;/code>. Note that for bidirectional streams, &lt;code>CancelWrite&lt;/code> &lt;em>only&lt;/em> resets the receive side of the stream. It is still possible to write to the stream.&lt;/p>
-&lt;p>A bidirectional stream is only closed once both the read and the write side of the stream have been either closed or reset. Only then the peer is granted a new stream according to the maximum number of concurrent streams configured via &lt;code>quic.Config.MaxIncomingStreams&lt;/code>.&lt;/p></description></item><item><title>Optimizations</title><link>https://docs.quic-go.net/docs/quic/optimizations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/optimizations/</guid><description>
-&lt;h2>Generic Segmentation Offload (GSO)&lt;span class="absolute -mt-20" id="generic-segmentation-offload-gso">&lt;/span>
-&lt;a href="#generic-segmentation-offload-gso" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;code>net.UDPConn.WriteMsgUDP&lt;/code> sends a single UDP packet. Under the hood, the standard library uses the &lt;code>sendmsg&lt;/code> syscall. In principle, this is all we need to make QUIC work. However, for high-troughput transfers, the cost of these syscalls adds up.&lt;/p>
-&lt;p>Generic Segmentation Offload (GSO) allows applications to pass a large (up to 64 kB) buffer to the kernel, and have the kernel chop this buffer up into smaller pieces. This comes with a few requirements: all packets are sent to the same receiver address, and all packets except the last one need to have exactly the same size. quic-go handles all this complexity, and is able to optimize the creation of new packets by creating them in GSO-sized batched.&lt;/p>
-&lt;p>GSO is currently only available on Linux for kernel versions from 4.18. On certain systems, GSO might still fail, which is why quic-go comes with GSO detection logic, and falls back to the non-GSO send path if GSO doesn&amp;rsquo;t properly work.&lt;/p>
-&lt;p>There is no config flag to disable GSO support, and it is not expected that users would ever want to disable GSO support. If you run into any GSO-related problem, please open an issue. It is however possible to globally disable GSO by setting the &lt;code>QUIC_GO_DISABLE_GSO&lt;/code> environment variable to &lt;code>true&lt;/code>.&lt;/p>
-&lt;h3>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
-&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
-&lt;li>GSO on Windows: &lt;a href="https://github.com/quic-go/quic-go/issues/4325" target="_blank" rel="noopener">#4325&lt;/a>&lt;/li>
-&lt;li>amortize header protection cost by batching: &lt;a href="https://github.com/quic-go/quic-go/issues/4371" target="_blank" rel="noopener">#4371&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;h2>Path MTU Discovery (DPLPMTUD)&lt;span class="absolute -mt-20" id="path-mtu-discovery-dplpmtud">&lt;/span>
-&lt;a href="#path-mtu-discovery-dplpmtud" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>RFC 9000 requires any QUIC path to support MTUs of at least 1200 bytes, but many paths on the internet support larger MTUs, some up to 1500 bytes. On some path, even larger MTUs are possible.&lt;/p>
-&lt;p>Datagram Packetization Layer Path MTU Discovery (DPLPMTUD) allows a QUIC endpoint to determine the MTU available on a given path, and therefore increase the size of QUIC packets it sends. This is advantageus since there is a per-packet overhead: QUIC packet encryption, QUIC header protection, framing overhead, etc.&lt;/p>
-&lt;p>DPLPMTUD is enabled by default. If desired, it can be disabled on a per-connection basis using the &lt;code>quic.Config&lt;/code>:&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">DisablePathMTUDiscovery&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="kc">false&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
-&lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
-title="Copy code"
->
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;p>DPLPMTUD works by occasionally sending larger &amp;ldquo;probe packets&amp;rdquo;. If these packets are received and acknowledged, this confirms that the network path is capable of handling higher MTUs, and allows quic-go to increase the size of packets sent out. In terms of bandwidth consumption, DPLPMTUD is exceedingly cheap: over the lifetime of a connection, less than 10 probe packets are sent.&lt;/p>
-&lt;h3>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work-1">&lt;/span>
-&lt;a href="#-future-work-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
-&lt;li>Handle decreasing MTUs: &lt;a href="https://github.com/quic-go/quic-go/issues/3955" target="_blank" rel="noopener">#3955&lt;/a>&lt;/li>
-&lt;li>Make the maximum packet size configurable: &lt;a href="https://github.com/quic-go/quic-go/issues/3385" target="_blank" rel="noopener">#3385&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Datagrams</title><link>https://docs.quic-go.net/docs/quic/datagrams/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/datagrams/</guid><description>
+&lt;p>A bidirectional stream is only closed once both the read and the write side of the stream have been either closed or reset. Only then the peer is granted a new stream according to the maximum number of concurrent streams configured via &lt;code>quic.Config.MaxIncomingStreams&lt;/code>.&lt;/p></description></item><item><title>Datagrams</title><link>https://docs.quic-go.net/docs/quic/datagrams/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/datagrams/</guid><description>
 &lt;h2>The Unreliable Datagram Extension&lt;span class="absolute -mt-20" id="the-unreliable-datagram-extension">&lt;/span>
 &lt;a href="#the-unreliable-datagram-extension" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Unreliable datagrams are not part of QUIC (RFC 9000) itself, but a feature that is added by a QUIC extension (&lt;a href="https://datatracker.ietf.org/doc/html/rfc9221" target="_blank" rel="noopener">RFC 9221&lt;/a>). As other extensions, it can be negotiated during the handshake. Support can be enabled by setting the &lt;code>quic.Config.EnableDatagram&lt;/code> flag. Note that this doesn&amp;rsquo;t guarantee that the peer also supports datagrams. Whether or not the feature negotiation succeeded can be learned from the &lt;code>ConnectionState.SupportsDatagrams&lt;/code> obtained from &lt;code>Connection.ConnectionState()&lt;/code>.&lt;/p>
 &lt;p>QUIC DATAGRAMs are a new QUIC frame type sent in QUIC 1-RTT packets (i.e. after completion of the handshake). Therefore, they&amp;rsquo;re end-to-end encrypted and congestion-controlled. However, if a DATAGRAM frame is deemed lost by QUIC&amp;rsquo;s loss detection mechanism, they are not retransmitted.&lt;/p>
@@ -398,6 +366,87 @@ title="Copy code"
 &lt;li>general performance improvements in the DATAGRAM send and receive path&lt;/li>
 &lt;li>introduce an API to query the current DATAGRAM size limit: &lt;a href="https://github.com/quic-go/quic-go/issues/4259" target="_blank" rel="noopener">#4259&lt;/a>&lt;/li>
 &lt;li>notify the application when a DATAGRAM frame is acked / lost: &lt;a href="https://github.com/quic-go/quic-go/issues/4273" target="_blank" rel="noopener">#4273&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Optimizations</title><link>https://docs.quic-go.net/docs/quic/optimizations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/optimizations/</guid><description>
+&lt;h2>Generic Segmentation Offload (GSO)&lt;span class="absolute -mt-20" id="generic-segmentation-offload-gso">&lt;/span>
+&lt;a href="#generic-segmentation-offload-gso" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;code>net.UDPConn.WriteMsgUDP&lt;/code> sends a single UDP packet. Under the hood, the standard library uses the &lt;code>sendmsg&lt;/code> syscall. In principle, this is all we need to make QUIC work. However, for high-troughput transfers, the cost of these syscalls adds up.&lt;/p>
+&lt;p>Generic Segmentation Offload (GSO) allows applications to pass a large (up to 64 kB) buffer to the kernel, and have the kernel chop this buffer up into smaller pieces. This comes with a few requirements: all packets are sent to the same receiver address, and all packets except the last one need to have exactly the same size. quic-go handles all this complexity, and is able to optimize the creation of new packets by creating them in GSO-sized batched.&lt;/p>
+&lt;p>GSO is currently only available on Linux for kernel versions from 4.18. On certain systems, GSO might still fail, which is why quic-go comes with GSO detection logic, and falls back to the non-GSO send path if GSO doesn&amp;rsquo;t properly work.&lt;/p>
+&lt;p>There is no config flag to disable GSO support, and it is not expected that users would ever want to disable GSO support. If you run into any GSO-related problem, please open an issue. It is however possible to globally disable GSO by setting the &lt;code>QUIC_GO_DISABLE_GSO&lt;/code> environment variable to &lt;code>true&lt;/code>.&lt;/p>
+&lt;h3>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
+&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>GSO on Windows: &lt;a href="https://github.com/quic-go/quic-go/issues/4325" target="_blank" rel="noopener">#4325&lt;/a>&lt;/li>
+&lt;li>amortize header protection cost by batching: &lt;a href="https://github.com/quic-go/quic-go/issues/4371" target="_blank" rel="noopener">#4371&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2>UDP Buffer Sizes&lt;span class="absolute -mt-20" id="udp-buffer-sizes">&lt;/span>
+&lt;a href="#udp-buffer-sizes" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Experiments have shown that QUIC transfers on high-bandwidth connections can be limited by the size of the UDP receive and send buffer. The receive buffer holds packets that have been received by the kernel, but not yet read by the application (quic-go in this case). The send buffer holds packets that have been sent by quic-go, but not sent out by the kernel. In both cases, once these buffers fill up, the kernel will drop any new incoming packet.&lt;/p>
+&lt;p>Therefore, quic-go tries to increase the buffer size. The way to do this is OS-specific, and we currently have an implementation for Linux, Windows and macOS. However, an application is only allowed to do increase the buffer size up to a maximum value set in the kernel. Unfortunately, on Linux this value is rather small, too small for high-bandwidth QUIC transfers.&lt;/p>
+&lt;h3>non-BSD&lt;span class="absolute -mt-20" id="non-bsd">&lt;/span>
+&lt;a href="#non-bsd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>It is recommended to increase the maximum buffer size by running:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>sysctl -w net.core.rmem_max=2500000
+sysctl -w net.core.wmem_max=2500000&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>This command would increase the maximum send and the receive buffer size to roughly 2.5 MB. Note that these settings are not persisted across reboots.&lt;/p>
+&lt;h3>BSD&lt;span class="absolute -mt-20" id="bsd">&lt;/span>
+&lt;a href="#bsd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Taken from: &lt;a href="https://medium.com/@CameronSparr/increase-os-udp-buffers-to-improve-performance-51d167bb1360" target="_blank" rel="noopener">https://medium.com/@CameronSparr/increase-os-udp-buffers-to-improve-performance-51d167bb1360&lt;/a>&lt;/p>
+&lt;blockquote>
+&lt;p>On BSD/Darwin systems you need to add about a 15% padding to the kernel limit socket buffer. Meaning if you want a 25MB buffer (8388608 bytes) you need to set the kernel limit to 26214400*1.15 = 30146560. This is not documented anywhere but happens &lt;a href="https://github.com/freebsd/freebsd-src/blob/master/sys/kern/uipc_sockbuf.c#L63-L64" target="_blank" rel="noopener">in the kernel here&lt;/a>.&lt;/p>
+&lt;/blockquote>
+&lt;p>To update the value immediately to 2.5M, type the following commands as root:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-sh" data-lang="sh">&lt;span class="line">&lt;span class="cl">sysctl -w kern.ipc.maxsockbuf&lt;span class="o">=&lt;/span>&lt;span class="m">3014656&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>Add the following lines to the &lt;code>/etc/sysctl.conf&lt;/code> file to keep this setting across reboots:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>kern.ipc.maxsockbuf=3014656&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h3>📝 Open Questions&lt;span class="absolute -mt-20" id="-open-questions">&lt;/span>
+&lt;a href="#-open-questions" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>Setting UDP buffer sizes when using Docker: &lt;a href="https://github.com/quic-go/quic-go/issues/3801" target="_blank" rel="noopener">#3801&lt;/a>&lt;/li>
+&lt;li>Setting UDP buffer sizes on OpenBSD: &lt;a href="https://github.com/quic-go/quic-go/issues/3476" target="_blank" rel="noopener">#3476&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2>Path MTU Discovery (DPLPMTUD)&lt;span class="absolute -mt-20" id="path-mtu-discovery-dplpmtud">&lt;/span>
+&lt;a href="#path-mtu-discovery-dplpmtud" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>RFC 9000 requires any QUIC path to support MTUs of at least 1200 bytes, but many paths on the internet support larger MTUs, some up to 1500 bytes. On some path, even larger MTUs are possible.&lt;/p>
+&lt;p>Datagram Packetization Layer Path MTU Discovery (DPLPMTUD) allows a QUIC endpoint to determine the MTU available on a given path, and therefore increase the size of QUIC packets it sends. This is advantageus since there is a per-packet overhead: QUIC packet encryption, QUIC header protection, framing overhead, etc.&lt;/p>
+&lt;p>DPLPMTUD is enabled by default. If desired, it can be disabled on a per-connection basis using the &lt;code>quic.Config&lt;/code>:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">DisablePathMTUDiscovery&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="kc">false&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>DPLPMTUD works by occasionally sending larger &amp;ldquo;probe packets&amp;rdquo;. If these packets are received and acknowledged, this confirms that the network path is capable of handling higher MTUs, and allows quic-go to increase the size of packets sent out. In terms of bandwidth consumption, DPLPMTUD is exceedingly cheap: over the lifetime of a connection, less than 10 probe packets are sent.&lt;/p>
+&lt;h3>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work-1">&lt;/span>
+&lt;a href="#-future-work-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>Handle decreasing MTUs: &lt;a href="https://github.com/quic-go/quic-go/issues/3955" target="_blank" rel="noopener">#3955&lt;/a>&lt;/li>
+&lt;li>Make the maximum packet size configurable: &lt;a href="https://github.com/quic-go/quic-go/issues/3385" target="_blank" rel="noopener">#3385&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Connection Migration</title><link>https://docs.quic-go.net/docs/quic/connection-migration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://docs.quic-go.net/docs/quic/connection-migration/</guid><description>
 &lt;p>Whereas TCP identifies connection by their 4-tuple (i.e. the combination of the client&amp;rsquo;s and server&amp;rsquo;s IP address and port), QUIC uses connection IDs to demultiplex connections. This allows QUIC connections to migrate between paths.&lt;/p>
 &lt;p>This can be useful when a mobile phone moves away from a WiFi networks, and wishes to use the cellular connection instead. Connection migration is completely transparent to the application, as the entire connection, including all streams, is migrated to the new path.&lt;/p>
