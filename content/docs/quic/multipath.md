@@ -1,7 +1,7 @@
 ---
 title: Multipath
 toc: true
-weight: 11
+weight: 51
 ---
 
 [Multipath QUIC](https://datatracker.ietf.org/doc/draft-ietf-quic-multipath/) is a QUIC extension currently under development in the IETF QUIC working group. It allows the simultaneous use of multiple path for transferring application data.
