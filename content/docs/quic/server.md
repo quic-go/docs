@@ -4,7 +4,9 @@ toc: true
 weight: 2
 ---
 
-The central entry point is the `quic.Transport`. A `Transport` manages QUIC connections running on a single UDP socket. Since QUIC uses Connection IDs, it can demultiplex a listener (accepting incoming connections) and an arbitrary number of outgoing QUIC connections on the same UDP socket.
+## Using a `quic.Transport`
+
+The central entry point is the `quic.Transport`. A `Transport` manages all QUIC connections running on a single UDP socket. Since QUIC uses Connection IDs, it can demultiplex a listener (accepting incoming connections) and an arbitrary number of outgoing QUIC connections on the same UDP socket.
 
 ```go
 udpConn, err := net.ListenUDP("udp4", &net.UDPAddr{Port: 1234})
@@ -25,7 +27,12 @@ go func() {
 
 The listener `ln` can now be used to accept incoming QUIC connections by (repeatedly) calling the `Accept` method (see below for more information on the `quic.Connection`).
 
-As a shortcut,  `quic.Listen` and `quic.ListenAddr` can be used without explicitly initializing a `quic.Transport`:
+This listener can be closed independently from the underlying transport. Connections that are already established and accepted won't be affected, but clients won't be able to establish new connections.
+
+
+## Using the Convenience Functions
+
+As a shortcut, `quic.Listen` and `quic.ListenAddr` can be used without explicitly initializing a `quic.Transport`:
 
 ```go
 ln, err := quic.Listen(udpConn, tlsConf, quicConf)
@@ -33,6 +40,9 @@ ln, err := quic.Listen(udpConn, tlsConf, quicConf)
 
 When using the shortcut, it's not possible to reuse the same UDP socket for outgoing connections.
 
+{{< callout type="warning" >}}
+  While closing the listener associated with a `Transport` doesn't close QUIC connections accepted from this listener, closing a listener created using these shortcuts causes all accepted connections to be immediately terminated.
+{{< /callout >}}
 
 ## Certificate Size Considerations
 
