@@ -30,7 +30,7 @@ jobs:
       - name: Check Links
         uses: ruzickap/action-my-broken-link-checker@v2
         with:
-          url: https://quic-go.net
+          url: https://${{ github.event.repository.name }}
           pages_path: ./build/
           cmd_params: '--buffer-size=8192 --max-connections=10 --color=always --skip-tls-verification --header="User-Agent:curl/7.54.0" --timeout=20'
       - uses: burnett01/rsync-deployments@93f02b856fbeaf9a8fbfdd8ce1a4adfd0843f849 # v7.0.0
