@@ -48,4 +48,4 @@ QUIC was designed to be demultiplexed with a number of common UDP-based protocol
 tr.ReadNonQUICPacket(ctx context.Context, b []byte) (int, net.Addr, error) 
 ```
 
-Using the `ReadNonQUICPacket` method is preferable over implementation this inspection logic outside of quic-go, and passing a wrapped `net.PacketConn` to the `Transport`, as it allows quic-go to use a number of kernel-based optimization (e.g. GSO) that massively speed up QUIC transfers (see [Optimizations]({{< relref path="optimizations.md#GSO" >}})).
+Using the `ReadNonQUICPacket` method is preferable over implementation this inspection logic outside of quic-go, and passing a wrapped `net.PacketConn` to the `Transport`, as it allows quic-go to use a number of kernel-based optimization (e.g. GSO) that massively speed up QUIC transfers (see [Optimizations]({{< relref path="optimizations.md#gso" >}})).

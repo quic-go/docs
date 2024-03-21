@@ -4,7 +4,7 @@ toc: true
 weight: 20
 ---
 
-## Generic Segmentation Offload (GSO)
+## Generic Segmentation Offload (GSO) {#gso}
 
 `net.UDPConn.WriteMsgUDP` sends a single UDP packet. Under the hood, the standard library uses the `sendmsg` syscall. In principle, this is all we need to make QUIC work. However, for high-troughput transfers, the cost of these syscalls adds up.
 
