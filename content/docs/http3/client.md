@@ -40,3 +40,11 @@ roundTripper := &http3.RoundTripper{
 Since QUIC demultiplexes packets based on their connection IDs, it is possible allows running a QUIC server and client on the same UDP socket. This also works when using HTTP/3: HTTP requests can be sent from the same socket that a server is listening on.
 
 To achieve this using this package, first initialize a single `quic.Transport`, and pass a `quic.EarlyListner` obtained from that transport to `http3.Server.ServeListener`, and use the `DialEarly` function of the transport as the `Dial` function for the `http3.RoundTripper`.
+
+## 📝 Future Work
+
+* Support for zstd Content Encoding: [#4100](https://github.com/quic-go/quic-go/issues/4100)
+* qlog Support: [#4124](https://github.com/quic-go/quic-go/issues/4124)
+* Happy Eyeballs Support: [#3755](https://github.com/quic-go/quic-go/issues/3755)
+* Support for Extensible Priorities ([RFC 9218](https://www.rfc-editor.org/rfc/rfc9218.html)): [#3470](https://github.com/quic-go/quic-go/issues/3470)
+* Support for HTTP Trailers: [#2266](https://github.com/quic-go/quic-go/issues/2266)
