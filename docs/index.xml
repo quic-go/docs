@@ -180,7 +180,22 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>Using the &lt;code>ReadNonQUICPacket&lt;/code> method is preferable over implementation this inspection logic outside of quic-go, and passing a wrapped &lt;code>net.PacketConn&lt;/code> to the &lt;code>Transport&lt;/code>, as it allows quic-go to use a number of kernel-based optimization (e.g. GSO) that massively speed up QUIC transfers (see &lt;a href="https://quic-go.net/docs/quic/optimizations/#gso" >Optimizations&lt;/a>).&lt;/p></description></item><item><title>Dialing HTTP/3</title><link>https://quic-go.net/docs/http3/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/http3/client/</guid><description>
+&lt;p>Using the &lt;code>ReadNonQUICPacket&lt;/code> method is preferable over implementation this inspection logic outside of quic-go, and passing a wrapped &lt;code>net.PacketConn&lt;/code> to the &lt;code>Transport&lt;/code>, as it allows quic-go to use a number of kernel-based optimization (e.g. GSO) that massively speed up QUIC transfers (see &lt;a href="https://quic-go.net/docs/quic/optimizations/#gso" >Optimizations&lt;/a>).&lt;/p>
+&lt;h2>Disabling QUIC Version Negotiation&lt;span class="absolute -mt-20" id="disabling-quic-version-negotiation">&lt;/span>
+&lt;a href="#disabling-quic-version-negotiation" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>In certain deployments, clients know for a fact which QUIC versions a server supports. For example, in a p2p setting, a server might have advertised the supported QUIC versions in / with its address. In these cases, QUIC&amp;rsquo;s version negotiation doesn&amp;rsquo;t serve any purpose, but might open a network up for request forgery attacks as described in &lt;a href="https://datatracker.ietf.org/doc/html/rfc9000#section-21.5.5" target="_blank" rel="noopener">Section 21.5.5 of RFC 9000&lt;/a>.&lt;/p>
+&lt;p>The sending of Version Negotiation packets can be disabled using the &lt;code>DisableVersionNegotiationPackets&lt;/code> option:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Transport&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">DisableVersionNegotiationPackets&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div></description></item><item><title>Dialing HTTP/3</title><link>https://quic-go.net/docs/http3/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/http3/client/</guid><description>
 &lt;p>This package provides a &lt;code>http.RoundTripper&lt;/code> implementation that can be used on the &lt;code>http.Client&lt;/code>:&lt;/p>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">http3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">RoundTripper&lt;/span>&lt;span class="p">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">TLSClientConfig&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{},&lt;/span> &lt;span class="c1">// set a TLS client config, if desired
