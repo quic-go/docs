@@ -44,7 +44,7 @@ When using the shortcut, it's not possible to reuse the same UDP socket for outg
   While closing the listener associated with a `Transport` doesn't close QUIC connections accepted from this listener, closing a listener created using these shortcuts causes all accepted connections to be immediately terminated.
 {{< /callout >}}
 
-## Certificate Size Considerations
+## Certificate Size Considerations {#cert-size}
 
 During the initial phase of the QUIC handshake, before validating the client's address, server response size is restricted to thrice the bytes received from the client, as outlined in [RFC 9000, Section 8](https://datatracker.ietf.org/doc/html/rfc9000#name-address-validation). This limitation helps prevent the use of QUIC servers in DDoS attack amplifications by ensuring a server cannot send an excessively large response to a potentially spoofed packet.
 

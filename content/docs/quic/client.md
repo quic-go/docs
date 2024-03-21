@@ -29,3 +29,7 @@ Just as a TLS client running on top of a TCP connection, a QUIC client can also 
 
 To use session resumption, nothing needs to be done on the QUIC layer. It is enabled the same way as when using the standard library TLS over TCP, i.e. by settings the `tls.Config.ClientSessionCache`.
 
+## 📝 Future Work
+
+* Mitigate [Performance Impact of Large Certificates]({{< relref "server.md#cert-size" >}}) by sending two ClientHellos: [#3775](https://github.com/quic-go/quic-go/issues/3775)
+* Happy Eyeballs for `DialAddr`: [#3772](https://github.com/quic-go/quic-go/issues/3772)
