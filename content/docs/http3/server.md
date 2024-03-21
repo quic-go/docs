@@ -4,6 +4,8 @@ toc: true
 weight: 1
 ---
 
+## Using `ListenAndServeQUIC`
+
 The easiest way to start an HTTP/3 server is using
 ```go
 mux := http.NewServeMux()
@@ -12,7 +14,9 @@ mux := http.NewServeMux()
 http3.ListenAndServeQUIC("0.0.0.0:443", "/path/to/cert", "/path/to/key", mux)
 ```
 
-`ListenAndServeQUIC` is a convenience function. For more configurability, set up an `http3.Server` explicitly:
+## Setting up a `http3.Server`
+
+For more configurability, set up an `http3.Server` explicitly:
 ```go
 server := http3.Server{
 	Handler:    mux,
@@ -23,7 +27,9 @@ server := http3.Server{
 err := server.ListenAndServe()
 ```
 
-The `http3.Server` provides a number of configuration options, please refer to the [documentation](https://pkg.go.dev/github.com/quic-go/quic-go/http3#Server) for a complete list. The `QuicConfig` is used to configure the underlying QUIC connection. More details can be found in the documentation of the QUIC package.
+`http3.ConfigureTLSConfig` takes a `tls.Config` and configures the `GetConfigForClient` such that the correct ALPN value for HTTP/3 is used.
+
+## Using a `quic.Transport`
 
 It is also possible to manually set up a `quic.Transport`, and then pass the listener to the server. This is useful when you want to set configuration options on the `quic.Transport`.
 ```go
@@ -32,23 +38,24 @@ tlsConf := http3.ConfigureTLSConfig(&tls.Config{})  // use your tls.Config here
 quicConf := &quic.Config{} // QUIC connection options
 server := http3.Server{}
 ln, _ := tr.ListenEarly(tlsConf, quicConf)
-server.ServeListener(ln)
+err := server.ServeListener(ln)
 ```
 
-Alternatively, it is also possible to pass fully established QUIC connections to the HTTP/3 server. This is useful if the QUIC server offers multiple ALPNs (via `NextProtos` in the `tls.Config`).
+### Demultiplexing non-HTTP Protocols
+
+Alternatively, it is also possible to pass fully established QUIC connections to the HTTP/3 server. This is useful if the QUIC serves both HTTP/3 and other protocols. Connection can then be demultiplexed using the ALPN value (via `NextProtos` in the `tls.Config`).
 ```go
 tr := quic.Transport{Conn: conn}
 tlsConf := http3.ConfigureTLSConfig(&tls.Config{})  // use your tls.Config here
 quicConf := &quic.Config{} // QUIC connection options
 server := http3.Server{}
-// alternatively, use tr.ListenEarly to accept 0-RTT connections
-ln, _ := tr.Listen(tlsConf, quicConf)
+ln, _ := tr.ListenEarly(tlsConf, quicConf)
 for {
 	c, _ := ln.Accept()
 	switch c.ConnectionState().TLS.NegotiatedProtocol {
 	case http3.NextProtoH3:
 		go server.ServeQUICConn(c) 
-        // ... handle other protocols ...  
+	// ... handle other protocols ...  
 	}
 }
 ```
