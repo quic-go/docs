@@ -74,6 +74,44 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
+&lt;h2>Advertising HTTP/3 via Alt-Svc&lt;span class="absolute -mt-20" id="advertising-http3-via-alt-svc">&lt;/span>
+&lt;a href="#advertising-http3-via-alt-svc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>An HTTP/1.1 or HTTP/2 server can advertise that it is also offering the same resources on HTTP/3 using &lt;a href="https://datatracker.ietf.org/doc/html/rfc7838#section-3" target="_blank" rel="noopener">HTTP Alternative Services&lt;/a> (Alt-Svc) header field. &lt;a href="https://datatracker.ietf.org/doc/html/rfc9114#section-3.1.1" target="_blank" rel="noopener">Section 3.1.1 of RFC 9114&lt;/a> specifies how to use this field to advertise support for HTTP/3.&lt;/p>
+&lt;p>This allows HTTP clients to discover support for HTTP/3. Clients may still continue using the existing HTTP connection on top of TCP, but might decide to connect via QUIC the next time.&lt;/p>
+&lt;p>An &lt;code>http.Handler&lt;/code> can be wrapped to automatically add the Alt-Svc header field for non-HTTP/3 requests:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">server&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">http3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Server&lt;/span>&lt;span class="p">{}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">handler&lt;/span> &lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Handler&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewServeMux&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... add HTTP handlers ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">handler&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">HandlerFunc&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kd">func&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">w&lt;/span> &lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ResponseWriter&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">r&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Request&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">r&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ProtoMajor&lt;/span> &lt;span class="p">&amp;lt;&lt;/span> &lt;span class="mi">3&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">server&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">SetQuicHeaders&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">w&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Header&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ... handle error ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">handler&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ServeHTTP&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">w&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">r&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">})&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h3>Reverse-Proxying&lt;span class="absolute -mt-20" id="reverse-proxying">&lt;/span>
+&lt;a href="#reverse-proxying" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>If the HTTP/3 server is located behind an L4 reverse proxy, it might be listening on a different UDP port than the port that is exposed to the internet. To accomodate for this common scenario, the external port can be configured using the &lt;code>Port&lt;/code> field of the &lt;code>http3.Server&lt;/code>:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">server&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">http3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Server&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Port&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mi">443&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// SetQuicHeaders will now generate the Alt-Svc header for port 443
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>More complex scenarios can be handled by manually setting the Alt-Svc header field, or by overwriting the value added by &lt;code>SetQuicHeaders&lt;/code>.&lt;/p>
 &lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
 &lt;li>Graceful shutdown: &lt;a href="https://github.com/quic-go/quic-go/issues/153" target="_blank" rel="noopener">#153&lt;/a>&lt;/li>
