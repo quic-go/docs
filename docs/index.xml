@@ -70,7 +70,15 @@ title="Copy code"
 &lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
-&lt;/div></description></item><item><title>Transport</title><link>https://quic-go.net/docs/quic/transport/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/transport/</guid><description>
+&lt;/div>
+&lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
+&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>Graceful shutdown: &lt;a href="https://github.com/quic-go/quic-go/issues/153" target="_blank" rel="noopener">#153&lt;/a>&lt;/li>
+&lt;li>Correctly deal with 0-RTT and HTTP/3 extensions: &lt;a href="https://github.com/quic-go/quic-go/issues/3855" target="_blank" rel="noopener">#3855&lt;/a>&lt;/li>
+&lt;li>Support for Extensible Priorities (&lt;a href="https://www.rfc-editor.org/rfc/rfc9218.html" target="_blank" rel="noopener">RFC 9218&lt;/a>): &lt;a href="https://github.com/quic-go/quic-go/issues/3470" target="_blank" rel="noopener">#3470&lt;/a>&lt;/li>
+&lt;li>Support for httptrace: &lt;a href="https://github.com/quic-go/quic-go/issues/3342" target="_blank" rel="noopener">#3342&lt;/a>&lt;/li>
+&lt;li>Support for HTTP Trailers: &lt;a href="https://github.com/quic-go/quic-go/issues/2266" target="_blank" rel="noopener">#2266&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Transport</title><link>https://quic-go.net/docs/quic/transport/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/transport/</guid><description>
 &lt;h2>Initializing a Transport&lt;span class="absolute -mt-20" id="initializing-a-transport">&lt;/span>
 &lt;a href="#initializing-a-transport" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>The central entrypoint into quic-go is the &lt;code>quic.Transport&lt;/code>. It used both when running a QUIC server and when dialing QUIC connections.&lt;/p>
 &lt;p>Other than TCP, which identifies connections by their 4-tuple (i.e. the combination of the client&amp;rsquo;s and server&amp;rsquo;s IP address and port), QUIC uses connection IDs to demultiplex connections. That means that an arbitrary number of QUIC connections can be run on the same UDP socket. It is even possible to run a server (accepting incoming connections) and clients (establishing outgoing connections) on the socket.&lt;/p>
@@ -175,7 +183,15 @@ title="Copy code"
 &lt;/div>
 &lt;h2>Using the same UDP Socket for Server and Roundtripper&lt;span class="absolute -mt-20" id="using-the-same-udp-socket-for-server-and-roundtripper">&lt;/span>
 &lt;a href="#using-the-same-udp-socket-for-server-and-roundtripper" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Since QUIC demultiplexes packets based on their connection IDs, it is possible allows running a QUIC server and client on the same UDP socket. This also works when using HTTP/3: HTTP requests can be sent from the same socket that a server is listening on.&lt;/p>
-&lt;p>To achieve this using this package, first initialize a single &lt;code>quic.Transport&lt;/code>, and pass a &lt;code>quic.EarlyListner&lt;/code> obtained from that transport to &lt;code>http3.Server.ServeListener&lt;/code>, and use the &lt;code>DialEarly&lt;/code> function of the transport as the &lt;code>Dial&lt;/code> function for the &lt;code>http3.RoundTripper&lt;/code>.&lt;/p></description></item><item><title>Running a QUIC Server</title><link>https://quic-go.net/docs/quic/server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/server/</guid><description>
+&lt;p>To achieve this using this package, first initialize a single &lt;code>quic.Transport&lt;/code>, and pass a &lt;code>quic.EarlyListner&lt;/code> obtained from that transport to &lt;code>http3.Server.ServeListener&lt;/code>, and use the &lt;code>DialEarly&lt;/code> function of the transport as the &lt;code>Dial&lt;/code> function for the &lt;code>http3.RoundTripper&lt;/code>.&lt;/p>
+&lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
+&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>Support for zstd Content Encoding: &lt;a href="https://github.com/quic-go/quic-go/issues/4100" target="_blank" rel="noopener">#4100&lt;/a>&lt;/li>
+&lt;li>qlog Support: &lt;a href="https://github.com/quic-go/quic-go/issues/4124" target="_blank" rel="noopener">#4124&lt;/a>&lt;/li>
+&lt;li>Happy Eyeballs support: &lt;a href="https://github.com/quic-go/quic-go/issues/3755" target="_blank" rel="noopener">#3755&lt;/a>&lt;/li>
+&lt;li>Support for Extensible Priorities (&lt;a href="https://www.rfc-editor.org/rfc/rfc9218.html" target="_blank" rel="noopener">RFC 9218&lt;/a>): &lt;a href="https://github.com/quic-go/quic-go/issues/3470" target="_blank" rel="noopener">#3470&lt;/a>&lt;/li>
+&lt;li>Support for HTTP Trailers: &lt;a href="https://github.com/quic-go/quic-go/issues/2266" target="_blank" rel="noopener">#2266&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Running a QUIC Server</title><link>https://quic-go.net/docs/quic/server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/server/</guid><description>
 &lt;p>The central entry point is the &lt;code>quic.Transport&lt;/code>. A &lt;code>Transport&lt;/code> manages QUIC connections running on a single UDP socket. Since QUIC uses Connection IDs, it can demultiplex a listener (accepting incoming connections) and an arbitrary number of outgoing QUIC connections on the same UDP socket.&lt;/p>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">udpConn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">net&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ListenUDP&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;udp4&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">net&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">UDPAddr&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="nx">Port&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mi">1234&lt;/span>&lt;span class="p">})&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
