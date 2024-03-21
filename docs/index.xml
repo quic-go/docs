@@ -188,7 +188,7 @@ title="Copy code"
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
 &lt;li>Support for zstd Content Encoding: &lt;a href="https://github.com/quic-go/quic-go/issues/4100" target="_blank" rel="noopener">#4100&lt;/a>&lt;/li>
 &lt;li>qlog Support: &lt;a href="https://github.com/quic-go/quic-go/issues/4124" target="_blank" rel="noopener">#4124&lt;/a>&lt;/li>
-&lt;li>Happy Eyeballs support: &lt;a href="https://github.com/quic-go/quic-go/issues/3755" target="_blank" rel="noopener">#3755&lt;/a>&lt;/li>
+&lt;li>Happy Eyeballs Support: &lt;a href="https://github.com/quic-go/quic-go/issues/3755" target="_blank" rel="noopener">#3755&lt;/a>&lt;/li>
 &lt;li>Support for Extensible Priorities (&lt;a href="https://www.rfc-editor.org/rfc/rfc9218.html" target="_blank" rel="noopener">RFC 9218&lt;/a>): &lt;a href="https://github.com/quic-go/quic-go/issues/3470" target="_blank" rel="noopener">#3470&lt;/a>&lt;/li>
 &lt;li>Support for HTTP Trailers: &lt;a href="https://github.com/quic-go/quic-go/issues/2266" target="_blank" rel="noopener">#2266&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Running a QUIC Server</title><link>https://quic-go.net/docs/quic/server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/server/</guid><description>
