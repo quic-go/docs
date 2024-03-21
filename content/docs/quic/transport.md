@@ -49,3 +49,14 @@ tr.ReadNonQUICPacket(ctx context.Context, b []byte) (int, net.Addr, error)
 ```
 
 Using the `ReadNonQUICPacket` method is preferable over implementation this inspection logic outside of quic-go, and passing a wrapped `net.PacketConn` to the `Transport`, as it allows quic-go to use a number of kernel-based optimization (e.g. GSO) that massively speed up QUIC transfers (see [Optimizations]({{< relref path="optimizations.md#gso" >}})).
+
+## Disabling QUIC Version Negotiation
+
+In certain deployments, clients know for a fact which QUIC versions a server supports. For example, in a p2p setting, a server might have advertised the supported QUIC versions in / with its address. In these cases, QUIC's version negotiation doesn't serve any purpose, but might open a network up for request forgery attacks as described in [Section 21.5.5 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-21.5.5).
+
+The sending of Version Negotiation packets can be disabled using the `DisableVersionNegotiationPackets` option:
+```go
+quic.Transport{
+  DisableVersionNegotiationPackets: true,
+}
+```
