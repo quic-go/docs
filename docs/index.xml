@@ -412,6 +412,39 @@ title="Copy code"
 &lt;li>Mitigate &lt;a href="https://quic-go.net/docs/quic/server/#cert-size" >Performance Impact of Large Certificates&lt;/a> by sending two ClientHellos: &lt;a href="https://github.com/quic-go/quic-go/issues/3775" target="_blank" rel="noopener">#3775&lt;/a>&lt;/li>
 &lt;li>Happy Eyeballs for &lt;code>DialAddr&lt;/code>: &lt;a href="https://github.com/quic-go/quic-go/issues/3772" target="_blank" rel="noopener">#3772&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Closing a Connection</title><link>https://quic-go.net/docs/quic/connection/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/connection/</guid><description>
+&lt;h2>Idle Timeouts&lt;span class="absolute -mt-20" id="idle-timeouts">&lt;/span>
+&lt;a href="#idle-timeouts" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>A QUIC connections can be closed automatically (i.e. without sending of any packets), if it is not used for a certain period of time, the so-called idle timeout. This is especially useful on mobile devices, where waking up the radio just to close a connection would be wasteful.&lt;/p>
+&lt;p>During the handshake, both client and server advertise the longest time that they want to keep the connection alive when it is idle. Details are specified in &lt;a href="https://datatracker.ietf.org/doc/html/rfc9000#section-10.1" target="_blank" rel="noopener">Section 10.1 of RFC 9000&lt;/a>. The idle timeout that applies to the connection is the minimum of the two values advertised by the client and by the server, respectively.&lt;/p>
+&lt;p>The idle timeout can be configured on a per-connection basis using the &lt;code>MaxIdleTimeout&lt;/code> field on the &lt;code>quic.Config&lt;/code>:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">MaxIdleTimeout&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mi">45&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Second&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>Internally, every QUIC connection endpoint keeps track of the time when the connection was last used, and silently (without sending any packets) closes the connection if that period exceeds the negotiated idle timeout period.&lt;/p>
+&lt;h3>Keeping a Connection Alive&lt;span class="absolute -mt-20" id="keeping-a-connection-alive">&lt;/span>
+&lt;a href="#keeping-a-connection-alive" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Endpoints can prevent the idle timeout from closing a QUIC connection by regularly sending application data. However, an application can also request the QUIC stack to keep the connection alive. This is done by regularly sending a PING frame before the idle timeout expires.&lt;/p>
+&lt;p>Keep-Alives can be configured by setting the &lt;code>KeepAlivePeriod&lt;/code> option on the &lt;code>quic.Config&lt;/code>.&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">KeepAlivePeriod&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mi">30&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Second&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>This will cause a PING frame to be sent &lt;em>at least&lt;/em> every &lt;code>KeepAlivePeriod&lt;/code>. If the idle timeout negotiated between the two endpoints is shorter than the &lt;code>KeepAlivePeriod&lt;/code>, PING frames will be sent more frequently.&lt;/p>
 &lt;h2>When the Remote Peer closes the Connection&lt;span class="absolute -mt-20" id="when-the-remote-peer-closes-the-connection">&lt;/span>
 &lt;a href="#when-the-remote-peer-closes-the-connection" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>In case the peer closes the QUIC connection, all calls to open streams, accept streams, as well as all methods on streams immediately return an error. Additionally, it is set as cancellation cause of the connection context. Users can use errors assertions to find out what exactly went wrong:&lt;/p>
 &lt;ul>
