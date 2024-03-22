@@ -50,6 +50,26 @@ tr.ReadNonQUICPacket(ctx context.Context, b []byte) (int, net.Addr, error)
 
 Using the `ReadNonQUICPacket` method is preferable over implementation this inspection logic outside of quic-go, and passing a wrapped `net.PacketConn` to the `Transport`, as it allows quic-go to use a number of kernel-based optimization (e.g. GSO) that massively speed up QUIC transfers (see [Optimizations]({{< relref path="optimizations.md#gso" >}})).
 
+## Stateless Resets
+
+QUIC was designed such that an off-path attacker is not able to disrupt an established QUIC connection. This is different from TCP: An off-path attacker can close a connection by injecting a TCP RST packet.
+
+This however poses a problem when a QUIC endpoint is rebooted: It now receives QUIC packets for which it doesn't possess the TLS session keys anymore. For the peer, it would be beneficial if the connection could immediately be closed. Otherwise, it would have to wait for an idle timeout to occur.
+
+Stateless resets (see [Section 10.3 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-10.3)) were designed to solve this problem. From a static key and the connection ID on an incoming packet, the rebooted endpoint can calculate the so called stateless reset token -- a 16 byte value. It then sends this value as part of what looks like a regular QUIC packet. The peer, having been informed of the stateless reset token associated with the connection ID when the connection ID was issued, can detect the stateless reset and immediately close the connection.
+
+
+The key used to calculate stateless reset is configured on the `quic.Transport`:
+```go
+// load this from disk, or derive it deterministically
+var statelessResetKey quic.StatelessResetKey
+quic.Transport{
+  StatelessResetKey: &statelessResetKey,
+}
+```
+
+Applications need to make sure that this key stays constant across reboots of the endpoint. One way to achieve this is to load it from a configuration file on disk. Alternatively, an application could also derive it from the TLS private key. Applications need to make sure that this key remains secret, otherwise off-path attackers are able to disrupt any QUIC connection handled by the endpoint.
+
 ## Disabling QUIC Version Negotiation
 
 In certain deployments, clients know for a fact which QUIC versions a server supports. For example, in a p2p setting, a server might have advertised the supported QUIC versions in / with its address. In these cases, QUIC's version negotiation doesn't serve any purpose, but might open a network up for request forgery attacks as described in [Section 21.5.5 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-21.5.5).
