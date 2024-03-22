@@ -50,6 +50,25 @@ tr.ReadNonQUICPacket(ctx context.Context, b []byte) (int, net.Addr, error)
 
 Using the `ReadNonQUICPacket` method is preferable over implementation this inspection logic outside of quic-go, and passing a wrapped `net.PacketConn` to the `Transport`, as it allows quic-go to use a number of kernel-based optimization (e.g. GSO) that massively speed up QUIC transfers (see [Optimizations]({{< relref path="optimizations.md#gso" >}})).
 
+## Stateless Resets
+
+QUIC is designed to prevent off-path attackers from disrupting connections, unlike TCP where such attackers can close connections using RST packets.
+
+A problem arises when a QUIC endpoint is suddenly rebooted: It now receives QUIC packets for connections for which it doesn't possess the TLS session keys anymore. For the peer, it would be beneficial if the connection could immediately be closed. Otherwise, it would have to wait for an idle timeout to occur.
+
+Stateless resets, as outlined in [Section 10.3 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-10.3), address this issue. Utilizing a static key and the connection ID from an incoming packet, a rebooted endpoint generates a 16-byte stateless reset token. This token is sent in a packet mimicking a standard QUIC packet. The peer, already aware of the stateless reset token linked to the connection ID, recognizes the stateless reset and can close the connection instantly.
+
+The key used to calculate stateless reset is configured on the `quic.Transport`:
+```go
+// load this from disk, or derive it deterministically
+var statelessResetKey quic.StatelessResetKey
+quic.Transport{
+  StatelessResetKey: &statelessResetKey,
+}
+```
+
+Applications need to make sure that this key stays constant across reboots of the endpoint. One way to achieve this is to load it from a configuration file on disk. Alternatively, an application could also derive it from the TLS private key. Keeping this key confidential is essential to prevent off-path attackers from disrupting QUIC connections managed by the endpoint.
+
 ## Disabling QUIC Version Negotiation
 
 In certain deployments, clients know for a fact which QUIC versions a server supports. For example, in a p2p setting, a server might have advertised the supported QUIC versions in / with its address. In these cases, QUIC's version negotiation doesn't serve any purpose, but might open a network up for request forgery attacks as described in [Section 21.5.5 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-21.5.5).
