@@ -60,6 +60,26 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;p>Using the &lt;code>ReadNonQUICPacket&lt;/code> method is preferable over implementation this inspection logic outside of quic-go, and passing a wrapped &lt;code>net.PacketConn&lt;/code> to the &lt;code>Transport&lt;/code>, as it allows quic-go to use a number of kernel-based optimization (e.g. GSO) that massively speed up QUIC transfers (see &lt;a href="https://quic-go.net/docs/quic/optimizations/#gso" >Optimizations&lt;/a>).&lt;/p>
+&lt;h2>Stateless Resets&lt;span class="absolute -mt-20" id="stateless-resets">&lt;/span>
+&lt;a href="#stateless-resets" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>QUIC is designed to prevent off-path attackers from disrupting connections, unlike TCP where such attackers can close connections using RST packets.&lt;/p>
+&lt;p>A problem arises when a QUIC endpoint is suddenly rebooted: It now receives QUIC packets for connections for which it doesn&amp;rsquo;t possess the TLS session keys anymore. For the peer, it would be beneficial if the connection could immediately be closed. Otherwise, it would have to wait for an idle timeout to occur.&lt;/p>
+&lt;p>Stateless resets, as outlined in &lt;a href="https://datatracker.ietf.org/doc/html/rfc9000#section-10.3" target="_blank" rel="noopener">Section 10.3 of RFC 9000&lt;/a>, address this issue. Utilizing a static key and the connection ID from an incoming packet, a rebooted endpoint generates a 16-byte stateless reset token. This token is sent in a packet mimicking a standard QUIC packet. The peer, already aware of the stateless reset token linked to the connection ID, recognizes the stateless reset and can close the connection instantly.&lt;/p>
+&lt;p>The key used to calculate stateless reset is configured on the &lt;code>quic.Transport&lt;/code>:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// load this from disk, or derive it deterministically
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kd">var&lt;/span> &lt;span class="nx">statelessResetKey&lt;/span> &lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">StatelessResetKey&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Transport&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">StatelessResetKey&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">statelessResetKey&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>Applications need to make sure that this key stays constant across reboots of the endpoint. One way to achieve this is to load it from a configuration file on disk. Alternatively, an application could also derive it from the TLS private key. Keeping this key confidential is essential to prevent off-path attackers from disrupting QUIC connections managed by the endpoint.&lt;/p>
 &lt;h2>Disabling QUIC Version Negotiation&lt;span class="absolute -mt-20" id="disabling-quic-version-negotiation">&lt;/span>
 &lt;a href="#disabling-quic-version-negotiation" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>In certain deployments, clients know for a fact which QUIC versions a server supports. For example, in a p2p setting, a server might have advertised the supported QUIC versions in / with its address. In these cases, QUIC&amp;rsquo;s version negotiation doesn&amp;rsquo;t serve any purpose, but might open a network up for request forgery attacks as described in &lt;a href="https://datatracker.ietf.org/doc/html/rfc9000#section-21.5.5" target="_blank" rel="noopener">Section 21.5.5 of RFC 9000&lt;/a>.&lt;/p>
 &lt;p>The sending of Version Negotiation packets can be disabled using the &lt;code>DisableVersionNegotiationPackets&lt;/code> option:&lt;/p>
