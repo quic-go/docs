@@ -91,6 +91,22 @@ server := http3.Server{
 
 More complex scenarios can be handled by manually setting the Alt-Svc header field, or by overwriting the value added by `SetQuicHeaders`.
 
+## 0-RTT
+
+By default, the `http3.Server` enables 0-RTT support on the QUIC layer, thereby allowing clients to send requests using 0-RTT. When using a user-provided `quic.Config`, 0-RTT is only enabled when the `Allow0RTT` config flag is set.
+
+An `http.Handler` can determine if a request was likely sent in 0-RTT by examining the `tls.ConnectionState` associated with the request.
+```go
+func(w http.ResponseWriter, r *http.Request) {
+	wasLikely0RTT := !r.TLS.HandshakeComplete
+}
+```
+
+{{< callout type="warning" >}}
+  This is not a 100% reliable way of telling if a request was (fully or partially) sent in 0-RTT data. The `tls.ConnectionState` is obtained from the `quic.Connection` when the request stream is accepted. There's a race condition here: The QUIC STREAM frames might have been sent in 0-RTT, but the handshake could have completed before the HTTP/3 was able to accept the stream.
+{{< /callout >}}
+
+
 ## 📝 Future Work
 
 * Graceful shutdown: [#153](https://github.com/quic-go/quic-go/issues/153)
