@@ -32,6 +32,26 @@ quic.Config{
 
 This will cause a PING frame to be sent _at least_ every `KeepAlivePeriod`. If the idle timeout negotiated between the two endpoints is shorter than the `KeepAlivePeriod`, PING frames will be sent more frequently.
 
+## Stateless Resets
+
+QUIC was designed such that an off-path attacker is not able to disrupt an established QUIC connection. This is different from TCP: An off-path attacker can close a connection by injecting a TCP RST packet.
+
+This however poses a problem when a QUIC endpoint is rebooted: It now receives QUIC packets for which it doesn't possess the TLS session keys anymore. For the peer, it would be beneficial if the connection could immediately be closed. Otherwise, it would have to wait for an idle timeout to occur.
+
+Stateless resets (see [Section 10.3 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-10.3)) were designed to solve this problem. From a static key and the connection ID on an incoming packet, the rebooted endpoint can calculate the so called stateless reset token -- a 16 byte value. It then sends this value as part of what looks like a regular QUIC packet. The peer, having been informed of the stateless reset token associated with the connection ID when the connection ID was issued, can detect the stateless reset and immediately close the connection.
+
+
+The key used to calculate stateless reset is configured on the `quic.Transport`:
+```go
+// load this from disk, or derive it deterministically
+var statelessResetTokenKey quic.StatelessResetTokenKey
+quic.Transport{
+  StatelessResetToken: &statelessResetTokenKey,
+}
+```
+
+Applications need to make sure that this key stays constant across reboots of the endpoint. One way to achieve this is to load it from a configuration file on disk. Alternatively, an application could also derive it from the TLS private key. Applications need to make sure that this key remains secret, otherwise off-path attackers are able to disrupt any QUIC connection handled by the endpoint.
+
 ## When the Remote Peer closes the Connection
 
 In case the peer closes the QUIC connection, all calls to open streams, accept streams, as well as all methods on streams immediately return an error. Additionally, it is set as cancellation cause of the connection context. Users can use errors assertions to find out what exactly went wrong:
