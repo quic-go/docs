@@ -41,10 +41,43 @@ Since QUIC demultiplexes packets based on their connection IDs, it is possible a
 
 To achieve this using this package, first initialize a single `quic.Transport`, and pass a `quic.EarlyListner` obtained from that transport to `http3.Server.ServeListener`, and use the `DialEarly` function of the transport as the `Dial` function for the `http3.RoundTripper`.
 
-## 📝 Future Work
+## Using 0-RTT
+
+Support for 0-RTT session resumption can be enabled by passing a `quic.Config` to the `quic.Transport` that enables 0-RTT (using the `Allow0RTT` flag). It is then possible to use 0-RTT for requests. 
+
+This use case was not anticipated by Go's standard library, and Go doesn't have 0-RTT support, neither in its `crypto/tls` nor in its `net/http` implementation. The `http3` package therefore defines two new request methods: `http3.MethodGet0RTT` for GET requests and `http3.MethodHead0RTT` for HEAD requests.
+
+{{< callout type="warning" >}}
+  Support for the "Early-Data" header field, as well as the "Too Early" status code (425) defined in [RFC 8470](https://datatracker.ietf.org/doc/html/rfc8470#section-5.2) is not yet implemented. See [📝 Future Work](#future-work).
+{{< /callout >}}
+
+It is the application's responsibility to make sure that it is actually safe to send a request in 0-RTT. Requests sent in 0-RTT can be replayed on a new connection by an on-path attacker, so 0-RTT should only be used for idempotent requests. [RFC 8740](https://datatracker.ietf.org/doc/html/rfc8470) defines some guidance on how to use 0-RTT in HTTP.
+
+
+```go
+rt := &http3.RoundTripper{
+	TLSClientConfig: &tls.Config{
+		ClientSessionCache: tls.NewLRUClientSessionCache(100),
+	},
+	QuicConfig: &quic.Config{
+		Allow0RTT: true,
+	},
+}
+req, err := http.NewRequest(http3.MethodGet0RTT, "https://my-server/path", nil)
+// ... handle error ...
+rt.RoundTrip(req)
+```
+
+The code snippet shows all the knobs that need to be turned to send a request in 0-RTT data:
+1. TLS session resumption must be enabled by configuring a `tls.ClientSessionCache` on the `tls.Config`.
+2. 0-RTT needs to be enabled on the QUIC layer by setting `Allow0RTT` on the `quic.Config`.
+3. The request method needs to be set to `http3.MethodGet0RTT`.
+
+## 📝 Future Work {#future-work}
 
 * Support for zstd Content Encoding: [#4100](https://github.com/quic-go/quic-go/issues/4100)
 * qlog Support: [#4124](https://github.com/quic-go/quic-go/issues/4124)
 * Happy Eyeballs Support: [#3755](https://github.com/quic-go/quic-go/issues/3755)
 * Support for Extensible Priorities ([RFC 9218](https://www.rfc-editor.org/rfc/rfc9218.html)): [#3470](https://github.com/quic-go/quic-go/issues/3470)
 * Support for HTTP Trailers: [#2266](https://github.com/quic-go/quic-go/issues/2266)
+* Use [`Early-Data` header field](https://datatracker.ietf.org/doc/html/rfc8470#section-5.1) for 0-RTT requests, retry on 425 response status: [#4381](https://github.com/quic-go/quic-go/issues/4381)
