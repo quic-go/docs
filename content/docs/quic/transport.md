@@ -52,12 +52,11 @@ Using the `ReadNonQUICPacket` method is preferable over implementation this insp
 
 ## Stateless Resets
 
-QUIC was designed such that an off-path attacker is not able to disrupt an established QUIC connection. This is different from TCP: An off-path attacker can close a connection by injecting a TCP RST packet.
+QUIC is designed to prevent off-path attackers from disrupting connections, unlike TCP where such attackers can close connections using RST packets.
 
-This however poses a problem when a QUIC endpoint is rebooted: It now receives QUIC packets for which it doesn't possess the TLS session keys anymore. For the peer, it would be beneficial if the connection could immediately be closed. Otherwise, it would have to wait for an idle timeout to occur.
+A problem arises when a QUIC endpoint is suddenly rebooted: It now receives QUIC packets for connections for which it doesn't possess the TLS session keys anymore. For the peer, it would be beneficial if the connection could immediately be closed. Otherwise, it would have to wait for an idle timeout to occur.
 
-Stateless resets (see [Section 10.3 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-10.3)) were designed to solve this problem. From a static key and the connection ID on an incoming packet, the rebooted endpoint can calculate the so called stateless reset token -- a 16 byte value. It then sends this value as part of what looks like a regular QUIC packet. The peer, having been informed of the stateless reset token associated with the connection ID when the connection ID was issued, can detect the stateless reset and immediately close the connection.
-
+Stateless resets, as outlined in [Section 10.3 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-10.3), address this issue. Utilizing a static key and the connection ID from an incoming packet, a rebooted endpoint generates a 16-byte stateless reset token. This token is sent in a packet mimicking a standard QUIC packet. The peer, already aware of the stateless reset token linked to the connection ID, recognizes the stateless reset and can close the connection instantly.
 
 The key used to calculate stateless reset is configured on the `quic.Transport`:
 ```go
@@ -68,7 +67,7 @@ quic.Transport{
 }
 ```
 
-Applications need to make sure that this key stays constant across reboots of the endpoint. One way to achieve this is to load it from a configuration file on disk. Alternatively, an application could also derive it from the TLS private key. Applications need to make sure that this key remains secret, otherwise off-path attackers are able to disrupt any QUIC connection handled by the endpoint.
+Applications need to make sure that this key stays constant across reboots of the endpoint. One way to achieve this is to load it from a configuration file on disk. Alternatively, an application could also derive it from the TLS private key. Keeping this key confidential is essential to prevent off-path attackers from disrupting QUIC connections managed by the endpoint.
 
 ## Disabling QUIC Version Negotiation
 
