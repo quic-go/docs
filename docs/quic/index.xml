@@ -468,7 +468,7 @@ title="Copy code"
 &lt;h3>BSD&lt;span class="absolute -mt-20" id="bsd">&lt;/span>
 &lt;a href="#bsd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Taken from: &lt;a href="https://medium.com/@CameronSparr/increase-os-udp-buffers-to-improve-performance-51d167bb1360" target="_blank" rel="noopener">https://medium.com/@CameronSparr/increase-os-udp-buffers-to-improve-performance-51d167bb1360&lt;/a>&lt;/p>
 &lt;blockquote>
-&lt;p>On BSD/Darwin systems you need to add about a 15% padding to the kernel limit socket buffer. Meaning if you want a 25MB buffer (8388608 bytes) you need to set the kernel limit to 26214400*1.15 = 30146560. This is not documented anywhere but happens &lt;a href="https://github.com/freebsd/freebsd-src/blob/master/sys/kern/uipc_sockbuf.c#L63-L64" target="_blank" rel="noopener">in the kernel here&lt;/a>.&lt;/p>
+&lt;p>On BSD/Darwin systems you need to add about a 15% padding to the kernel limit socket buffer. Meaning if you want a 25MB buffer (8388608 bytes) you need to set the kernel limit to 26214400*1.15 = 30146560.&lt;/p>
 &lt;/blockquote>
 &lt;p>To update the value immediately to 2.5M, type the following commands as root:&lt;/p>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-sh" data-lang="sh">&lt;span class="line">&lt;span class="cl">sysctl -w kern.ipc.maxsockbuf&lt;span class="o">=&lt;/span>&lt;span class="m">3014656&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
