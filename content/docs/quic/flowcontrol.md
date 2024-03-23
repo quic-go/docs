@@ -64,7 +64,7 @@ In that case, the auto-tuning logic doubles the receive window. The flow control
 This means that a suitable stream window size is usually reached within just a few network roundtrips.
 
 
-## Limiting the Number of Streams
+## Limiting the Number of Streams {#stream-num}
 
 A QUIC endpoint also imposes limits on the number of streams that the peer is allowed to open. The mechanism is described in [Section 4.6 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-4.6).
 
