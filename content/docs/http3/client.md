@@ -9,7 +9,7 @@ This package provides a `http.RoundTripper` implementation that can be used on t
 ```go
 &http3.RoundTripper{
 	TLSClientConfig: &tls.Config{},  // set a TLS client config, if desired
-	QuicConfig:      &quic.Config{}, // QUIC connection options
+	QUICConfig:      &quic.Config{}, // QUIC connection options
 }
 defer roundTripper.Close()
 client := &http.Client{
@@ -24,7 +24,7 @@ To use a custom `quic.Transport`, the function used to dial new QUIC connections
 tr := quic.Transport{}
 roundTripper := &http3.RoundTripper{
 	TLSClientConfig: &tls.Config{},  // set a TLS client config, if desired 
-	QuicConfig:      &quic.Config{}, // QUIC connection options 
+	QUICConfig:      &quic.Config{}, // QUIC connection options 
 	Dial: func(ctx context.Context, addr string, tlsConf *tls.Config, quicConf *quic.Config) (quic.EarlyConnection, error) {
 		a, err := net.ResolveUDPAddr("udp", addr)
 		if err != nil {
@@ -59,7 +59,7 @@ rt := &http3.RoundTripper{
 	TLSClientConfig: &tls.Config{
 		ClientSessionCache: tls.NewLRUClientSessionCache(100),
 	},
-	QuicConfig: &quic.Config{
+	QUICConfig: &quic.Config{
 		Allow0RTT: true,
 	},
 }

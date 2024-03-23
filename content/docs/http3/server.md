@@ -22,7 +22,7 @@ server := http3.Server{
 	Handler:    mux,
 	Addr:       "0.0.0.0:443",
 	TLSConfig:  http3.ConfigureTLSConfig(&tls.Config{}), // use your tls.Config here
-	QuicConfig: &quic.Config{},
+	QUICConfig: &quic.Config{},
 }
 err := server.ListenAndServe()
 ```
@@ -73,7 +73,7 @@ var handler http.Handler = http.NewServeMux()
 // ... add HTTP handlers ...
 handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	if r.ProtoMajor < 3 {
-		err := server.SetQuicHeaders(w.Header())
+		err := server.SetQUICHeaders(w.Header())
 		// ... handle error ...
 	}
 	handler.ServeHTTP(w, r)
@@ -85,11 +85,11 @@ handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 If the HTTP/3 server is located behind an L4 reverse proxy, it might be listening on a different UDP port than the port that is exposed to the internet. To accomodate for this common scenario, the external port can be configured using the `Port` field of the `http3.Server`:
 ```go
 server := http3.Server{
-	Port: 443, // SetQuicHeaders will now generate the Alt-Svc header for port 443
+	Port: 443, // SetQUICHeaders will now generate the Alt-Svc header for port 443
 }
 ```
 
-More complex scenarios can be handled by manually setting the Alt-Svc header field, or by overwriting the value added by `SetQuicHeaders`.
+More complex scenarios can be handled by manually setting the Alt-Svc header field, or by overwriting the value added by `SetQUICHeaders`.
 
 ## 0-RTT
 
