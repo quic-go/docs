@@ -1,7 +1,7 @@
 ---
 title: Datagrams
 toc: true
-weight: 7
+weight: 10
 ---
 
 ## The Unreliable Datagram Extension
