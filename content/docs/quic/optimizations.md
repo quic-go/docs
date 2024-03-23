@@ -38,7 +38,7 @@ This command would increase the maximum send and the receive buffer size to roug
 
 Taken from: https://medium.com/@CameronSparr/increase-os-udp-buffers-to-improve-performance-51d167bb1360
 
-> On BSD/Darwin systems you need to add about a 15% padding to the kernel limit socket buffer. Meaning if you want a 25MB buffer (8388608 bytes) you need to set the kernel limit to 26214400*1.15 = 30146560. This is not documented anywhere but happens [in the kernel here](https://github.com/freebsd/freebsd-src/blob/master/sys/kern/uipc_sockbuf.c#L63-L64).
+> On BSD/Darwin systems you need to add about a 15% padding to the kernel limit socket buffer. Meaning if you want a 25MB buffer (8388608 bytes) you need to set the kernel limit to 26214400*1.15 = 30146560.
 
 To update the value immediately to 2.5M, type the following commands as root:
 ```sh
