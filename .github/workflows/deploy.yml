@@ -29,7 +29,7 @@ jobs:
           publish_branch: build
       - name: Check Links
         uses: ruzickap/action-my-broken-link-checker@v2
-        continue-on-error: ${{ github.event_name == 'push' }}
+        continue-on-error: ${{ github.event_name != 'push' }}
         with:
           url: https://quic-go.net
           pages_path: ./build/
