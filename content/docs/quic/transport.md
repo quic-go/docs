@@ -69,9 +69,36 @@ quic.Transport{
 
 Applications need to make sure that this key stays constant across reboots of the endpoint. One way to achieve this is to load it from a configuration file on disk. Alternatively, an application could also derive it from the TLS private key. Keeping this key confidential is essential to prevent off-path attackers from disrupting QUIC connections managed by the endpoint.
 
-## Disabling QUIC Version Negotiation
 
-In certain deployments, clients know for a fact which QUIC versions a server supports. For example, in a p2p setting, a server might have advertised the supported QUIC versions in / with its address. In these cases, QUIC's version negotiation doesn't serve any purpose, but might open a network up for request forgery attacks as described in [Section 21.5.5 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-21.5.5).
+## Version Negotiation
+
+QUIC is designed to accommodate the definition of new versions in the future. [RFC 8999](https://datatracker.ietf.org/doc/html/rfc8999) describes the (minimal set of) properties of QUIC that must be fulfilled by all QUIC versions.
+
+Before accepting a client's QUIC connection attempt, the server checks if it supports the QUIC version offered by the client. If it doesn't, it sends a Version Negotiation packet ([Section 6 of RFC 8999](https://datatracker.ietf.org/doc/html/rfc8999#section-6)), which lists all the versions supported by the server. The client can then pick a QUIC version that is supported by both nodes and initiate another connection attempt.
+
+
+### QUIC Version 2
+  
+QUIC Version 2 was defined in [RFC 9369](https://datatracker.ietf.org/doc/html/rfc9369). It introduces no new features compared to QUIC Version 1 ([RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000)), but has a slightly different wire image. It aims to acclimate middleboxes to the fact that QUIC is not just a single version. This will (hopefully!) prevent ossification and make it possible to define new versions of QUIC later.
+
+
+### Configuring Versions
+
+quic-go currently supports both QUIC version 1 and 2. The supported versions can be configured using the `Versions` field on the `quic.Config`.
+
+```go
+quic.Config{
+  Versions: []quic.Version{quic.Version2, quic.Version1},
+}
+```
+
+For the client, the first version in the `Versions` slice is used when dialing a new connection. The remaining versions are only used if the server doesn't support the first version and sends Version Negotiation packet. For the server, the order of the versions doesn't have any meaning.
+
+By default, quic-go supports both versions, but prefers version 1, as this is the most commonly deployed QUIC version at this time.
+
+### Disabling Version Negotiation
+
+In certain deployments, clients know for a fact which QUIC versions a server supports. For example, in a p2p setting, a server might have advertised the supported QUIC versions in / with its address. In these cases, QUIC's version negotiation doesn't serve any purpose, but may expose the network to request forgery attacks as described in [Section 21.5.5 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-21.5.5).
 
 The sending of Version Negotiation packets can be disabled using the `DisableVersionNegotiationPackets` option:
 ```go
@@ -79,3 +106,7 @@ quic.Transport{
   DisableVersionNegotiationPackets: true,
 }
 ```
+
+## 📝 Future Work
+
+* Compatible Version Negotiation [RFC 9368](https://datatracker.ietf.org/doc/html/rfc9369): [#3640](https://github.com/quic-go/quic-go/issues/3640)
