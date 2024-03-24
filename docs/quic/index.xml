@@ -228,7 +228,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>Internally, every QUIC connection endpoint keeps track of the time when the connection was last used, and silently (without sending any packets) closes the connection if that period exceeds the negotiated idle timeout period.&lt;/p>
 &lt;h3>Keeping a Connection Alive&lt;span class="absolute -mt-20" id="keeping-a-connection-alive">&lt;/span>
-&lt;a href="#keeping-a-connection-alive" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Endpoints can prevent the idle timeout from closing a QUIC connection by regularly sending application data. However, an application can also request the QUIC stack to keep the connection alive. This is done by regularly sending a PING frame before the idle timeout expires.&lt;/p>
+&lt;a href="#keeping-a-connection-alive" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Endpoints can prevent the idle timeout from closing a QUIC connection by regularly sending application data. However, an application can also request the QUIC stack to keep the connection alive. This is done by regularly sending a PING frame before the idle timeout expires. A PING frame is a mechanism in QUIC used purely to elicit an acknowledgment from the peer, ensuring the connection is considered active.&lt;/p>
 &lt;p>Keep-Alives can be configured by setting the &lt;code>KeepAlivePeriod&lt;/code> option on the &lt;code>quic.Config&lt;/code>.&lt;/p>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">KeepAlivePeriod&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mi">30&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Second&lt;/span>&lt;span class="p">,&lt;/span>
@@ -243,6 +243,16 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;p>This will cause a PING frame to be sent &lt;em>at least&lt;/em> every &lt;code>KeepAlivePeriod&lt;/code>. If the idle timeout negotiated between the two endpoints is shorter than the &lt;code>KeepAlivePeriod&lt;/code>, PING frames will be sent more frequently.&lt;/p>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
+⚠️
+&lt;/div>&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+Enabling Keep-Alives doesn&amp;rsquo;t mean that the connection can&amp;rsquo;t experience an idle timeout anymore. For example, the remote node could have crashed, or the path could have become unusable for a number of reasons.
+&lt;/div>
+&lt;/div>
+&lt;/div>
 &lt;h2>Closing a Connection&lt;span class="absolute -mt-20" id="closing-a-connection">&lt;/span>
 &lt;a href="#closing-a-connection" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>At any point during the connection, a &lt;code>quic.Connection&lt;/code> can be closed by calling &lt;code>CloseWithError&lt;/code>:&lt;/p>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">CloseWithError&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mh">0x42&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;I don&amp;#39;t want to talk to you anymore 🙉&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
@@ -331,6 +341,10 @@ title="Copy code"
 &lt;li>&lt;code>quic.StatelessResetError&lt;/code>: Happens when a &lt;a href="https://quic-go.net/docs/quic/transport/#stateless-reset" >Stateless Reset&lt;/a> is received.&lt;/li>
 &lt;li>&lt;code>quic.TransportError&lt;/code>: Happens if the QUIC protocol is violated. Unless the error code is &lt;code>APPLICATION_ERROR&lt;/code>, this will not happen unless one of the QUIC stacks involved is misbehaving. Please open an issue if you encounter this error.&lt;/li>
 &lt;li>&lt;code>quic.ApplicationError&lt;/code>: Happens when the remote decides to close the connection, see above.&lt;/li>
+&lt;/ul>
+&lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
+&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>Better Configuration of Keep-Alives: &lt;a href="https://github.com/quic-go/quic-go/issues/4382" target="_blank" rel="noopener">#4382&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Using QUIC Streams</title><link>https://quic-go.net/docs/quic/streams/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/streams/</guid><description>
 &lt;p>QUIC is a stream-multiplexed transport. A &lt;code>quic.Connection&lt;/code> fundamentally differs from the &lt;code>net.Conn&lt;/code> and the &lt;code>net.PacketConn&lt;/code> interface defined in the standard library.&lt;/p>
 &lt;p>Data is sent and received on (unidirectional and bidirectional) streams, not on the connection itself. The stream state machine is described in detail in &lt;a href="https://datatracker.ietf.org/doc/html/rfc9000#section-3" target="_blank" rel="noopener">Section 3 of RFC 9000&lt;/a>.&lt;/p>
