@@ -50,7 +50,7 @@ tr.ReadNonQUICPacket(ctx context.Context, b []byte) (int, net.Addr, error)
 
 Using the `ReadNonQUICPacket` method is preferable over implementation this inspection logic outside of quic-go, and passing a wrapped `net.PacketConn` to the `Transport`, as it allows quic-go to use a number of kernel-based optimization (e.g. GSO) that massively speed up QUIC transfers (see [Optimizations]({{< relref path="optimizations.md#gso" >}})).
 
-## Stateless Resets
+## Stateless Resets {#stateless-reset}
 
 QUIC is designed to prevent off-path attackers from disrupting connections, unlike TCP where such attackers can close connections using RST packets.
 
@@ -70,7 +70,7 @@ quic.Transport{
 Applications need to make sure that this key stays constant across reboots of the endpoint. One way to achieve this is to load it from a configuration file on disk. Alternatively, an application could also derive it from the TLS private key. Keeping this key confidential is essential to prevent off-path attackers from disrupting QUIC connections managed by the endpoint.
 
 
-## Version Negotiation
+## Version Negotiation {#version-negotiation}
 
 QUIC is designed to accommodate the definition of new versions in the future. [RFC 8999](https://datatracker.ietf.org/doc/html/rfc8999) describes the (minimal set of) properties of QUIC that must be fulfilled by all QUIC versions.
 
