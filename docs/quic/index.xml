@@ -249,7 +249,7 @@ title="Copy code"
 &lt;/div>&lt;/div>
 &lt;div class="w-full min-w-0 leading-7">
 &lt;div class="mt-6 leading-7 first:mt-0">
-Enabling Keep-Alives doesn&amp;rsquo;t mean that the connection can&amp;rsquo;t experience an idle timeout anymore. For example, the remote node could have crashed, or the path could have become unusable for a number of reasons.
+Enabling Keep-Alives doesn&amp;rsquo;t mean that the connection can&amp;rsquo;t experience an idle timeout. For example, the remote node could have crashed, or the path could have become unusable for a number of reasons.
 &lt;/div>
 &lt;/div>
 &lt;/div>
