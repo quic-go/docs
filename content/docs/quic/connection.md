@@ -1,5 +1,5 @@
 ---
-title: Closing a Connection
+title: QUIC Connection
 toc: true
 weight: 4
 ---
@@ -31,6 +31,32 @@ quic.Config{
 ```
 
 This will cause a PING frame to be sent _at least_ every `KeepAlivePeriod`. If the idle timeout negotiated between the two endpoints is shorter than the `KeepAlivePeriod`, PING frames will be sent more frequently.
+
+## Closing a Connection
+
+At any point during the connection, a `quic.Connection` can be closed by calling `CloseWithError`:
+
+```go
+conn.CloseWithError(0x42, "I don't want to talk to you anymore 🙉")
+```
+
+Error codes are defined by the application and can be any unsigned 62-bit value. The error message is a UTF-8 encoded human-readable reason. The error code allows the receiver to learn why the connection was closed, and the reason can be useful for debugging purposes.
+quic-go doesn't provide a way to close a connection without providing an error code or an error message.
+
+{{< callout type="warning" >}}
+  This instantly closes the connection. There's no guarantee that any outstanding stream data or datagrams will be delivered.
+  In particular, writing to a stream, closing the stream, and immediately closing the connection doesn't guarantee that the peer has received all stream data.
+
+  The application is responsible for ensuring that all data has been delivered before closing the connection.
+{{< /callout >}}
+
+Closing the connections makes all calls associated with this connection (accepting and opening streams, reading and writing on streams, sending and receiving datagrams, etc.) return immediately. On the receiver side, the error is surfaced as a `quic.ApplicationError` as soon as it is received.
+
+{{< callout type="warning" >}}
+  If the connection is closed before the handshake completes, the error code might not be transmitted to the peer.
+
+  Instead the error might be surfaced as a `quic.TransportError` with an APPLICATION_ERROR error code. This protects from application state being revealed unencrypted on the wire. See [Section 10.2.3 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-10.2.3) for details.
+{{< /callout >}}
 
 
 ## Inspecting the Error
@@ -79,16 +105,4 @@ case errors.As(err, &vnErr):
 * `quic.IdleTimeoutError`: Happens after completion of the handshake if the connection is [idle](#idle-timeout) for longer than the minimum of both peers idle timeouts.
 * `quic.StatelessResetError`: Happens when a [Stateless Reset]({{< relref "transport.md#stateless-reset" >}}) is received.
 * `quic.TransportError`: Happens if the QUIC protocol is violated. Unless the error code is `APPLICATION_ERROR`, this will not happen unless one of the QUIC stacks involved is misbehaving. Please open an issue if you encounter this error.
-* `quic.ApplicationError`: Happens when the remote decides to close the connection, see below.
-
-## When we close the Connection
-
-A `quic.Connection` can be closed using `CloseWithError`:
-
-```go
-conn.CloseWithError(0x42, "error 0x42 occurred")
-```
-
-Applications can transmit both an error code (an unsigned 62-bit number) as well as a UTF-8 encoded human-readable reason. The error code allows the receiver to learn why the connection was closed, and the reason can be useful for debugging purposes.
-
-On the receiver side, this is surfaced as a `quic.ApplicationError`.
+* `quic.ApplicationError`: Happens when the remote decides to close the connection, see above.
