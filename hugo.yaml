@@ -24,6 +24,10 @@ menu:
     - name: Sponsor ↗
       url: "https://github.com/sponsors/marten-seemann"
       weight: 2
+    - name: Search
+      weight: 3
+      params:
+        type: search
 
 params:
   theme:
