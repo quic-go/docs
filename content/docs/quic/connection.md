@@ -21,7 +21,7 @@ Internally, every QUIC connection endpoint keeps track of the time when the conn
 
 ### Keeping a Connection Alive
 
-Endpoints can prevent the idle timeout from closing a QUIC connection by regularly sending application data. However, an application can also request the QUIC stack to keep the connection alive. This is done by regularly sending a PING frame before the idle timeout expires.
+Endpoints can prevent the idle timeout from closing a QUIC connection by regularly sending application data. However, an application can also request the QUIC stack to keep the connection alive. This is done by regularly sending a PING frame before the idle timeout expires. A PING frame is a mechanism in QUIC used purely to elicit an acknowledgment from the peer, ensuring the connection is considered active.
 
 Keep-Alives can be configured by setting the `KeepAlivePeriod` option on the `quic.Config`.
 ```go
@@ -31,6 +31,11 @@ quic.Config{
 ```
 
 This will cause a PING frame to be sent _at least_ every `KeepAlivePeriod`. If the idle timeout negotiated between the two endpoints is shorter than the `KeepAlivePeriod`, PING frames will be sent more frequently.
+
+{{< callout type="warning" >}}
+  Enabling Keep-Alives doesn't mean that the connection can't experience an idle timeout. For example, the remote node could have crashed, or the path could have become unusable for a number of reasons.
+{{< /callout >}}
+
 
 ## Closing a Connection
 
@@ -106,3 +111,7 @@ case errors.As(err, &vnErr):
 * `quic.StatelessResetError`: Happens when a [Stateless Reset]({{< relref "transport.md#stateless-reset" >}}) is received.
 * `quic.TransportError`: Happens if the QUIC protocol is violated. Unless the error code is `APPLICATION_ERROR`, this will not happen unless one of the QUIC stacks involved is misbehaving. Please open an issue if you encounter this error.
 * `quic.ApplicationError`: Happens when the remote decides to close the connection, see above.
+
+## 📝 Future Work
+
+* Better Configuration of Keep-Alives: [#4382](https://github.com/quic-go/quic-go/issues/4382)
