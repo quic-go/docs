@@ -538,7 +538,7 @@ title="Copy code"
 &lt;li>&lt;code>quic.HandshakeTimeoutError&lt;/code>: Happens if the QUIC handshake doesn&amp;rsquo;t complete within the time specified in &lt;code>quic.Config.HandshakeTimeout&lt;/code>.&lt;/li>
 &lt;li>&lt;code>quic.IdleTimeoutError&lt;/code>: Happens after completion of the handshake if the connection is &lt;a href="#idle-timeout" >idle&lt;/a> for longer than the minimum of both peers idle timeouts.&lt;/li>
 &lt;li>&lt;code>quic.StatelessResetError&lt;/code>: Happens when a &lt;a href="https://quic-go.net/docs/quic/transport/#stateless-reset" >Stateless Reset&lt;/a> is received.&lt;/li>
-&lt;li>&lt;code>quic.TransportError&lt;/code>: Happens if when the QUIC protocol is violated. Unless the error code is &lt;code>APPLICATION_ERROR&lt;/code>, this will not happen unless one of the QUIC stacks involved is misbehaving. Please open an issue if you encounter this error.&lt;/li>
+&lt;li>&lt;code>quic.TransportError&lt;/code>: Happens if the QUIC protocol is violated. Unless the error code is &lt;code>APPLICATION_ERROR&lt;/code>, this will not happen unless one of the QUIC stacks involved is misbehaving. Please open an issue if you encounter this error.&lt;/li>
 &lt;li>&lt;code>quic.ApplicationError&lt;/code>: Happens when the remote decides to close the connection, see below.&lt;/li>
 &lt;/ul>
 &lt;h2>When we close the Connection&lt;span class="absolute -mt-20" id="when-we-close-the-connection">&lt;/span>
