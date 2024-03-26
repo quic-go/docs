@@ -3,6 +3,8 @@
 /resources/_gen/
 /assets/jsconfig.json
 hugo_stats.json
+# commonly used directory name for building
+/build
 
 # Temporary lock file while building
 /.hugo_build.lock
