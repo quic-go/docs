@@ -428,14 +428,14 @@ Client-->>Server: 1-RTT Application Data
 deactivate Client
 Server-->>Client: 1-RTT Application Data
 end
-deactivate Server&lt;/pre>&lt;p>The server can send application data in its flight, right after it has sent the TLS ServerHello and the Certificate. Since this happens right after receiving the ClientHello (which takes half a network roundtrip time after the client sent it), this is called 0.5-RTT data.&lt;/p>
+deactivate Server&lt;/pre>&lt;p>The server can send application data in its first flight, right after it has sent the TLS ServerHello and the Certificate. Since this happens right after receiving the ClientHello (which takes half a network roundtrip time after the client sent it), this is called 0.5-RTT data.&lt;/p>
 &lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
 &lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
 ⚠️
 &lt;/div>&lt;/div>
 &lt;div class="w-full min-w-0 leading-7">
 &lt;div class="mt-6 leading-7 first:mt-0">
-0.5-RTT data is encrypted with the same keys that all data sent later is sent with. However, at this point during the handshake the server hasn&amp;rsquo;t received the client&amp;rsquo;s TLS certificate yet (if TLS client authentication is used). Implementations need to take care to not send sensitive data to unauthenticated clients.
+0.5-RTT data is encrypted with the same keys that all data sent later is sent with. However, at this point in the handshake, the server has not yet received the client&amp;rsquo;s TLS certificate (if TLS client authentication is used). It&amp;rsquo;s important for implementations to avoid sending sensitive data to unauthenticated clients.
 &lt;/div>
 &lt;/div>
 &lt;/div>
