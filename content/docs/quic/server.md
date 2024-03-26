@@ -48,3 +48,60 @@ During the initial phase of the QUIC handshake, before validating the client's a
 
 Given that the initial client packet is typically 1200 bytes, the server's response is capped at 3600 bytes. This cap includes the server's TLS certificate in its first response, and an oversized certificate can extend the handshake by an additional RTT. As large certificates are commonplace, optimizing the certificate chain's size is advisable to avoid handshake delays, supported by insights from [Fastly's research](https://www.fastly.com/blog/quic-handshake-tls-compression-certificates-extension-study).
 
+
+## 0.5-RTT
+
+The following diagram shows a (simplified) sequence diagram of the TLS handshake messages exchanged during the QUIC handshake, and at which place handshake data can be sent by both endpoints.
+
+```mermaid
+sequenceDiagram
+    Client->>Server: ClientHello
+    activate Server
+    Server->> Client: ServerHello, Certificate, Finished
+    activate Client
+    rect rgb(220,220,220)
+    Server-->>Client: 0.5-RTT Application data
+    end
+    deactivate Server
+    Client->>Server: (Client Certificates), Finished
+    activate Server
+    rect rgb(220,220,220)
+    Client-->>Server: 1-RTT Application Data
+    deactivate Client
+    Server-->>Client: 1-RTT Application Data
+    end
+    deactivate Server
+```
+
+The server can send application data in its first flight, right after it has sent the TLS ServerHello and the Certificate. Since this happens right after receiving the ClientHello (which takes half a network roundtrip time after the client sent it), this is called 0.5-RTT data.
+
+{{< callout type="warning" >}}
+  0.5-RTT data is encrypted with the same keys that all data sent later is sent with. However, at this point in the handshake, the server has not yet received the client's TLS certificate (if TLS client authentication is used). It's important for implementations to avoid sending sensitive data to unauthenticated clients.
+{{< /callout >}}
+
+A connection can be accepted at this early stage by using `ListenEarly` instead of `Listen`: 
+
+```go
+ln, err := tr.ListenEarly(tlsConf, quicConf)
+// ... error handling
+conn, err := ln.Accept()
+// ... error handling
+go func() {
+  // It is now possible to open streams and send data in 0.5-RTT data
+  str, err := conn.OpenStream()
+  // ... error handling
+
+  // Wait for the handshake to complete
+  select {
+  case <-conn.HandshakeComplete():
+    // handshake completed
+  case <-conn.Context().Done():
+    // connection closed before handshake completion, e.g. due to handshake failure
+  }
+}()
+```
+
+As soon as the connection is accepted, it can open streams and send application data. If [datagram support]({{< relref "datagrams.md" >}}) is negotiated, datagrams can be sent as well.
+
+At any point, the application can wait for completion of the handshake by blocking on the channel returned by `Connection.HandshakeComplete()`.
+
