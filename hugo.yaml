@@ -21,7 +21,7 @@ menu:
     - name: Docs
       pageRef: /docs
       weight: 1
-    - name: Sponsor ↗
+    - name: 💖 Sponsor ↗
       url: "https://github.com/sponsors/marten-seemann"
       weight: 2
     - name: Search
