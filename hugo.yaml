@@ -28,6 +28,11 @@ menu:
       weight: 3
       params:
         type: search
+    - name: GitHub
+      weight: 4
+      url: "https://github.com/quic-go/quic-go"
+      params:
+        icon: github
 
 params:
   theme:
