@@ -170,7 +170,65 @@ While closing the listener associated with a &lt;code>Transport&lt;/code> doesn&
 &lt;/div>
 &lt;h2>Certificate Size Considerations&lt;span class="absolute -mt-20" id="cert-size">&lt;/span>
 &lt;a href="#cert-size" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>During the initial phase of the QUIC handshake, before validating the client&amp;rsquo;s address, server response size is restricted to thrice the bytes received from the client, as outlined in &lt;a href="https://datatracker.ietf.org/doc/html/rfc9000#name-address-validation" target="_blank" rel="noopener">RFC 9000, Section 8&lt;/a>. This limitation helps prevent the use of QUIC servers in DDoS attack amplifications by ensuring a server cannot send an excessively large response to a potentially spoofed packet.&lt;/p>
-&lt;p>Given that the initial client packet is typically 1200 bytes, the server&amp;rsquo;s response is capped at 3600 bytes. This cap includes the server&amp;rsquo;s TLS certificate in its first response, and an oversized certificate can extend the handshake by an additional RTT. As large certificates are commonplace, optimizing the certificate chain&amp;rsquo;s size is advisable to avoid handshake delays, supported by insights from &lt;a href="https://www.fastly.com/blog/quic-handshake-tls-compression-certificates-extension-study" target="_blank" rel="noopener">Fastly&amp;rsquo;s research&lt;/a>.&lt;/p></description></item><item><title>Running a QUIC Client</title><link>https://quic-go.net/docs/quic/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/client/</guid><description>
+&lt;p>Given that the initial client packet is typically 1200 bytes, the server&amp;rsquo;s response is capped at 3600 bytes. This cap includes the server&amp;rsquo;s TLS certificate in its first response, and an oversized certificate can extend the handshake by an additional RTT. As large certificates are commonplace, optimizing the certificate chain&amp;rsquo;s size is advisable to avoid handshake delays, supported by insights from &lt;a href="https://www.fastly.com/blog/quic-handshake-tls-compression-certificates-extension-study" target="_blank" rel="noopener">Fastly&amp;rsquo;s research&lt;/a>.&lt;/p>
+&lt;h2>0.5-RTT&lt;span class="absolute -mt-20" id="05-rtt">&lt;/span>
+&lt;a href="#05-rtt" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>The following diagram shows a (simplified) sequence diagram of the TLS handshake messages exchanged during the QUIC handshake, and at which place handshake data can be sent by both endpoints.&lt;/p>
+&lt;pre class="mermaid mt-6">sequenceDiagram
+Client->>Server: ClientHello
+activate Server
+Server->> Client: ServerHello, Certificate, Finished
+activate Client
+rect rgb(220,220,220)
+Server-->>Client: 0.5-RTT Application data
+end
+deactivate Server
+Client->>Server: (Client Certificates), Finished
+activate Server
+rect rgb(220,220,220)
+Client-->>Server: 1-RTT Application Data
+deactivate Client
+Server-->>Client: 1-RTT Application Data
+end
+deactivate Server&lt;/pre>&lt;p>The server can send application data in its flight, right after it has sent the TLS ServerHello and the Certificate. Since this happens right after receiving the ClientHello (which takes half a network roundtrip time after the client sent it), this is called 0.5-RTT data.&lt;/p>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
+⚠️
+&lt;/div>&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+0.5-RTT data is encrypted with the same keys that all data sent later is sent with. However, at this point during the handshake the server hasn&amp;rsquo;t received the client&amp;rsquo;s TLS certificate yet (if TLS client authentication is used). Implementations need to take care to not send sensitive data to unauthenticated clients.
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>A connection can be accepted at this early stage by using &lt;code>ListenEarly&lt;/code> instead of &lt;code>Listen&lt;/code>:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">ln&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">tr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ListenEarly&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">tlsConf&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">quicConf&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">ln&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Accept&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="k">go&lt;/span> &lt;span class="kd">func&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// It is now possible to open streams and send data in 0.5-RTT data
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">str&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">OpenStream&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Wait for the handshake to complete
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">select&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">case&lt;/span> &lt;span class="o">&amp;lt;-&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">HandshakeComplete&lt;/span>&lt;span class="p">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// handshake completed
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">case&lt;/span> &lt;span class="o">&amp;lt;-&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Context&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="nf">Done&lt;/span>&lt;span class="p">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// connection closed before handshake completion, e.g. due to handshake failure
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}()&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>As soon as the connection is accepted, it can open streams and send application data. If &lt;a href="https://quic-go.net/docs/quic/datagrams/" >datagram support&lt;/a> is negotiated, datagrams can be sent as well.&lt;/p>
+&lt;p>At any point, the application can wait for completion of the handshake by blocking on the channel returned by &lt;code>Connection.HandshakeComplete()&lt;/code>.&lt;/p></description></item><item><title>Running a QUIC Client</title><link>https://quic-go.net/docs/quic/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/client/</guid><description>
 &lt;p>Since QUIC uses connection IDs to demultiplex connections, multiple outgoing connections can share a single UDP socket.&lt;/p>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">cancel&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WithTimeout&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Background&lt;/span>&lt;span class="p">(),&lt;/span> &lt;span class="mi">3&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Second&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1">// 3s handshake timeout
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="k">defer&lt;/span> &lt;span class="nf">cancel&lt;/span>&lt;span class="p">()&lt;/span>
