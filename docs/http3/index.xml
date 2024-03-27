@@ -245,4 +245,6 @@ title="Copy code"
 &lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
 &lt;li>Add support for the QPACK dynamic table: &lt;a href="https://github.com/quic-go/quic-go/issues/2424" target="_blank" rel="noopener">#2424&lt;/a> and &lt;a href="https://github.com/quic-go/qpack/issues/33" target="_blank" rel="noopener">qpack#33&lt;/a>&lt;/li>
-&lt;/ul></description></item></channel></rss>
+&lt;/ul></description></item><item><title>HTTP Datagrams</title><link>https://quic-go.net/docs/http3/datagrams/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/http3/datagrams/</guid><description>
+&lt;p>&lt;a href="https://datatracker.ietf.org/doc/rfc9297/" target="_blank" rel="noopener">RFC 9297&lt;/a> defines how QUIC datagrams (as defined in &lt;a href="https://datatracker.ietf.org/doc/rfc9221/" target="_blank" rel="noopener">RFC 9221&lt;/a>) can be used in HTTP.&lt;/p>
+&lt;p>quic-go currently doesn&amp;rsquo;t support HTTP datagrams. This is tracked in &lt;a href="https://github.com/quic-go/quic-go/issues/3522" target="_blank" rel="noopener">#3522&lt;/a>.&lt;/p></description></item></channel></rss>
