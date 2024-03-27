@@ -91,6 +91,12 @@ server := http3.Server{
 
 More complex scenarios can be handled by manually setting the Alt-Svc header field, or by overwriting the value added by `SetQUICHeaders`.
 
+## Sending SETTINGS
+
+As described in [Section 7.2.4 of RFC 9114](https://datatracker.ietf.org/doc/html/rfc9114#section-7.2.4), both endpoints send each other a SETTINGS frame to convey configuration parameters. For example, SETTINGS are used to enable extensions, such as the [datagram extension]({{< relref "datagrams.md" >}}).
+
+To allow the client to immediately make use of the settings, the SETTINGS frame is sent in [0.5-RTT data]({{< relref "../quic/server.md#05-rtt" >}}).
+
 ## 0-RTT
 
 By default, the `http3.Server` enables 0-RTT support on the QUIC layer, thereby allowing clients to send requests using 0-RTT. When using a user-provided `quic.Config`, 0-RTT is only enabled when the `Allow0RTT` config flag is set.
