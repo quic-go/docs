@@ -112,6 +112,9 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;p>More complex scenarios can be handled by manually setting the Alt-Svc header field, or by overwriting the value added by &lt;code>SetQUICHeaders&lt;/code>.&lt;/p>
+&lt;h2>Sending SETTINGS&lt;span class="absolute -mt-20" id="sending-settings">&lt;/span>
+&lt;a href="#sending-settings" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>As described in &lt;a href="https://datatracker.ietf.org/doc/html/rfc9114#section-7.2.4" target="_blank" rel="noopener">Section 7.2.4 of RFC 9114&lt;/a>, both endpoints send each other a SETTINGS frame to convey configuration parameters. For example, SETTINGS are used to enable extensions, such as the &lt;a href="https://quic-go.net/docs/http3/datagrams/" >datagram extension&lt;/a>.&lt;/p>
+&lt;p>To allow the client to immediately make use of the settings, the SETTINGS frame is sent in &lt;a href="https://quic-go.net/docs/quic/server/#0.5-rtt" >0.5-RTT data&lt;/a>.&lt;/p>
 &lt;h2>0-RTT&lt;span class="absolute -mt-20" id="0-rtt">&lt;/span>
 &lt;a href="#0-rtt" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>By default, the &lt;code>http3.Server&lt;/code> enables 0-RTT support on the QUIC layer, thereby allowing clients to send requests using 0-RTT. When using a user-provided &lt;code>quic.Config&lt;/code>, 0-RTT is only enabled when the &lt;code>Allow0RTT&lt;/code> config flag is set.&lt;/p>
 &lt;p>An &lt;code>http.Handler&lt;/code> can determine if a request was likely sent in 0-RTT by examining the &lt;code>tls.ConnectionState&lt;/code> associated with the request.&lt;/p>
