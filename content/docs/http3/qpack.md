@@ -1,5 +1,5 @@
 ---
-title: HTTP Header Compression using QPACK
+title: QPACK Header Field Compression
 toc: true
 weight: 3
 ---
