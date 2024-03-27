@@ -584,6 +584,45 @@ title="Copy code"
 &lt;li>Mitigate &lt;a href="https://quic-go.net/docs/quic/server/#cert-size" >Performance Impact of Large Certificates&lt;/a> by sending two ClientHellos: &lt;a href="https://github.com/quic-go/quic-go/issues/3775" target="_blank" rel="noopener">#3775&lt;/a>&lt;/li>
 &lt;li>Happy Eyeballs for &lt;code>DialAddr&lt;/code>: &lt;a href="https://github.com/quic-go/quic-go/issues/3772" target="_blank" rel="noopener">#3772&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>QUIC Connection</title><link>https://quic-go.net/docs/quic/connection/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/connection/</guid><description>
+&lt;p>The &lt;code>quic.Connection&lt;/code> is the central object to send and receive application data. Data is not sent directly on the connection, but either on &lt;a href="https://quic-go.net/docs/quic/streams/" >streams&lt;/a>, or (optionally) in so-called &lt;a href="https://quic-go.net/docs/quic/datagrams/" >datagrams&lt;/a>.&lt;/p>
+&lt;h2>Closing a Connection&lt;span class="absolute -mt-20" id="closing-a-connection">&lt;/span>
+&lt;a href="#closing-a-connection" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>At any point during the connection, a &lt;code>quic.Connection&lt;/code> can be closed by calling &lt;code>CloseWithError&lt;/code>:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">CloseWithError&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mh">0x42&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;I don&amp;#39;t want to talk to you anymore 🙉&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>Error codes are defined by the application and can be any unsigned 62-bit value. The error message is a UTF-8 encoded human-readable reason. The error code allows the receiver to learn why the connection was closed, and the reason can be useful for debugging purposes.
+quic-go doesn&amp;rsquo;t provide a way to close a connection without providing an error code or an error message.&lt;/p>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
+⚠️
+&lt;/div>&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+&lt;p>This instantly closes the connection. There&amp;rsquo;s no guarantee that any outstanding stream data or datagrams will be delivered.
+In particular, writing to a stream, closing the stream, and immediately closing the connection doesn&amp;rsquo;t guarantee that the peer has received all stream data.&lt;/p>
+&lt;p>The application is responsible for ensuring that all data has been delivered before closing the connection.&lt;/p>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>Closing the connections makes all calls associated with this connection (accepting and opening streams, reading and writing on streams, sending and receiving datagrams, etc.) return immediately. On the receiver side, the error is surfaced as a &lt;code>quic.ApplicationError&lt;/code> as soon as it is received.&lt;/p>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
+⚠️
+&lt;/div>&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+&lt;p>If the connection is closed before the handshake completes, the error code might not be transmitted to the peer.&lt;/p>
+&lt;p>Instead the error might be surfaced as a &lt;code>quic.TransportError&lt;/code> with an APPLICATION_ERROR error code. This protects from application state being revealed unencrypted on the wire. See &lt;a href="https://datatracker.ietf.org/doc/html/rfc9000#section-10.2.3" target="_blank" rel="noopener">Section 10.2.3 of RFC 9000&lt;/a> for details.&lt;/p>
+&lt;/div>
+&lt;/div>
+&lt;/div>
 &lt;h2>Idle Timeouts&lt;span class="absolute -mt-20" id="idle-timeout">&lt;/span>
 &lt;a href="#idle-timeout" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>A QUIC connections can be closed automatically (i.e. without sending of any packets), if it is not used for a certain period of time, the so-called idle timeout. This is especially useful on mobile devices, where waking up the radio just to close a connection would be wasteful.&lt;/p>
 &lt;p>During the handshake, both client and server advertise the longest time that they want to keep the connection alive when it is idle. Details are specified in &lt;a href="https://datatracker.ietf.org/doc/html/rfc9000#section-10.1" target="_blank" rel="noopener">Section 10.1 of RFC 9000&lt;/a>. The idle timeout that applies to the connection is the minimum of the two values advertised by the client and by the server, respectively.&lt;/p>
@@ -627,46 +666,8 @@ Enabling Keep-Alives doesn&amp;rsquo;t mean that the connection can&amp;rsquo;t 
 &lt;/div>
 &lt;/div>
 &lt;/div>
-&lt;h2>Closing a Connection&lt;span class="absolute -mt-20" id="closing-a-connection">&lt;/span>
-&lt;a href="#closing-a-connection" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>At any point during the connection, a &lt;code>quic.Connection&lt;/code> can be closed by calling &lt;code>CloseWithError&lt;/code>:&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">CloseWithError&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mh">0x42&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;I don&amp;#39;t want to talk to you anymore 🙉&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
-&lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
-title="Copy code"
->
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;p>Error codes are defined by the application and can be any unsigned 62-bit value. The error message is a UTF-8 encoded human-readable reason. The error code allows the receiver to learn why the connection was closed, and the reason can be useful for debugging purposes.
-quic-go doesn&amp;rsquo;t provide a way to close a connection without providing an error code or an error message.&lt;/p>
-&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
-&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
-⚠️
-&lt;/div>&lt;/div>
-&lt;div class="w-full min-w-0 leading-7">
-&lt;div class="mt-6 leading-7 first:mt-0">
-&lt;p>This instantly closes the connection. There&amp;rsquo;s no guarantee that any outstanding stream data or datagrams will be delivered.
-In particular, writing to a stream, closing the stream, and immediately closing the connection doesn&amp;rsquo;t guarantee that the peer has received all stream data.&lt;/p>
-&lt;p>The application is responsible for ensuring that all data has been delivered before closing the connection.&lt;/p>
-&lt;/div>
-&lt;/div>
-&lt;/div>
-&lt;p>Closing the connections makes all calls associated with this connection (accepting and opening streams, reading and writing on streams, sending and receiving datagrams, etc.) return immediately. On the receiver side, the error is surfaced as a &lt;code>quic.ApplicationError&lt;/code> as soon as it is received.&lt;/p>
-&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
-&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
-⚠️
-&lt;/div>&lt;/div>
-&lt;div class="w-full min-w-0 leading-7">
-&lt;div class="mt-6 leading-7 first:mt-0">
-&lt;p>If the connection is closed before the handshake completes, the error code might not be transmitted to the peer.&lt;/p>
-&lt;p>Instead the error might be surfaced as a &lt;code>quic.TransportError&lt;/code> with an APPLICATION_ERROR error code. This protects from application state being revealed unencrypted on the wire. See &lt;a href="https://datatracker.ietf.org/doc/html/rfc9000#section-10.2.3" target="_blank" rel="noopener">Section 10.2.3 of RFC 9000&lt;/a> for details.&lt;/p>
-&lt;/div>
-&lt;/div>
-&lt;/div>
-&lt;h2>Inspecting the Error&lt;span class="absolute -mt-20" id="inspecting-the-error">&lt;/span>
-&lt;a href="#inspecting-the-error" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>In case the peer closes the QUIC connection, all calls to open streams, accept streams, as well as all methods on streams immediately return an error. Additionally, it is set as cancellation cause of the connection context. In most cases, applications won&amp;rsquo;t need to closely inspect the error returned.&lt;/p>
+&lt;h2>Inspecting the Error&lt;span class="absolute -mt-20" id="error-assertion">&lt;/span>
+&lt;a href="#error-assertion" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>In case the peer closes the QUIC connection, all calls to open streams, accept streams, as well as all methods on streams immediately return an error. Additionally, it is set as cancellation cause of the connection context. In most cases, applications won&amp;rsquo;t need to closely inspect the error returned.&lt;/p>
 &lt;p>The most common way to handle an error is by interface-asserting it to &lt;code>net.Error&lt;/code>, and (for example) retry the last operation if it&amp;rsquo;s a temporary error.&lt;/p>
 &lt;p>The following example shows how to inspect an error in detail:&lt;/p>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="p">(&lt;/span>
