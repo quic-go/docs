@@ -291,7 +291,12 @@ title="Copy code"
 &lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
-&lt;/div></description></item><item><title>Running a QUIC Client</title><link>https://quic-go.net/docs/quic/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/client/</guid><description>
+&lt;/div>
+&lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
+&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>Call &lt;code>GetConfigForClient&lt;/code> after processing the ClientHello: &lt;a href="https://github.com/quic-go/quic-go/issues/3862" target="_blank" rel="noopener">#3862&lt;/a>&lt;/li>
+&lt;li>Save the RTT measurement in the resumption token (not the session ticket): &lt;a href="https://github.com/quic-go/quic-go/issues/4158" target="_blank" rel="noopener">#4158&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Running a QUIC Client</title><link>https://quic-go.net/docs/quic/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/client/</guid><description>
 &lt;p>Since QUIC uses connection IDs to demultiplex connections, multiple outgoing connections can share a single UDP socket.&lt;/p>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">cancel&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WithTimeout&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Background&lt;/span>&lt;span class="p">(),&lt;/span> &lt;span class="mi">3&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Second&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1">// 3s handshake timeout
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="k">defer&lt;/span> &lt;span class="nf">cancel&lt;/span>&lt;span class="p">()&lt;/span>

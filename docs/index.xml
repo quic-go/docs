@@ -533,7 +533,12 @@ title="Copy code"
 &lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
-&lt;/div></description></item><item><title>HTTP Header Compression using QPACK</title><link>https://quic-go.net/docs/http3/qpack/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/http3/qpack/</guid><description>
+&lt;/div>
+&lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
+&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>Call &lt;code>GetConfigForClient&lt;/code> after processing the ClientHello: &lt;a href="https://github.com/quic-go/quic-go/issues/3862" target="_blank" rel="noopener">#3862&lt;/a>&lt;/li>
+&lt;li>Save the RTT measurement in the resumption token (not the session ticket): &lt;a href="https://github.com/quic-go/quic-go/issues/4158" target="_blank" rel="noopener">#4158&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>HTTP Header Compression using QPACK</title><link>https://quic-go.net/docs/http3/qpack/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/http3/qpack/</guid><description>
 &lt;p>HTTP/3 utilizes QPACK (&lt;a href="https://datatracker.ietf.org/doc/html/rfc9204" target="_blank" rel="noopener">RFC 9204&lt;/a>) for efficient HTTP header field compression. Our implementation, available at &lt;a href="https://github.com/quic-go/qpack" target="_blank" rel="noopener">quic-go/qpack&lt;/a>, provides a minimal implementation of the protocol.&lt;/p>
 &lt;h2>Implementation Status&lt;span class="absolute -mt-20" id="implementation-status">&lt;/span>
 &lt;a href="#implementation-status" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>While the current implementation is a fully interoperable implementation of the QPACK protocol, it only uses the static compression table. The dynamic table would allow for more effective compression of frequently transmitted header fields. This can be particularly beneficial in scenarios where headers have considerable redundancy or in high-throughput environments.&lt;/p>
