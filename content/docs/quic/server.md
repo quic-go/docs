@@ -91,7 +91,7 @@ go func() {
   str, err := conn.OpenStream()
   // ... error handling
 
-  // Wait for the handshake to complete
+  // Optionally, wait for the handshake to complete
   select {
   case <-conn.HandshakeComplete():
     // handshake completed
@@ -105,3 +105,61 @@ As soon as the connection is accepted, it can open streams and send application 
 
 At any point, the application can wait for completion of the handshake by blocking on the channel returned by `Connection.HandshakeComplete()`.
 
+
+## 0-RTT
+
+From the server's perspective, accepting 0-RTT connection looks very similar to accepting a 0.5-RTT connection.
+The main difference is that with 0-RTT, the client is able to open streams right away, which can be accepted using `AcceptStream`.
+
+```mermaid
+sequenceDiagram
+    Client->>Server: ClientHello
+    activate Client
+    rect rgb(220,220,220)
+    Client-->>Server: 0-RTT Application data
+    activate Server
+    end
+    deactivate Client
+    Server->> Client: ServerHello, Certificate, Finished
+    activate Client
+    rect rgb(220,220,220)
+    Server-->>Client: 0.5-RTT Application data
+    end
+    deactivate Server
+    Client->>Server: (Client Certificates), Finished
+    activate Server
+    rect rgb(220,220,220)
+    Client-->>Server: 1-RTT Application Data
+    deactivate Client
+    Server-->>Client: 1-RTT Application Data
+    end
+    deactivate Server
+```
+
+To allow clients to use 0-RTT resumption, the `Allow0RTT` flag needs to be set on the `quic.Config`.
+
+```go
+quicConf := &quic.Config{Allow0RTT: true}
+ln, err := tr.ListenEarly(tlsConf, quicConf)
+// ... error handling
+conn, err := ln.Accept()
+// ... error handling
+go func() {
+  // It is now possible to accept the streams which the client opened in 0-RTT.
+  str, err := conn.AcceptStream()
+  // ... error handling
+
+  // Optionally, wait for the handshake to complete
+  select {
+  case <-conn.HandshakeComplete():
+    // handshake completed
+  case <-conn.Context().Done():
+    // connection closed before handshake completion, e.g. due to handshake failure
+  }
+}()
+```
+
+It is possible to inspect the `quic.ConnectionState` to find out if a connection used 0-RTT resumption:
+```go
+used0RTT := conn.ConnectionState().Used0RTT
+```
