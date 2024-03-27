@@ -163,3 +163,9 @@ It is possible to inspect the `quic.ConnectionState` to find out if a connection
 ```go
 used0RTT := conn.ConnectionState().Used0RTT
 ```
+
+
+## 📝 Future Work
+
+* Call `GetConfigForClient` after processing the ClientHello: [#3862](https://github.com/quic-go/quic-go/issues/3862)
+* Save the RTT measurement in the resumption token (not the session ticket): [#4158](https://github.com/quic-go/quic-go/issues/4158)
