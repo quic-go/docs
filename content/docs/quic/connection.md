@@ -4,6 +4,36 @@ toc: true
 weight: 4
 ---
 
+The `quic.Connection` is the central object to send and receive application data. Data is not sent directly on the connection, but either on [streams]({{< relref "streams.md" >}}), or (optionally) in so-called [datagrams]({{< relref "datagrams.md" >}}).
+
+
+## Closing a Connection
+
+At any point during the connection, a `quic.Connection` can be closed by calling `CloseWithError`:
+
+```go
+conn.CloseWithError(0x42, "I don't want to talk to you anymore 🙉")
+```
+
+Error codes are defined by the application and can be any unsigned 62-bit value. The error message is a UTF-8 encoded human-readable reason. The error code allows the receiver to learn why the connection was closed, and the reason can be useful for debugging purposes.
+quic-go doesn't provide a way to close a connection without providing an error code or an error message.
+
+{{< callout type="warning" >}}
+  This instantly closes the connection. There's no guarantee that any outstanding stream data or datagrams will be delivered.
+  In particular, writing to a stream, closing the stream, and immediately closing the connection doesn't guarantee that the peer has received all stream data.
+
+  The application is responsible for ensuring that all data has been delivered before closing the connection.
+{{< /callout >}}
+
+Closing the connections makes all calls associated with this connection (accepting and opening streams, reading and writing on streams, sending and receiving datagrams, etc.) return immediately. On the receiver side, the error is surfaced as a `quic.ApplicationError` as soon as it is received.
+
+{{< callout type="warning" >}}
+  If the connection is closed before the handshake completes, the error code might not be transmitted to the peer.
+
+  Instead the error might be surfaced as a `quic.TransportError` with an APPLICATION_ERROR error code. This protects from application state being revealed unencrypted on the wire. See [Section 10.2.3 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-10.2.3) for details.
+{{< /callout >}}
+
+
 ## Idle Timeouts {#idle-timeout}
 
 A QUIC connections can be closed automatically (i.e. without sending of any packets), if it is not used for a certain period of time, the so-called idle timeout. This is especially useful on mobile devices, where waking up the radio just to close a connection would be wasteful.
@@ -37,34 +67,7 @@ This will cause a PING frame to be sent _at least_ every `KeepAlivePeriod`. If t
 {{< /callout >}}
 
 
-## Closing a Connection
-
-At any point during the connection, a `quic.Connection` can be closed by calling `CloseWithError`:
-
-```go
-conn.CloseWithError(0x42, "I don't want to talk to you anymore 🙉")
-```
-
-Error codes are defined by the application and can be any unsigned 62-bit value. The error message is a UTF-8 encoded human-readable reason. The error code allows the receiver to learn why the connection was closed, and the reason can be useful for debugging purposes.
-quic-go doesn't provide a way to close a connection without providing an error code or an error message.
-
-{{< callout type="warning" >}}
-  This instantly closes the connection. There's no guarantee that any outstanding stream data or datagrams will be delivered.
-  In particular, writing to a stream, closing the stream, and immediately closing the connection doesn't guarantee that the peer has received all stream data.
-
-  The application is responsible for ensuring that all data has been delivered before closing the connection.
-{{< /callout >}}
-
-Closing the connections makes all calls associated with this connection (accepting and opening streams, reading and writing on streams, sending and receiving datagrams, etc.) return immediately. On the receiver side, the error is surfaced as a `quic.ApplicationError` as soon as it is received.
-
-{{< callout type="warning" >}}
-  If the connection is closed before the handshake completes, the error code might not be transmitted to the peer.
-
-  Instead the error might be surfaced as a `quic.TransportError` with an APPLICATION_ERROR error code. This protects from application state being revealed unencrypted on the wire. See [Section 10.2.3 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-10.2.3) for details.
-{{< /callout >}}
-
-
-## Inspecting the Error
+## Inspecting the Error {#error-assertion}
 
 In case the peer closes the QUIC connection, all calls to open streams, accept streams, as well as all methods on streams immediately return an error. Additionally, it is set as cancellation cause of the connection context. In most cases, applications won't need to closely inspect the error returned. 
 
