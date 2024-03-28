@@ -58,9 +58,9 @@ A problem arises when a QUIC endpoint is suddenly rebooted: It now receives QUIC
 
 Stateless resets, as outlined in [Section 10.3 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-10.3), address this issue. Utilizing a static key and the connection ID from an incoming packet, a rebooted endpoint generates a 16-byte stateless reset token. This token is sent in a packet mimicking a standard QUIC packet. The peer, already aware of the stateless reset token linked to the connection ID, recognizes the stateless reset and can close the connection instantly.
 
-The key used to calculate stateless reset is configured on the `quic.Transport`:
+The key used to calculate stateless reset tokens is configured on the `quic.Transport`:
 ```go
-// load this from disk, or derive it deterministically
+// load the key from disk, or derive it deterministically
 var statelessResetKey quic.StatelessResetKey
 quic.Transport{
   StatelessResetKey: &statelessResetKey,
