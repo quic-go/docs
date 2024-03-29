@@ -104,7 +104,7 @@ When performing a 0-RTT session resumption, the same [flow control limits]({{< r
 {{< /callout >}}
 
 
-### Security Properties of 0-RTT
+### Security Properties of 0-RTT {#0rtt-security}
 
 As described in [Section 8 of RFC 8446](https://datatracker.ietf.org/doc/html/rfc8446#section-8), application data sent in 0-RTT (what TLS 1.3 calls "Early Data") has different security properties than application data sent after completion of the handshake. 0-RTT data is encrypted, and an observer won't be able to decrypt it. However, since data is sent before the client has received any fresh key material from the server, an attacker can record the 0-RTT data and replay it to the server at a later point, or to a different server in a load-balanced server deployment.
 
