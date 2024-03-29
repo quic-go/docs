@@ -57,5 +57,5 @@ params:
   analytics:
     umami:
       serverURL: "analytics.seemann.io"
-      id: "c8e5d798-f535-4fea-906f-93da2e05a771"
+      id: "97428108-30bc-4019-9782-418bf1a6b17f"
       trackerScriptName: "script.js"
