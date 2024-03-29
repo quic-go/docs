@@ -54,7 +54,8 @@ params:
   editURL:
     enable: true
     base: "https://github.com/quic-go/docs/tree/master/content"
-  umami:
-    serverURL: "analytics.seemann.io"
-    id: "c8e5d798-f535-4fea-906f-93da2e05a771"
-    trackerScriptName: "script.js"
+  analytics:
+    umami:
+      serverURL: "analytics.seemann.io"
+      id: "c8e5d798-f535-4fea-906f-93da2e05a771"
+      trackerScriptName: "script.js"
