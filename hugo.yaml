@@ -1,6 +1,7 @@
 baseURL: https://quic-go.net
 languageCode: en-us
 title: quic-go docs
+enableRobotsTXT: true
 
 module:
   imports:
