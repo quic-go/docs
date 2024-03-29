@@ -547,7 +547,8 @@ title="Copy code"
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
 &lt;li>Add support for the QPACK dynamic table: &lt;a href="https://github.com/quic-go/quic-go/issues/2424" target="_blank" rel="noopener">#2424&lt;/a> and &lt;a href="https://github.com/quic-go/qpack/issues/33" target="_blank" rel="noopener">qpack#33&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Running a QUIC Client</title><link>https://quic-go.net/docs/quic/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/client/</guid><description>
-&lt;p>Since QUIC uses connection IDs to demultiplex connections, multiple outgoing connections can share a single UDP socket.&lt;/p>
+&lt;h2>Using a &lt;code>quic.Transport&lt;/code>&lt;span class="hx-absolute -hx-mt-20" id="using-a-quictransport">&lt;/span>
+&lt;a href="#using-a-quictransport" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Since QUIC uses connection IDs to demultiplex connections, multiple outgoing connections can share a single UDP socket.&lt;/p>
 &lt;div class="code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">cancel&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WithTimeout&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Background&lt;/span>&lt;span class="p">(),&lt;/span> &lt;span class="mi">3&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Second&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1">// 3s handshake timeout
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="k">defer&lt;/span> &lt;span class="nf">cancel&lt;/span>&lt;span class="p">()&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">tr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Dial&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">server&lt;/span> &lt;span class="nx">address&lt;/span>&lt;span class="p">&amp;gt;,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">&amp;gt;,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">&amp;gt;)&lt;/span>
@@ -562,7 +563,8 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>As a shortcut, &lt;code>quic.Dial&lt;/code> and &lt;code>quic.DialAddr&lt;/code> can be used without explictly initializing a &lt;code>quic.Transport&lt;/code>:&lt;/p>
+&lt;h2>Using the Convenience Functions&lt;span class="hx-absolute -hx-mt-20" id="using-the-convenience-functions">&lt;/span>
+&lt;a href="#using-the-convenience-functions" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>As a shortcut, &lt;code>quic.Dial&lt;/code> and &lt;code>quic.DialAddr&lt;/code> can be used without explictly initializing a &lt;code>quic.Transport&lt;/code>:&lt;/p>
 &lt;div class="code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">cancel&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WithTimeout&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Background&lt;/span>&lt;span class="p">(),&lt;/span> &lt;span class="mi">3&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Second&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1">// 3s handshake timeout
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="k">defer&lt;/span> &lt;span class="nf">cancel&lt;/span>&lt;span class="p">()&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Dial&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">server&lt;/span> &lt;span class="nx">address&lt;/span>&lt;span class="p">&amp;gt;,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">&amp;gt;,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">&amp;gt;)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
@@ -579,6 +581,90 @@ title="Copy code"
 &lt;h2>TLS Session Resumption&lt;span class="hx-absolute -hx-mt-20" id="tls-session-resumption">&lt;/span>
 &lt;a href="#tls-session-resumption" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Just as a TLS client running on top of a TCP connection, a QUIC client can also use &lt;a href="https://datatracker.ietf.org/doc/html/rfc8446#section-2.2" target="_blank" rel="noopener">TLS session resumption&lt;/a>. Session resumption allows the skipping of certain parts of the TLS handshake. For example, the server doesn&amp;rsquo;t need to send its certificate again.&lt;/p>
 &lt;p>To use session resumption, nothing needs to be done on the QUIC layer. It is enabled the same way as when using the standard library TLS over TCP, i.e. by settings the &lt;code>tls.Config.ClientSessionCache&lt;/code>.&lt;/p>
+&lt;h2>0-RTT&lt;span class="hx-absolute -hx-mt-20" id="0-rtt">&lt;/span>
+&lt;a href="#0-rtt" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>QUIC&amp;rsquo;s 0-RTT feature allows the client to send application data right away when resuming a connection to a server to which it connected before. Application data is sent before the handshake with the server completes.&lt;/p>
+&lt;pre class="mermaid hx-mt-6">sequenceDiagram
+Client->>Server: ClientHello
+activate Client
+rect rgb(220,220,220)
+Client-->>Server: 0-RTT Application data
+activate Server
+end
+deactivate Client
+Server->> Client: ServerHello, Certificate, Finished
+activate Client
+rect rgb(220,220,220)
+Server-->>Client: 0.5-RTT Application data
+end
+deactivate Server
+Client->>Server: (Client Certificates), Finished
+activate Server
+rect rgb(220,220,220)
+Client-->>Server: 1-RTT Application Data
+deactivate Client
+Server-->>Client: 1-RTT Application Data
+end
+deactivate Server&lt;/pre>&lt;p>A client can use 0-RTT session resumption if a few conditions are met on the client side:&lt;/p>
+&lt;ol>
+&lt;li>It needs to use &lt;a href="#tls-session-resumption" >TLS session resumption&lt;/a>. There&amp;rsquo;s no way to use 0-RTT without a TLS session ticket.&lt;/li>
+&lt;li>The server&amp;rsquo;s support for session resumption, indicated by the session ticket issued on the initial connection, must be present.&lt;/li>
+&lt;li>The ALPN (configured using &lt;code>tls.Config.NextProtos&lt;/code>) on the new connection must be the same.&lt;/li>
+&lt;/ol>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-rounded-lg hx-border hx-py-2 ltr:hx-pr-4 rtl:hx-pl-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-yellow-100 hx-bg-yellow-50 hx-text-yellow-900 dark:hx-border-yellow-200/30 dark:hx-bg-yellow-700/30 dark:hx-text-yellow-200">
+&lt;div class="ltr:hx-pl-3 ltr:hx-pr-2 rtl:hx-pr-3 rtl:hx-pl-2">&lt;div class="hx-select-none hx-text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
+⚠️
+&lt;/div>&lt;/div>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">
+Due to the design of the TLS protocol, clients cannot directly request session tickets or unilaterally enable 0-RTT. These capabilities depend on the server&amp;rsquo;s configuration and support.
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>To dial a 0-RTT connection, use &lt;code>DialEarly&lt;/code> instead of &lt;code>Dial&lt;/code>. quic-go performs the checks for the conditions listed above and dials a 0-RTT connection if they are met.&lt;/p>
+&lt;div class="code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">cancel&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WithTimeout&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Background&lt;/span>&lt;span class="p">(),&lt;/span> &lt;span class="mi">3&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Second&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">defer&lt;/span> &lt;span class="nf">cancel&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">tlsConf&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ClientSessionCache&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewLRUClientSessionCache&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">100&lt;/span>&lt;span class="p">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 1. Use this tls.Config to establish the first connection to the server
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// and receive a session ticket ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 2. Dial another connection to the same server
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">tr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">DialEarly&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">server&lt;/span> &lt;span class="nx">address&lt;/span>&lt;span class="p">&amp;gt;,&lt;/span> &lt;span class="nx">tlsConf&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">&amp;gt;)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// Check if 0-RTT is being used
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">uses0RTT&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ConnectionState&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="nx">Used0RTT&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// If 0-RTT was used, DialEarly returned immediately.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// Open a stream and send some application data in 0-RTT ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">str&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">OpenStream&lt;/span>&lt;span class="p">()&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h3>Security Properties of 0-RTT&lt;span class="hx-absolute -hx-mt-20" id="security-properties-of-0-rtt">&lt;/span>
+&lt;a href="#security-properties-of-0-rtt" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>As described in &lt;a href="https://datatracker.ietf.org/doc/html/rfc8446#section-8" target="_blank" rel="noopener">Section 8 of RFC 8446&lt;/a>, application data sent in 0-RTT (what TLS 1.3 calls &amp;ldquo;Early Data&amp;rdquo;) has different security properties than application data sent after completion of the handshake. 0-RTT data is encrypted, and an observer won&amp;rsquo;t be able to decrypt it. However, since data is sent before the client has received any fresh key material from the server, an attacker can record the 0-RTT data and replay it to the server at a later point, or to a different server in a load-balanced server deployment.&lt;/p>
+&lt;p>In general it is only safe to perform idempotent actions in 0-RTT. It is the client&amp;rsquo;s responsibility to make sure that the data it sends is appropriate to send in 0-RTT. For many application protocols, this means limiting to the use of 0-RTT to certain kinds of data, and delaying the sending of other data until the handshake has completed.&lt;/p>
+&lt;p>This can easily be accomplished by blocking on the channel returned by &lt;code>HandshakeComplete&lt;/code>.&lt;/p>
+&lt;div class="code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="k">select&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">case&lt;/span> &lt;span class="o">&amp;lt;-&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">HandshakeComplete&lt;/span>&lt;span class="p">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Handshake complete.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// All data sent from here on is protected against replay attacks.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="k">case&lt;/span> &lt;span class="o">&amp;lt;-&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Context&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="nf">Done&lt;/span>&lt;span class="p">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Handshake failed.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
 &lt;h2>📝 Future Work&lt;span class="hx-absolute -hx-mt-20" id="-future-work">&lt;/span>
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
 &lt;li>Mitigate &lt;a href="https://quic-go.net/docs/quic/server/#cert-size" >Performance Impact of Large Certificates&lt;/a> by sending two ClientHellos: &lt;a href="https://github.com/quic-go/quic-go/issues/3775" target="_blank" rel="noopener">#3775&lt;/a>&lt;/li>
