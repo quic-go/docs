@@ -95,6 +95,14 @@ uses0RTT := conn.ConnectionState().Used0RTT
 str, err := conn.OpenStream()
 ```
 
+When performing a 0-RTT session resumption, the same [flow control limits]({{< ref "flowcontrol.md" >}}) apply to the resumed session as to the original session, both in terms of the amount of data that can be sent on streams and the total number of streams that can be opened. quic-go achieves this by storing these values in the `tls.SessionState` associated with the session ticket.
+
+{{< callout type="warning" >}}
+  Clients need to handle the possibility of servers rejecting 0-RTT handshakes, as outlined in [Dealing with Rejections](#0rtt-rejection).
+
+  This adds some complexity to the use of 0-RTT, but it is imperative to correctly handle this case, as the server might reject 0-RTT for any reason.
+{{< /callout >}}
+
 
 ### Security Properties of 0-RTT
 
@@ -110,6 +118,32 @@ case <-conn.HandshakeComplete():
   // All data sent from here on is protected against replay attacks.
 case <-conn.Context().Done():
   // Handshake failed.
+}
+```
+
+
+### Dealing with Rejections {#0rtt-rejection}
+
+The server can reject a 0-RTT connection attempt for various reasons. When 0-RTT is rejected, this doesn't lead to a failure of the QUIC handshake. Instead, the handshake proceeds as if it were a [session resumption](#tls-session-resumption) without 0-RTT.
+
+Servers might reject 0-RTT due to:
+* Incompatible changes in flow control parameters.
+* Differences in the application protocol (negotiated using ALPN) from the initial connection.
+* Server load, opting not to process 0-RTT packets at the time.
+
+As mentioned above, the client applies the flow control limits used on the initial connection to the resumed connection. For example, if the server was reconfigured after the initial connection, reducing the flow control limits, the client might unknowingly exceed these new limits. This scenario is a common reason for 0-RTT rejection.
+
+Upon rejecting 0-RTT, the server discards all 0-RTT packets sent by the client. This results in the invalidation of all opened streams and any data sent. quic-go does not automatically retransmit data sent in 0-RTT after completion of the handshake. It's the application's responsibility to detect this error and respond appropriately.
+
+The `quic.Connection` returned by `DialEarly` behaves as if it had been [closed]({{< relref "connection.md#closing" >}}): all calls to `OpenStream`, `AcceptStream`, as well as `Read` and `Write` calls on streams return a `quic.Err0RTTRejected`. **However, the underlying QUIC connection remains open**, it is only used as a signal to the application that all data sent so far was not processed by the server. To continue communication, the application can transition to using `NextConnection`:
+
+```go
+conn, err := tr.DialEarly(ctx, <server address>, <tls.Config>, <quic.Config>)
+// ... error handling
+_, err :=conn.AcceptStream()
+if errors.Is(err, quic.Err0RTTRejected) {
+  // The server rejected 0-RTT. None of the data sent so far was processed.
+  newConn := conn.NextConnection()
 }
 ```
 
