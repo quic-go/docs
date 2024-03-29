@@ -6,7 +6,7 @@ weight: 90
 
 quic-go logs a wide range of events defined in [draft-ietf-quic-qlog-quic-events](https://datatracker.ietf.org/doc/draft-ietf-quic-qlog-quic-events/), providing comprehensive insights in the internals of a QUIC connection. 
 
-qlog files can be processed by a number of 3rd-party tools. [qviz](https://qvis.quictools.info/) has proven very useful for debugging all kinds of QUIC connection failures.
+qlog files can be processed by a number of 3rd-party tools. [qvis](https://qvis.quictools.info/) has proven very useful for debugging all kinds of QUIC connection failures.
 
 ## Events associated with a Connection
 
