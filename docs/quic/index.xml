@@ -395,6 +395,18 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
+&lt;p>When performing a 0-RTT session resumption, the same &lt;a href="https://quic-go.net/docs/quic/flowcontrol/" >flow control limits&lt;/a> apply to the resumed session as to the original session, both in terms of the amount of data that can be sent on streams and the total number of streams that can be opened. quic-go achieves this by storing these values in the &lt;code>tls.SessionState&lt;/code> associated with the session ticket.&lt;/p>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-rounded-lg hx-border hx-py-2 ltr:hx-pr-4 rtl:hx-pl-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-yellow-100 hx-bg-yellow-50 hx-text-yellow-900 dark:hx-border-yellow-200/30 dark:hx-bg-yellow-700/30 dark:hx-text-yellow-200">
+&lt;div class="ltr:hx-pl-3 ltr:hx-pr-2 rtl:hx-pr-3 rtl:hx-pl-2">&lt;div class="hx-select-none hx-text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
+⚠️
+&lt;/div>&lt;/div>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">
+&lt;p>Clients need to handle the possibility of servers rejecting 0-RTT handshakes, as outlined in &lt;a href="#0rtt-rejection" >Dealing with Rejections&lt;/a>.&lt;/p>
+&lt;p>This adds some complexity to the use of 0-RTT, but it is imperative to correctly handle this case, as the server might reject 0-RTT for any reason.&lt;/p>
+&lt;/div>
+&lt;/div>
+&lt;/div>
 &lt;h3>Security Properties of 0-RTT&lt;span class="hx-absolute -hx-mt-20" id="security-properties-of-0-rtt">&lt;/span>
 &lt;a href="#security-properties-of-0-rtt" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>As described in &lt;a href="https://datatracker.ietf.org/doc/html/rfc8446#section-8" target="_blank" rel="noopener">Section 8 of RFC 8446&lt;/a>, application data sent in 0-RTT (what TLS 1.3 calls &amp;ldquo;Early Data&amp;rdquo;) has different security properties than application data sent after completion of the handshake. 0-RTT data is encrypted, and an observer won&amp;rsquo;t be able to decrypt it. However, since data is sent before the client has received any fresh key material from the server, an attacker can record the 0-RTT data and replay it to the server at a later point, or to a different server in a load-balanced server deployment.&lt;/p>
 &lt;p>In general it is only safe to perform idempotent actions in 0-RTT. It is the client&amp;rsquo;s responsibility to make sure that the data it sends is appropriate to send in 0-RTT. For many application protocols, this means limiting to the use of 0-RTT to certain kinds of data, and delaying the sending of other data until the handshake has completed.&lt;/p>
@@ -406,6 +418,33 @@ title="Copy code"
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="k">case&lt;/span> &lt;span class="o">&amp;lt;-&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Context&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="nf">Done&lt;/span>&lt;span class="p">():&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Handshake failed.
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h3>Dealing with Rejections&lt;span class="hx-absolute -hx-mt-20" id="0rtt-rejection">&lt;/span>
+&lt;a href="#0rtt-rejection" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>The server can reject a 0-RTT connection attempt for various reasons. When 0-RTT is rejected, this doesn&amp;rsquo;t lead to a failure of the QUIC handshake. Instead, the handshake proceeds as if it were a &lt;a href="#tls-session-resumption" >session resumption&lt;/a> without 0-RTT.&lt;/p>
+&lt;p>Servers might reject 0-RTT due to:&lt;/p>
+&lt;ul>
+&lt;li>Incompatible changes in flow control parameters.&lt;/li>
+&lt;li>Differences in the application protocol (negotiated using ALPN) from the initial connection.&lt;/li>
+&lt;li>Server load, opting not to process 0-RTT packets at the time.&lt;/li>
+&lt;/ul>
+&lt;p>As mentioned above, the client applies the flow control limits used on the initial connection to the resumed connection. For example, if the server was reconfigured after the initial connection, reducing the flow control limits, the client might unknowingly exceed these new limits. This scenario is a common reason for 0-RTT rejection.&lt;/p>
+&lt;p>Upon rejecting 0-RTT, the server discards all 0-RTT packets sent by the client. This results in the invalidation of all opened streams and any data sent. quic-go does not automatically retransmit data sent in 0-RTT after completion of the handshake. It&amp;rsquo;s the application&amp;rsquo;s responsibility to detect this error and respond appropriately.&lt;/p>
+&lt;p>The &lt;code>quic.Connection&lt;/code> returned by &lt;code>DialEarly&lt;/code> behaves as if it had been &lt;a href="https://quic-go.net/docs/quic/connection/#closing" >closed&lt;/a>: all calls to &lt;code>OpenStream&lt;/code>, &lt;code>AcceptStream&lt;/code>, as well as &lt;code>Read&lt;/code> and &lt;code>Write&lt;/code> calls on streams return a &lt;code>quic.Err0RTTRejected&lt;/code>. &lt;strong>However, the underlying QUIC connection remains open&lt;/strong>, it is only used as a signal to the application that all data sent so far was not processed by the server. To continue communication, the application can transition to using &lt;code>NextConnection&lt;/code>:&lt;/p>
+&lt;div class="code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">tr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">DialEarly&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">server&lt;/span> &lt;span class="nx">address&lt;/span>&lt;span class="p">&amp;gt;,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">&amp;gt;,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">&amp;gt;)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">_&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">AcceptStream&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="nx">errors&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Is&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">err&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Err0RTTRejected&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// The server rejected 0-RTT. None of the data sent so far was processed.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">newConn&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NextConnection&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
