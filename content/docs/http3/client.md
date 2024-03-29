@@ -43,24 +43,19 @@ To achieve this using this package, first initialize a single `quic.Transport`, 
 
 ## Using 0-RTT
 
-Support for 0-RTT session resumption can be enabled by passing a `quic.Config` to the `quic.Transport` that enables 0-RTT (using the `Allow0RTT` flag). It is then possible to use 0-RTT for requests. 
-
-This use case was not anticipated by Go's standard library, and Go doesn't have 0-RTT support, neither in its `crypto/tls` nor in its `net/http` implementation. The `http3` package therefore defines two new request methods: `http3.MethodGet0RTT` for GET requests and `http3.MethodHead0RTT` for HEAD requests.
+The use of 0-RTT was not anticipated by Go's standard library, and Go doesn't have 0-RTT support, neither in its `crypto/tls` nor in its `net/http` implementation (not even for TLS 1.3 on top of TCP). The `http3` package therefore defines two new request methods: `http3.MethodGet0RTT` for GET requests and `http3.MethodHead0RTT` for HEAD requests.
 
 {{< callout type="warning" >}}
   Support for the "Early-Data" header field, as well as the "Too Early" status code (425) defined in [RFC 8470](https://datatracker.ietf.org/doc/html/rfc8470#section-5.2) is not yet implemented. See [📝 Future Work](#future-work).
 {{< /callout >}}
 
-It is the application's responsibility to make sure that it is actually safe to send a request in 0-RTT. Requests sent in 0-RTT can be replayed on a new connection by an on-path attacker, so 0-RTT should only be used for idempotent requests. [RFC 8740](https://datatracker.ietf.org/doc/html/rfc8470) defines some guidance on how to use 0-RTT in HTTP.
+It is the application's responsibility to make sure that it is actually safe to send a request in 0-RTT, as outlined in [Security Properties of 0-RTT]({{< relref "../quic/client.md#0rtt-security" >}}). Requests sent in 0-RTT can be replayed on a new connection by an on-path attacker, so 0-RTT should only be used for idempotent requests. [RFC 8740](https://datatracker.ietf.org/doc/html/rfc8470) defines some guidance on how to use 0-RTT in HTTP.
 
 
 ```go
 rt := &http3.RoundTripper{
 	TLSClientConfig: &tls.Config{
 		ClientSessionCache: tls.NewLRUClientSessionCache(100),
-	},
-	QUICConfig: &quic.Config{
-		Allow0RTT: true,
 	},
 }
 req, err := http.NewRequest(http3.MethodGet0RTT, "https://my-server/path", nil)
@@ -70,8 +65,7 @@ rt.RoundTrip(req)
 
 The code snippet shows all the knobs that need to be turned to send a request in 0-RTT data:
 1. TLS session resumption must be enabled by configuring a `tls.ClientSessionCache` on the `tls.Config`.
-2. 0-RTT needs to be enabled on the QUIC layer by setting `Allow0RTT` on the `quic.Config`.
-3. The request method needs to be set to `http3.MethodGet0RTT`.
+2. The request method needs to be set to `http3.MethodGet0RTT`.
 
 ## 📝 Future Work {#future-work}
 
