@@ -27,12 +27,16 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
           publish_branch: build
-      - name: Check Links
-        uses: ruzickap/action-my-broken-link-checker@v2
-        with:
-          url: https://quic-go.net
-          pages_path: ./build/
-          cmd_params: '--buffer-size=8192 --max-connections=10 --color=always --skip-tls-verification --header="User-Agent:curl/7.54.0" --timeout=20 --exclude=(github.com/quic-go/docs|analytics.seemann.io)'
+      - name: Serve the site # needed so we can run the link checker
+        run: |
+          npm install -g http-server
+          http-server build -p 8080 &
+      - name: Install filiph/linkcheck
+        run: |
+          wget https://github.com/filiph/linkcheck/releases/download/3.0.0/linkcheck-3.0.0-linux-x64.tar.gz
+          tar xfz linkcheck-3.0.0-linux-x64.tar.gz --strip-components=1
+      - name: Run linkcheck
+        run: ./linkcheck -e -d --check-anchors --skip-file .github/workflows/linkcheck-skipfile.txt http://localhost:8080/docs
       - uses: burnett01/rsync-deployments@93f02b856fbeaf9a8fbfdd8ce1a4adfd0843f849 # v7.0.0
         if: ${{ github.event_name == 'push' }}
         with:
