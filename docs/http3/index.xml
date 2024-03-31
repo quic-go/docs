@@ -149,7 +149,7 @@ This is not a 100% reliable way of telling if a request was (fully or partially)
 &lt;li>Support for HTTP Trailers: &lt;a href="https://github.com/quic-go/quic-go/issues/2266" target="_blank" rel="noopener">#2266&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Dialing HTTP/3</title><link>https://quic-go.net/docs/http3/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/http3/client/</guid><description>
 &lt;p>This package provides a &lt;code>http.RoundTripper&lt;/code> implementation that can be used on the &lt;code>http.Client&lt;/code>:&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">http3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">RoundTripper&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">roundTripper&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">http3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">RoundTripper&lt;/span>&lt;span class="p">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">TLSClientConfig&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{},&lt;/span> &lt;span class="c1">// set a TLS client config, if desired
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">QUICConfig&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{},&lt;/span> &lt;span class="c1">// QUIC connection options
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">}&lt;/span>
@@ -166,6 +166,7 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
+&lt;p>The &lt;code>http.Client&lt;/code> can then be used to perform HTTP requests over HTTP/3.&lt;/p>
 &lt;h2>Using a &lt;code>quic.Transport&lt;/code>&lt;span class="absolute -mt-20" id="using-a-quictransport">&lt;/span>
 &lt;a href="#using-a-quictransport" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>To use a custom &lt;code>quic.Transport&lt;/code>, the function used to dial new QUIC connections can be configured:&lt;/p>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">tr&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Transport&lt;/span>&lt;span class="p">{}&lt;/span>
