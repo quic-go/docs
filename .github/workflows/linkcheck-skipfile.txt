@@ -1,2 +1,3 @@
 https://github.com/quic-go/docs
 https://analytics.seemann.io
+https://quic-go.net
