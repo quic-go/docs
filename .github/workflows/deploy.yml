@@ -36,7 +36,7 @@ jobs:
           wget https://github.com/filiph/linkcheck/releases/download/3.0.0/linkcheck-3.0.0-linux-x64.tar.gz
           tar xfz linkcheck-3.0.0-linux-x64.tar.gz --strip-components=1
       - name: Run linkcheck
-        run: ./linkcheck -e -d --check-anchors --skip-file .github/workflows/linkcheck-skipfile.txt http://localhost:8080/docs
+        run: ./linkcheck -e -d --check-anchors --skip-file .github/workflows/linkcheck-skipfile.txt http://localhost:8080
       - uses: burnett01/rsync-deployments@93f02b856fbeaf9a8fbfdd8ce1a4adfd0843f849 # v7.0.0
         if: ${{ github.event_name == 'push' }}
         with:
