@@ -85,6 +85,13 @@ Conversely, in case the application wishes to abort receiving from a `quic.Recei
 A bidirectional stream is only closed once both the read and the write side of the stream have been either closed or reset. Only then the peer is granted a new stream according to the maximum number of concurrent streams configured via `quic.Config.MaxIncomingStreams`.
 
 
+### Partial Reliability
+
+When the sender cancels sending on a stream (either unidirectional or bidirectional), it immediately stops transmitting STREAM frames for that stream. This includes retransmissions: If any stream data for this stream is lost, it will not be retransmitted.
+
+Conversely, the receiver does not need to wait for all data to be delivered before indicating to the application that the stream has been reset.
+
+
 ## 📝 Future Work
 
 * Stream Priorities: [#437](https://github.com/quic-go/quic-go/issues/437)
