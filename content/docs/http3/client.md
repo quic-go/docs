@@ -7,7 +7,7 @@ weight: 2
 This package provides a `http.RoundTripper` implementation that can be used on the `http.Client`:
 
 ```go
-&http3.RoundTripper{
+roundTripper := &http3.RoundTripper{
 	TLSClientConfig: &tls.Config{},  // set a TLS client config, if desired
 	QUICConfig:      &quic.Config{}, // QUIC connection options
 }
@@ -16,6 +16,8 @@ client := &http.Client{
 	Transport: roundTripper,
 }
 ```
+
+The `http.Client` can then be used to perform HTTP requests over HTTP/3.
 
 
 ## Using a `quic.Transport`
