@@ -1,1 +1,61 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>quic-go docs – WebTransport</title><link>https://quic-go.net/docs/webtransport/</link><description>Recent content in WebTransport on quic-go docs</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://quic-go.net/docs/webtransport/index.xml" rel="self" type="application/rss+xml"/></channel></rss>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>quic-go docs – WebTransport</title><link>https://quic-go.net/docs/webtransport/</link><description>Recent content in WebTransport on quic-go docs</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://quic-go.net/docs/webtransport/index.xml" rel="self" type="application/rss+xml"/><item><title>Running a WebTransport Server</title><link>https://quic-go.net/docs/webtransport/server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/webtransport/server/</guid><description>
+&lt;p>When a client establishes a new WebTransport session it:&lt;/p>
+&lt;ol>
+&lt;li>First establishes an HTTP/3 connection to the server.&lt;/li>
+&lt;li>It sends an HTTP request (using the Extended CONNECT protocol) to the server, requesting to establish a WebTransport session.&lt;/li>
+&lt;/ol>
+&lt;h2>Accepting a WebTransport Session&lt;span class="absolute -mt-20" id="accepting-a-webtransport-session">&lt;/span>
+&lt;a href="#accepting-a-webtransport-session" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>To start a WebTransport server, it is necessary to:&lt;/p>
+&lt;ol>
+&lt;li>Set up an HTTP/3 server.&lt;/li>
+&lt;li>Set up an HTTP handler for the WebTransport Extended CONNECT request.&lt;/li>
+&lt;/ol>
+&lt;p>The &lt;code>webtransport.Server&lt;/code> wraps an &lt;code>http3.Server&lt;/code>. For more details on how to set up and configure an HTTP/3 server, see &lt;a href="https://quic-go.net/docs/http3/server/" >Serving HTTP/3&lt;/a>.&lt;/p>
+&lt;p>Assume a server is running on &lt;code>example.com&lt;/code>. This code starts an HTTP/3 server on (UDP) port 443. The server can handle regular HTTP/3 requests to &lt;code>https://example.com&lt;/code>.&lt;/p>
+&lt;p>To accept the Extended CONNECT request, the application needs to define an HTTP handler. In this example, we want to accept WebTransport sessions at &lt;code>https://example.com/webtransport&lt;/code>. It is possible to reject an upgrade request by sending a non-2xx status code. Inside the handler, calling &lt;code>webtransport.Server.Upgrade&lt;/code> accepts the WebTransport session, and it returns a &lt;code>webtransport.Session&lt;/code>.&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">s&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">webtransport&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Server&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">H3&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">http3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Server&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Addr&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s">&amp;#34;:443&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">TLSConfig&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{},&lt;/span> &lt;span class="c1">// use your tls.Config here
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// Create a new HTTP endpoint /webtransport.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">HandleFunc&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;/webtransport&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kd">func&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">w&lt;/span> &lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ResponseWriter&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">r&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Request&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">sess&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">s&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Upgrade&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">w&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">r&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">log&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Printf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;upgrading failed: %s&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">w&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WriteHeader&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">500&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Handle the session. Here goes the application logic.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">})&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">s&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ListenAndServeTLS&lt;/span>&lt;span class="p">(&amp;lt;&lt;/span>&lt;span class="nx">certFile&lt;/span>&lt;span class="p">&amp;gt;,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">keyFile&lt;/span>&lt;span class="p">&amp;gt;)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h2>Origin Validation&lt;span class="absolute -mt-20" id="origin-validation">&lt;/span>
+&lt;a href="#origin-validation" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>By default, the &lt;code>Upgrade&lt;/code> function checks that the client&amp;rsquo;s request origin matches the host of the server. This prevents cross-site request forgery (CSRF) attacks, where an attacker could use a malicious web page to establish a WebTransport connection to a vulnerable application, with the application processing the connection as if it were part of the victim user&amp;rsquo;s session.&lt;/p>
+&lt;p>Applications can change this default behavior by setting the &lt;code>webtransport.Server.CheckOrigin&lt;/code> callback:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">s&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">webtransport&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Server&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">H3&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">http3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Server&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="nx">Addr&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s">&amp;#34;:443&amp;#34;&lt;/span>&lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">CheckOrigin&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="kd">func&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">r&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Request&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="kt">bool&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// custom validation logic
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div></description></item></channel></rss>
