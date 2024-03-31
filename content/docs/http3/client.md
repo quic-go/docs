@@ -17,7 +17,8 @@ client := &http.Client{
 }
 ```
 
-The `http3.RoundTripper` provides a number of configuration options, please refer to the [documentation](https://pkg.go.dev/github.com/quic-go/quic-go/http3#RoundTripper) for a complete list.
+
+## Using a `quic.Transport`
 
 To use a custom `quic.Transport`, the function used to dial new QUIC connections can be configured:
 ```go
@@ -34,6 +35,9 @@ roundTripper := &http3.RoundTripper{
 	},
 }
 ```
+
+This gives the application more fine-grained control over the configuration of the `quic.Transport`.
+
 
 ## Using the same UDP Socket for Server and Roundtripper
 
