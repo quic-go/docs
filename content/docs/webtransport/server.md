@@ -56,3 +56,9 @@ s := webtransport.Server{
     },
 }
 ```
+
+
+## 📝 Future Work
+
+* Subprotocol Negotiation: [#132](https://github.com/quic-go/webtransport-go/issues/132)
+* Properly check Validity of the client's SETTINGS: [#106](https://github.com/quic-go/webtransport-go/issues/106)
