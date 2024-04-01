@@ -18,7 +18,7 @@ The `webtransport.Server` wraps an `http3.Server`. For more details on how to se
 
 Assume a server is running on `example.com`. This code starts an HTTP/3 server on (UDP) port 443. The server can handle regular HTTP/3 requests to `https://example.com`.
 
-To accept the Extended CONNECT request, the application needs to define an HTTP handler. In this example, we want to accept WebTransport sessions at `https://example.com/webtransport`. It is possible to reject an upgrade request by sending a non-2xx status code. Inside the handler, calling `webtransport.Server.Upgrade` accepts the WebTransport session, and it returns a `webtransport.Session`.
+To accept the Extended CONNECT request, the application needs to define an HTTP handler. In this example, we want to accept WebTransport sessions at `https://example.com/webtransport`. It is possible to reject an upgrade request by sending a non-2xx status code. Inside the handler, calling `webtransport.Server.Upgrade` accepts the [WebTransport session]({{< relref "session.md" >}}), and it returns a `webtransport.Session`.
 
 ```go
 s := webtransport.Server{
