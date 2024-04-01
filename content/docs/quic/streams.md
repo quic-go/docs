@@ -106,6 +106,27 @@ Using QUIC streams is pretty straightforward. A bidirectional stream (`quic.Stre
 A bidirectional stream is only closed once **both** the read and the write side of the stream have been either closed or reset. Only then the peer is granted a new stream according to the maximum number of concurrent streams configured via `quic.Config.MaxIncomingStreams`.
 
 
+## Stream Errors
+
+When a stream is reset (i.e. when `CancelRead` or `CancelWrite` are used), applications can communicate an error code (a 62-bit unsigned integer value) to the peer. Subsequent calls to Read and Write may return an error that can be type-asserted as a `quic.StreamError`.
+
+QUIC itself does not interpret this value; instead, it is the responsibility of the application layer to assign specific meanings to different error codes. 
+
+```go
+var streamErr *quic.StreamError
+if errors.As(err, &streamErr) {
+  errorCode := streamErr.ErrorCode
+}
+```
+
+In general, the error returned from `Read` and `Write` might not be a stream error at all: For example, the underlying QUIC connection might have been closed, which (implicitly) closes all streams as well. The error returned will then be one of the [QUIC connection errors]({{< relref "connection.md#error-assertion" >}}).
+
+
+{{< callout type="warning" >}}
+  Be aware of a potential race condition: if the read side is canceled by the receiver using one error code while the write side is simultaneously canceled by the sender with a different error code, the resulting error codes observed by each peer may not match.
+{{< /callout >}}
+
+
 ## Stream Resets and Partial Reliability
 
 When the sender cancels sending on a stream (either unidirectional or bidirectional), it immediately stops transmitting STREAM frames for that stream. This includes retransmissions: If any stream data for this stream is lost, it will not be retransmitted.
