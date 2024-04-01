@@ -691,6 +691,33 @@ Calling &lt;code>Close&lt;/code> on a &lt;code>quic.Stream&lt;/code> closes the 
 &lt;/div>
 &lt;p>&lt;code>CancelWrite&lt;/code> &lt;strong>only&lt;/strong> resets the send side of the stream. It is still possible to read from the stream until the peer closes or resets the stream. Similary, &lt;code>CancelRead&lt;/code> &lt;strong>only&lt;/strong> resets the receive side of the stream, and it is still possible to write to the stream.&lt;/p>
 &lt;p>A bidirectional stream is only closed once &lt;strong>both&lt;/strong> the read and the write side of the stream have been either closed or reset. Only then the peer is granted a new stream according to the maximum number of concurrent streams configured via &lt;code>quic.Config.MaxIncomingStreams&lt;/code>.&lt;/p>
+&lt;h2>Stream Errors&lt;span class="absolute -mt-20" id="stream-errors">&lt;/span>
+&lt;a href="#stream-errors" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>When a stream is reset (i.e. when &lt;code>CancelRead&lt;/code> or &lt;code>CancelWrite&lt;/code> are used), applications can communicate an error code (a 62-bit unsigned integer value) to the peer. Subsequent calls to Read and Write may return an error that can be type-asserted as a &lt;code>quic.StreamError&lt;/code>.&lt;/p>
+&lt;p>QUIC itself does not interpret this value; instead, it is the responsibility of the application layer to assign specific meanings to different error codes.&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">streamErr&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">StreamError&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="nx">errors&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">As&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">err&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">streamErr&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">errorCode&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">streamErr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ErrorCode&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>In general, the error returned from &lt;code>Read&lt;/code> and &lt;code>Write&lt;/code> might not be a stream error at all: For example, the underlying QUIC connection might have been closed, which (implicitly) closes all streams as well. The error returned will then be one of the &lt;a href="https://quic-go.net/docs/quic/connection/#error-assertion" >QUIC connection errors&lt;/a>.&lt;/p>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
+⚠️
+&lt;/div>&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+Be aware of a potential race condition: if the read side is canceled by the receiver using one error code while the write side is simultaneously canceled by the sender with a different error code, the resulting error codes observed by each peer may not match.
+&lt;/div>
+&lt;/div>
+&lt;/div>
 &lt;h2>Stream Resets and Partial Reliability&lt;span class="absolute -mt-20" id="stream-resets-and-partial-reliability">&lt;/span>
 &lt;a href="#stream-resets-and-partial-reliability" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>When the sender cancels sending on a stream (either unidirectional or bidirectional), it immediately stops transmitting STREAM frames for that stream. This includes retransmissions: If any stream data for this stream is lost, it will not be retransmitted.&lt;/p>
 &lt;p>Conversely, the receiver does not need to wait for all data to be delivered before indicating to the application that the stream has been reset.&lt;/p>
