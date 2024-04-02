@@ -1,5 +1,5 @@
 ---
-title: WebTransport Session
+title: Session
 toc: true
 weight: 3
 ---

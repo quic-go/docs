@@ -72,7 +72,7 @@ str, err := conn.OpenStreamSync(ctx)
 Both `OpenStream` and `OpenStreamSync` return an error when the underlying QUIC connection is closed.
 
 
-## Stream States
+## Stream States {#states}
 
 quic-go exposes three different stream abstractions: A `quic.SendStream` and a `quic.ReceiveStream`, for the two directions of unidirectional streams, and a `quic.Stream` for bidirectional streams.
 
