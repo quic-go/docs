@@ -81,3 +81,5 @@ The code snippet shows all the knobs that need to be turned to send a request in
 * Support for Extensible Priorities ([RFC 9218](https://www.rfc-editor.org/rfc/rfc9218.html)): [#3470](https://github.com/quic-go/quic-go/issues/3470)
 * Support for HTTP Trailers: [#2266](https://github.com/quic-go/quic-go/issues/2266)
 * Use [`Early-Data` header field](https://datatracker.ietf.org/doc/html/rfc8470#section-5.1) for 0-RTT requests, retry on 425 response status: [#4381](https://github.com/quic-go/quic-go/issues/4381)
+* Use `url.Error`s for all `http3.RoundTripper` errors: [#4204](https://github.com/quic-go/quic-go/issues/4202)
+* Support for 1xx Status Codes (including Early Hints, 103): [#4403](https://github.com/quic-go/quic-go/issues/4403)
