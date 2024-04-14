@@ -79,11 +79,13 @@ quic-go exposes three different stream abstractions: A `quic.SendStream` and a `
 
 ### Send Stream
 
-The `quic.SendStream` is a unidirectional stream opened by us. It implements the `io.Writer` interface. Calling `Close` closes the stream, i.e. it sends a STREAM frame with the FIN bit set. On the receiver side, this will be surfaced as an `io.EOF` returned from the `io.Reader` once all data has been consumed. 
+The `quic.SendStream` is a unidirectional stream opened by us. It implements the `io.Writer` interface. Invoking `Close` closes the stream, i.e. it sends a STREAM frame with the FIN bit set. On the receiver side, this will be surfaced as an `io.EOF` returned from the `io.Reader` once all data has been consumed. 
 
-In case the application wishes to abort sending on a `quic.SendStream` or a `quic.Stream`, it can reset the send side by calling `CancelWrite` with an application-defined error code (an unsigned 62-bit number). On the receiver side, this is surfaced as a `quic.StreamError` containing that error code on the `io.Reader`.
+If the application needs to abruptly stop sending data on a stream, it can do so by by calling `CancelWrite` with an application-defined error code (an unsigned 62-bit number). This call immediately halts data transmission; any pending data will not be retransmitted. On the receiver side, this is surfaced as a `quic.StreamError` containing that error code on `stream.Read`.
 
-Calling `CancelWrite` after `Close`, or vice versa, doesn't have any effect.
+Once `CancelWrite` has been called to abort the stream, subsequent calls to Close are ineffective (no-op) - the stream's abortive state cannot be reversed.
+
+It is valid to call `CancelWrite` after `Close`. This immediately aborts transmission of stream data. Depending on the order in which the QUIC packets are received, the receiver will either surface this a normal or an abrupt stream termination to the application.
 
 
 ### Receive Stream
