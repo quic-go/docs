@@ -28,9 +28,11 @@ jobs:
           publish_dir: ./build
           publish_branch: build
       - name: Serve the site # needed so we can run the link checker
+        env:
+          NPM_CONFIG_PREFIX: "~/.npm-global"
         run: |
           npm install -g http-server
-          http-server build -p 8080 &
+          ~/.npm-global/bin/http-server build -p 8080 &
       - name: Install filiph/linkcheck
         run: |
           wget https://github.com/filiph/linkcheck/releases/download/3.0.0/linkcheck-3.0.0-linux-x64.tar.gz
