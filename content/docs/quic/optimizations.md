@@ -29,10 +29,10 @@ Therefore, quic-go tries to increase the buffer size. The way to do this is OS-s
 
 It is recommended to increase the maximum buffer size by running:
 ```
-sysctl -w net.core.rmem_max=2500000
-sysctl -w net.core.wmem_max=2500000
+sysctl -w net.core.rmem_max=7340032
+sysctl -w net.core.wmem_max=7340032
 ```
-This command would increase the maximum send and the receive buffer size to roughly 2.5 MB. Note that these settings are not persisted across reboots.
+This command would increase the maximum send and the receive buffer size to roughly 7 MB. Note that these settings are not persisted across reboots.
 
 ### BSD
 
@@ -40,13 +40,13 @@ Taken from: https://medium.com/@CameronSparr/increase-os-udp-buffers-to-improve-
 
 > On BSD/Darwin systems you need to add about a 15% padding to the kernel limit socket buffer. Meaning if you want a 25MB buffer (8388608 bytes) you need to set the kernel limit to 26214400*1.15 = 30146560.
 
-To update the value immediately to 2.5M, type the following commands as root:
+To update the value immediately to 7 MB, type the following commands as root:
 ```sh
-sysctl -w kern.ipc.maxsockbuf=3014656
+sysctl -w kern.ipc.maxsockbuf=8441037
 ```
 Add the following lines to the `/etc/sysctl.conf` file to keep this setting across reboots:
 ```
-kern.ipc.maxsockbuf=3014656
+kern.ipc.maxsockbuf=8441037
 ```
 
 ### 📝 Open Questions
