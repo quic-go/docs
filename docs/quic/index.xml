@@ -862,8 +862,8 @@ title="Copy code"
 &lt;p>Therefore, quic-go tries to increase the buffer size. The way to do this is OS-specific, and we currently have an implementation for Linux, Windows and macOS. However, an application is only allowed to do increase the buffer size up to a maximum value set in the kernel. Unfortunately, on Linux this value is rather small, too small for high-bandwidth QUIC transfers.&lt;/p>
 &lt;h3>non-BSD&lt;span class="absolute -mt-20" id="non-bsd">&lt;/span>
 &lt;a href="#non-bsd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>It is recommended to increase the maximum buffer size by running:&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>sysctl -w net.core.rmem_max=2500000
-sysctl -w net.core.wmem_max=2500000&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>sysctl -w net.core.rmem_max=7340032
+sysctl -w net.core.wmem_max=7340032&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
 &lt;button
 class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
 title="Copy code"
@@ -873,14 +873,14 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>This command would increase the maximum send and the receive buffer size to roughly 2.5 MB. Note that these settings are not persisted across reboots.&lt;/p>
+&lt;p>This command would increase the maximum send and the receive buffer size to roughly 7 MB. Note that these settings are not persisted across reboots.&lt;/p>
 &lt;h3>BSD&lt;span class="absolute -mt-20" id="bsd">&lt;/span>
 &lt;a href="#bsd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Taken from: &lt;a href="https://medium.com/@CameronSparr/increase-os-udp-buffers-to-improve-performance-51d167bb1360" target="_blank" rel="noopener">https://medium.com/@CameronSparr/increase-os-udp-buffers-to-improve-performance-51d167bb1360&lt;/a>&lt;/p>
 &lt;blockquote>
 &lt;p>On BSD/Darwin systems you need to add about a 15% padding to the kernel limit socket buffer. Meaning if you want a 25MB buffer (8388608 bytes) you need to set the kernel limit to 26214400*1.15 = 30146560.&lt;/p>
 &lt;/blockquote>
-&lt;p>To update the value immediately to 2.5M, type the following commands as root:&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-sh" data-lang="sh">&lt;span class="line">&lt;span class="cl">sysctl -w kern.ipc.maxsockbuf&lt;span class="o">=&lt;/span>&lt;span class="m">3014656&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;p>To update the value immediately to 7 MB, type the following commands as root:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-sh" data-lang="sh">&lt;span class="line">&lt;span class="cl">sysctl -w kern.ipc.maxsockbuf&lt;span class="o">=&lt;/span>&lt;span class="m">8441037&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
 &lt;button
 class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
 title="Copy code"
@@ -891,7 +891,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;p>Add the following lines to the &lt;code>/etc/sysctl.conf&lt;/code> file to keep this setting across reboots:&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>kern.ipc.maxsockbuf=3014656&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>kern.ipc.maxsockbuf=8441037&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
 &lt;button
 class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
 title="Copy code"
