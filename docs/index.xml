@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>quic-go docs – The quic-go Protocol Suite</title><link>https://quic-go.net/docs/</link><description>Recent content in The quic-go Protocol Suite on quic-go docs</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://quic-go.net/docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Running a WebTransport Server</title><link>https://quic-go.net/docs/webtransport/server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/webtransport/server/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>quic-go docs – The quic-go Protocol Suite</title><link>https://quic-go.net/docs/</link><description>Recent content in The quic-go Protocol Suite on quic-go docs</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://quic-go.net/docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Running a Server</title><link>https://quic-go.net/docs/webtransport/server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/webtransport/server/</guid><description>
 &lt;p>When a client establishes a new WebTransport session it:&lt;/p>
 &lt;ol>
 &lt;li>First establishes an HTTP/3 connection to the server.&lt;/li>
@@ -425,6 +425,33 @@ title="Copy code"
 &lt;li>Use &lt;a href="https://datatracker.ietf.org/doc/html/rfc8470#section-5.1" target="_blank" rel="noopener">&lt;code>Early-Data&lt;/code> header field&lt;/a> for 0-RTT requests, retry on 425 response status: &lt;a href="https://github.com/quic-go/quic-go/issues/4381" target="_blank" rel="noopener">#4381&lt;/a>&lt;/li>
 &lt;li>Use &lt;code>url.Error&lt;/code>s for all &lt;code>http3.RoundTripper&lt;/code> errors: &lt;a href="https://github.com/quic-go/quic-go/issues/4202" target="_blank" rel="noopener">#4204&lt;/a>&lt;/li>
 &lt;li>Support for 1xx Status Codes (including Early Hints, 103): &lt;a href="https://github.com/quic-go/quic-go/issues/4403" target="_blank" rel="noopener">#4403&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Running a Client</title><link>https://quic-go.net/docs/webtransport/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/webtransport/client/</guid><description>
+&lt;p>To dial a WebTransport session, initialize a &lt;code>webtransport.Dialer&lt;/code>, and call the &lt;code>Dial&lt;/code> function.&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">d&lt;/span> &lt;span class="nx">webtransport&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Dialer&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// optionally, add custom headers
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kd">var&lt;/span> &lt;span class="nx">headers&lt;/span> &lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Header&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">headers&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Add&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;foo&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;bar&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">rsp&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">sess&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">d&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Dial&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;https://example.com/webtransport&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">headers&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// err is only nil if rsp.StatusCode is a 2xx
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// Handle the session. Here goes the application logic.
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>This initiates a new WebTransport session with the server by sending an Extended CONNECT request to the server.
+The server might reject this request, in which case the status code of the HTTP response will not be in the 2xx range.&lt;/p>
+&lt;p>The parameters for the underlying QUIC connection can be adjusted by setting the &lt;code>QUICConfig&lt;/code> on the &lt;code>Dialer&lt;/code>. &lt;a href="https://quic-go.net/docs/quic/datagrams/" >Datagram support&lt;/a> is required by WebTransport, and must be enabled on using &lt;code>quic.Config.EnableDatagrams&lt;/code>.&lt;/p>
+&lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
+&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>Using the same QUIC connection for WebTransport and HTTP/3: &lt;a href="https://github.com/quic-go/webtransport-go/issues/147" target="_blank" rel="noopener">#147&lt;/a>&lt;/li>
+&lt;li>Allow Optimistic Opening of Streams: &lt;a href="https://github.com/quic-go/webtransport-go/issues/136" target="_blank" rel="noopener">#136&lt;/a>&lt;/li>
+&lt;li>Subprotocol Negotiation: &lt;a href="https://github.com/quic-go/webtransport-go/issues/132" target="_blank" rel="noopener">#132&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Running a QUIC Server</title><link>https://quic-go.net/docs/quic/server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/server/</guid><description>
 &lt;h2>Using a &lt;code>quic.Transport&lt;/code>&lt;span class="absolute -mt-20" id="using-a-quictransport">&lt;/span>
 &lt;a href="#using-a-quictransport" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>The central entry point is the &lt;code>quic.Transport&lt;/code>. A &lt;code>Transport&lt;/code> manages all QUIC connections running on a single UDP socket. Since QUIC uses Connection IDs, it can demultiplex a listener (accepting incoming connections) and an arbitrary number of outgoing QUIC connections on the same UDP socket.&lt;/p>
