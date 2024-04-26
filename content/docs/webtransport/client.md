@@ -8,14 +8,15 @@ To dial a WebTransport session, initialize a `webtransport.Dialer`, and call the
 
 ```go
 var d webtransport.Dialer
+// optionally, add custom headers
 var headers http.Header
 headers.Add("foo", "bar")
-rsp, conn, err := d.Dial(ctx, "https://example.com/webtransport", headers)
+rsp, sess, err := d.Dial(ctx, "https://example.com/webtransport", headers)
 // err is only nil if rsp.StatusCode is a 2xx
-// Handle the connection. Here goes the application logic.
+// Handle the session. Here goes the application logic.
 ```
 
-This initiates a new WebTransport session with the server. It is possible to pass additional HTTP header fields to the request.
+This initiates a new WebTransport session with the server.
 
 When `Dial` is called
 
