@@ -1,5 +1,5 @@
 ---
-title: Running a WebTransport Server
+title: Running a Server
 toc: true
 weight: 1
 ---
