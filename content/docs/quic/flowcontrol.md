@@ -4,14 +4,14 @@ toc: true
 weight: 7
 ---
 
-This page outlines the flow control algorithms used by QUIC. Flow control ensures that a sender doesn't overwhem the receiver with too much data (and too many new streams), if the receiver is not able to keep up with the sender's rate. This is essential to control the resource consumption of a QUIC connection. On the other hand, misconfiguration of flow control limits often is the reason for suboptimal performance (see the [BDP section](#bdp)).
+This page outlines the flow control algorithms used by QUIC. Flow control ensures that a sender doesn't overwhelm the receiver with too much data (and too many new streams), if the receiver is not able to keep up with the sender's rate. This is essential to control the resource consumption of a QUIC connection. On the other hand, misconfiguration of flow control limits is often the reason for suboptimal performance (see the [BDP section](#bdp)).
 
 
 ## Flow Control for Data sent on Streams
 
 Flow control for data sent on streams is described in [Section 4.1 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-4.1). QUIC imposes two separate limits: 
-1. A per-stream limit, definining the maximum amount of data that can be sent on any stream.
-2. A per-connection limit, specifying the total amount of data that can sent across all streams.
+1. A per-stream limit, defining the maximum amount of data that can be sent on any stream.
+2. A per-connection limit specifying the total amount of data that can sent across all streams.
 
 The per-connection limit makes it possible to use relatively high per-stream limits, while avoiding to commit a large amount of memory. For example, a QUIC stack might configure a per-stream window of 5 MB and a per-connection limit of 10 MB. Even if the peer opens 100 streams at the same time, the maximum memory commitment is limit to 10 MB (and not 500 MB).
 
@@ -44,7 +44,7 @@ quic.Config{
 }
 ```
 
-The initial limits (`InitialStreamReceiveWindow` and `InitialConnectionReceiveWindow`) are advertised to the peer during the QUIC handshake, and apply to every new stream opened by the peer. The protocol doesn't provide a way to change these limits after completion of the handshake. 
+The initial limits (`InitialStreamReceiveWindow` and `InitialConnectionReceiveWindow`) are advertised to the peer during the QUIC handshake, and apply to every new stream opened by the peer. The protocol doesn't provide a way to change these limits after the completion of the handshake. 
 
 The maximum limits (`MaxStreamReceiveWindow` and `MaxConnectionReceiveWindow`) are the maximum sizes that the [auto-tuning algorithm](#auto-tuning) increases the limits to for a well-connected peer that is making of these limits.
 
@@ -75,7 +75,7 @@ quic.Config{
 }
 ```
 
-The QUIC protocols allows adjusting this number during the lifetime of the connection, similar to how it is possible to [adjust the receive window](#auto-tuning). Currently quic-go doesn't expose an API for that.
+The QUIC protocols allow adjusting this number during the lifetime of the connection, similar to how it is possible to [adjust the receive window](#auto-tuning). Currently, quic-go doesn't expose an API for that.
 
 These configuration flags determine the number of concurrent streams and not the total number of streams over the lifetime of a QUIC connection. Once a stream is closed and / or reset (in both directions, in the case of bidirectional streams), and all frames have been delivered to the peer, the peer is allowed to open a new stream.
 
