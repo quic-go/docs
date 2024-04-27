@@ -112,8 +112,8 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;p>More complex scenarios can be handled by manually setting the Alt-Svc header field, or by overwriting the value added by &lt;code>SetQUICHeaders&lt;/code>.&lt;/p>
-&lt;h2>Sending SETTINGS&lt;span class="absolute -mt-20" id="sending-settings">&lt;/span>
-&lt;a href="#sending-settings" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>As described in &lt;a href="https://datatracker.ietf.org/doc/html/rfc9114#section-7.2.4" target="_blank" rel="noopener">Section 7.2.4 of RFC 9114&lt;/a>, both endpoints send each other a SETTINGS frame to convey configuration parameters. For example, SETTINGS are used to enable extensions, such as the &lt;a href="https://quic-go.net/docs/http3/datagrams/" >datagram extension&lt;/a>.&lt;/p>
+&lt;h2>Sending SETTINGS&lt;span class="absolute -mt-20" id="settings">&lt;/span>
+&lt;a href="#settings" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>As described in &lt;a href="https://datatracker.ietf.org/doc/html/rfc9114#section-7.2.4" target="_blank" rel="noopener">Section 7.2.4 of RFC 9114&lt;/a>, both endpoints send each other a SETTINGS frame to convey configuration parameters. For example, SETTINGS are used to enable extensions, such as the &lt;a href="https://quic-go.net/docs/http3/datagrams/" >datagram extension&lt;/a>.&lt;/p>
 &lt;p>To allow the client to immediately make use of the settings, the SETTINGS frame is sent in &lt;a href="https://quic-go.net/docs/quic/server/#05-rtt" >0.5-RTT data&lt;/a>.&lt;/p>
 &lt;h2>0-RTT&lt;span class="absolute -mt-20" id="0-rtt">&lt;/span>
 &lt;a href="#0-rtt" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>By default, the &lt;code>http3.Server&lt;/code> enables 0-RTT support on the QUIC layer, thereby allowing clients to send requests using 0-RTT. When using a user-provided &lt;code>quic.Config&lt;/code>, 0-RTT is only enabled when the &lt;code>Allow0RTT&lt;/code> config flag is set.&lt;/p>
@@ -250,4 +250,133 @@ title="Copy code"
 &lt;li>QPACK Error Codes: &lt;a href="https://github.com/quic-go/quic-go/issues/4406" target="_blank" rel="noopener">#4406&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>HTTP Datagrams</title><link>https://quic-go.net/docs/http3/datagrams/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/http3/datagrams/</guid><description>
 &lt;p>&lt;a href="https://datatracker.ietf.org/doc/rfc9297/" target="_blank" rel="noopener">RFC 9297&lt;/a> defines how QUIC datagrams (as defined in &lt;a href="https://datatracker.ietf.org/doc/rfc9221/" target="_blank" rel="noopener">RFC 9221&lt;/a>) can be used in HTTP.&lt;/p>
-&lt;p>quic-go currently doesn&amp;rsquo;t support HTTP datagrams. This is tracked in &lt;a href="https://github.com/quic-go/quic-go/issues/3522" target="_blank" rel="noopener">#3522&lt;/a>.&lt;/p></description></item></channel></rss>
+&lt;p>All HTTP Datagrams are associated with an HTTP request. Datagrams can only be sent with an HTTP request methods that explicitly supports them. For example, the GET and POST methods can&amp;rsquo;t be used for HTTP Datagrams.&lt;/p>
+&lt;h2>On the Server Side&lt;span class="absolute -mt-20" id="on-the-server-side">&lt;/span>
+&lt;a href="#on-the-server-side" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Since HTTP Datagram support is an HTTP/3 extension, it needs to be negotiated using the &lt;a href="https://quic-go.net/docs/http3/server/#settings" >HTTP/3 SETTINGS&lt;/a> before it can be used. Since SETTINGS are sent in a unidirectional stream, it is not guaranteed that the SETTINGS are available as soon as the QUIC handshake completes.&lt;/p>
+&lt;p>For example, if a client sends a request immediately after the handshake completes and the QUIC packet containing the SETTINGS is lost, the SETTINGS will not be available until a retransmission is received.&lt;/p>
+&lt;p>To use HTTP datagrams, the server is required to check that support is actually enabled.&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">HandleFunc&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;/datagrams&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kd">func&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">w&lt;/span> &lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ResponseWriter&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">r&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Request&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">conn&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">w&lt;/span>&lt;span class="p">.(&lt;/span>&lt;span class="nx">http3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Hijacker&lt;/span>&lt;span class="p">).&lt;/span>&lt;span class="nf">Connection&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// wait for the client&amp;#39;s SETTINGS
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">select&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">case&lt;/span> &lt;span class="o">&amp;lt;-&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ReceivedSettings&lt;/span>&lt;span class="p">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">case&lt;/span> &lt;span class="o">&amp;lt;-&lt;/span>&lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">After&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">10&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Second&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// didn&amp;#39;t receive SETTINGS within 10 seconds
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">w&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WriteHeader&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">StatusBadRequest&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// check that HTTP Datagram support is enabled
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">settings&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Settings&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">!&lt;/span>&lt;span class="nx">settings&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">EnableDatagrams&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">w&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WriteHeader&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">StatusBadRequest&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// HTTP datagrams are available
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">w&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WriteHeader&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">StatusOK&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ... handle the request ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">})&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>After HTTP datagram has been verified, it is possible to &amp;ldquo;take over&amp;rdquo; the stream by type-asserting the &lt;code>http.ResponseWriter&lt;/code> to an &lt;code>http3.HTTPStreamer&lt;/code> and calling the &lt;code>HTTPStream&lt;/code> method. The returned &lt;code>http3.Stream&lt;/code> has two methods, &lt;code>SendDatagram&lt;/code> and &lt;code>ReceiveDatagram&lt;/code>, to send and receive datagrams, respectively.&lt;/p>
+&lt;p>Once &lt;code>HTTPStream&lt;/code> has been called, the stream behaves akin to a &lt;a href="https://quic-go.net/docs/quic/streams/" >QUIC Stream&lt;/a> in terms of reads, writes and stream cancellations.&lt;/p>
+&lt;p>When writing to the &lt;code>http.ResponseWriter&lt;/code>, the HTTP/3 layer applies framing using HTTP/3 DATA frames. By taking over the streams we gain access to the underlying QUIC stream: data passed to &lt;code>Write&lt;/code> is written to the stream directly, and &lt;code>Read&lt;/code> reads from the stream directly. This is a requirement for the Capsule protocol defined in &lt;a href="https://datatracker.ietf.org/doc/html/rfc9297#section-3" target="_blank" rel="noopener">section 3 of RFC 9297&lt;/a>.&lt;/p>
+&lt;p>Continuing the code sample from above:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">HandleFunc&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;/datagrams&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kd">func&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">w&lt;/span> &lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ResponseWriter&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">r&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Request&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ... check for HTTP datagram support, see above
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">w&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WriteHeader&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">StatusOK&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">str&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">w&lt;/span>&lt;span class="p">.(&lt;/span>&lt;span class="nx">http3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">HTTPStreamer&lt;/span>&lt;span class="p">).&lt;/span>&lt;span class="nf">HTTPStream&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// send an HTTP datagram
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">str&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">SendDatagram&lt;/span>&lt;span class="p">([]&lt;/span>&lt;span class="nb">byte&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;foobar&amp;#34;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ... handle error ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// receive an HTTP datagram
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">data&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">str&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ReceiveDatagram&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Background&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ... handle error ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// send data directly on the QUIC stream
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">str&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Write&lt;/span>&lt;span class="p">([]&lt;/span>&lt;span class="nb">byte&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;message&amp;#34;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">str&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Close&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">})&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h2>On the Client Side&lt;span class="absolute -mt-20" id="on-the-client-side">&lt;/span>
+&lt;a href="#on-the-client-side" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>On the client side, the client needs to use an &lt;code>http3.SingleDestinationRoundTripper&lt;/code>. It is not possible to use HTTP datagrams when using an &lt;code>http3.RoundTripper&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>http3.SingleDestinationRoundTripper&lt;/code> manages a single QUIC connection to a remote server.&lt;/p>
+&lt;p>The client is required to check that the server enabled HTTP datagrams support by checking the SETTINGS:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... dial a quic.Connection to the target server
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// make sure to set the &amp;#34;h3&amp;#34; ALPN
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">rt&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">http3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">SingleDestinationRoundTripper&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Connection&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">qconn&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">EnableDatagrams&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">conn&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">rt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Start&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// wait for the server&amp;#39;s SETTINGS
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="k">select&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">case&lt;/span> &lt;span class="o">&amp;lt;-&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ReceivedSettings&lt;/span>&lt;span class="p">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">case&lt;/span> &lt;span class="o">&amp;lt;-&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Context&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="nf">Done&lt;/span>&lt;span class="p">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// connection closed
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">settings&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Settings&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="p">!&lt;/span>&lt;span class="nx">settings&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">EnableDatagrams&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// no datagram support
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>Since an HTTP/3 server can &lt;a href="https://quic-go.net/docs/http3/server/#settings" >send SETTINGS&lt;/a> in 0.5-RTT data, the SETTINGS are usually available right after completion of the QUIC handshake (barring packet loss, or an unoptimized HTTP/3 server implementation).&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">str&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">rt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">OpenRequestStream&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... handle error ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// send the HTTP request
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">err&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">str&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">SendRequestHeader&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">req&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... handle error ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// It now takes (at least) 1 RTT until we receive the server&amp;#39;s HTTP response.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// We can start sending HTTP datagrams now.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="k">go&lt;/span> &lt;span class="kd">func&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// send an HTTP datagram
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">str&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">SendDatagram&lt;/span>&lt;span class="p">([]&lt;/span>&lt;span class="nb">byte&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;foobar&amp;#34;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ... handle error ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// receive an HTTP datagram
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">data&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">str&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ReceiveDatagram&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Background&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ... handle error ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">}()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// read the server&amp;#39;s HTTP response
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">rsp&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">str&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ReadResponse&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... handle error ...
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>The &lt;code>SingleDestinationRoundTripper&lt;/code> splits the sending of the HTTP request and the receiving of the HTTP response into two separate API calls (compare that to the standard library&amp;rsquo;s &lt;code>RoundTrip&lt;/code> function). The reason is that sending an HTTP request and receiving the HTTP response from the server takes (at least) one network roundtrip. RFC 9297 allows the sending of HTTP datagrams as soon as the request has been sent.&lt;/p></description></item></channel></rss>
