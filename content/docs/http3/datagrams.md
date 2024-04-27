@@ -68,3 +68,61 @@ http.HandleFunc("/datagrams", func(w http.ResponseWriter, r *http.Request) {
 	str.Close()
 })
 ```
+
+## On the Client Side
+
+On the client side, the client needs to use an `http3.SingleDestinationRoundTripper`. It is not possible to use HTTP datagrams when using an `http3.RoundTripper`.
+
+The `http3.SingleDestinationRoundTripper` manages a single QUIC connection to a remote server.
+
+The client is required to check that the server enabled HTTP datagrams support by checking the SETTINGS:
+
+```go
+// ... dial a quic.Connection to the target server
+// make sure to set the "h3" ALPN
+rt := &http3.SingleDestinationRoundTripper{
+	Connection:      qconn,
+	EnableDatagrams: true,
+}
+conn := rt.Start()
+// wait for the server's SETTINGS
+select {
+case <-conn.ReceivedSettings():
+case <-conn.Context().Done():
+	// connection closed
+	return
+}
+settings := conn.Settings()
+if !settings.EnableDatagrams {
+	// no datagram support
+	return
+}
+```
+
+Since an HTTP/3 server can [send SETTINGS]({{< relref "server.md#settings" >}}) in 0.5-RTT data, the SETTINGS are usually available right after completion of the QUIC handshake (barring packet loss, or an unoptimized HTTP/3 server implementation).
+
+```go
+str, err := rt.OpenRequestStream(ctx)
+// ... handle error ...
+
+// send the HTTP request
+err = str.SendRequestHeader(req)
+// ... handle error ...
+// It now takes (at least) 1 RTT until we receive the server's HTTP response.
+// We can start sending HTTP datagrams now.
+go func() {
+	// send an HTTP datagram
+	err := str.SendDatagram([]byte("foobar"))
+	// ... handle error ...
+
+	// receive an HTTP datagram
+	data, err := str.ReceiveDatagram(context.Background())
+	// ... handle error ...
+}()
+
+// read the server's HTTP response
+rsp, err := str.ReadResponse()
+// ... handle error ...
+```
+
+The `SingleDestinationRoundTripper` splits the sending of the HTTP request and the receiving of the HTTP response into two separate API calls (compare that to the standard library's `RoundTrip` function). The reason is that sending an HTTP request and receiving the HTTP response from the server takes (at least) one network roundtrip. RFC 9297 allows the sending of HTTP datagrams as soon as the request has been sent.
