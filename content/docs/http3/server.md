@@ -91,7 +91,7 @@ server := http3.Server{
 
 More complex scenarios can be handled by manually setting the Alt-Svc header field, or by overwriting the value added by `SetQUICHeaders`.
 
-## Sending SETTINGS
+## Sending SETTINGS {#settings}
 
 As described in [Section 7.2.4 of RFC 9114](https://datatracker.ietf.org/doc/html/rfc9114#section-7.2.4), both endpoints send each other a SETTINGS frame to convey configuration parameters. For example, SETTINGS are used to enable extensions, such as the [datagram extension]({{< relref "datagrams.md" >}}).
 
