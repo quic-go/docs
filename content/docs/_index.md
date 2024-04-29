@@ -17,7 +17,7 @@ It is used by a wide variaty of users, see the [README](https://github.com/quic-
 
 ## HTTP/3
 
-quic-go also has support for HTTP/3 ([RFC 9114](https://datatracker.ietf.org/doc/html/rfc9114)) and basic support for QPACK ([RFC 9204](https://datatracker.ietf.org/doc/html/rfc9204)).
+quic-go also has support for HTTP/3 ([RFC 9114](https://datatracker.ietf.org/doc/html/rfc9114)), including QPACK ([RFC 9204](https://datatracker.ietf.org/doc/html/rfc9204)) and HTTP Datagrams ([RFC 9297](https://datatracker.ietf.org/doc/html/rfc9297)).
 
 With this package, it is possible to run a Go server that serves HTTP/1.1, HTTP/2 and HTTP/3.
 
