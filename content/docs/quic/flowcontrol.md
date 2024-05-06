@@ -4,7 +4,7 @@ toc: true
 weight: 7
 ---
 
-This page outlines the flow control algorithms used by QUIC. Flow control ensures that a sender doesn't overwhelm the receiver with too much data (and too many new streams), if the receiver is not able to keep up with the sender's rate. This is essential to control the resource consumption of a QUIC connection. On the other hand, misconfiguration of flow control limits is often the reason for suboptimal performance (see the [BDP section](#bdp)).
+This page outlines the flow control algorithms used by QUIC. Flow control ensures that a sender doesn't overwhelm the receiver with too much data (and too many new streams), if the receiver is not able to keep up with the sender's rate. This is essential to control the resource consumption of a QUIC connection. On the other hand, misconfiguration of flow control limits often is the reason for suboptimal performance (see the [BDP section](#bdp)).
 
 
 ## Flow Control for Data sent on Streams
