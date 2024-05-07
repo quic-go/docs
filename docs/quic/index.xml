@@ -727,11 +727,11 @@ Be aware of a potential race condition: if the read side is canceled by the rece
 &lt;li>Stream Priorities: &lt;a href="https://github.com/quic-go/quic-go/issues/437" target="_blank" rel="noopener">#437&lt;/a>&lt;/li>
 &lt;li>QUIC &lt;a href="https://datatracker.ietf.org/doc/draft-ietf-quic-reliable-stream-reset/" target="_blank" rel="noopener">Reliable Stream Reset&lt;/a> extension: &lt;a href="https://github.com/quic-go/quic-go/issues/4139" target="_blank" rel="noopener">#4139&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Flow Control</title><link>https://quic-go.net/docs/quic/flowcontrol/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/flowcontrol/</guid><description>
-&lt;p>This page outlines the flow control algorithms used by QUIC. Flow control ensures that a sender doesn&amp;rsquo;t overwhem the receiver with too much data (and too many new streams), if the receiver is not able to keep up with the sender&amp;rsquo;s rate. This is essential to control the resource consumption of a QUIC connection. On the other hand, misconfiguration of flow control limits often is the reason for suboptimal performance (see the &lt;a href="#bdp" >BDP section&lt;/a>).&lt;/p>
+&lt;p>This page outlines the flow control algorithms used by QUIC. Flow control ensures that a sender doesn&amp;rsquo;t overwhelm the receiver with too much data (and too many new streams), if the receiver is not able to keep up with the sender&amp;rsquo;s rate. This is essential to control the resource consumption of a QUIC connection. On the other hand, misconfiguration of flow control limits often is the reason for suboptimal performance (see the &lt;a href="#bdp" >BDP section&lt;/a>).&lt;/p>
 &lt;h2>Flow Control for Data sent on Streams&lt;span class="absolute -mt-20" id="flow-control-for-data-sent-on-streams">&lt;/span>
 &lt;a href="#flow-control-for-data-sent-on-streams" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Flow control for data sent on streams is described in &lt;a href="https://datatracker.ietf.org/doc/html/rfc9000#section-4.1" target="_blank" rel="noopener">Section 4.1 of RFC 9000&lt;/a>. QUIC imposes two separate limits:&lt;/p>
 &lt;ol>
-&lt;li>A per-stream limit, definining the maximum amount of data that can be sent on any stream.&lt;/li>
+&lt;li>A per-stream limit, defining the maximum amount of data that can be sent on any stream.&lt;/li>
 &lt;li>A per-connection limit, specifying the total amount of data that can sent across all streams.&lt;/li>
 &lt;/ol>
 &lt;p>The per-connection limit makes it possible to use relatively high per-stream limits, while avoiding to commit a large amount of memory. For example, a QUIC stack might configure a per-stream window of 5 MB and a per-connection limit of 10 MB. Even if the peer opens 100 streams at the same time, the maximum memory commitment is limit to 10 MB (and not 500 MB).&lt;/p>
@@ -791,7 +791,7 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>The QUIC protocols allows adjusting this number during the lifetime of the connection, similar to how it is possible to &lt;a href="#auto-tuning" >adjust the receive window&lt;/a>. Currently quic-go doesn&amp;rsquo;t expose an API for that.&lt;/p>
+&lt;p>The QUIC protocol allows adjusting this number during the lifetime of the connection, similar to how it is possible to &lt;a href="#auto-tuning" >adjust the receive window&lt;/a>. Currently, quic-go doesn&amp;rsquo;t expose an API for that.&lt;/p>
 &lt;p>These configuration flags determine the number of concurrent streams and not the total number of streams over the lifetime of a QUIC connection. Once a stream is closed and / or reset (in both directions, in the case of bidirectional streams), and all frames have been delivered to the peer, the peer is allowed to open a new stream.&lt;/p>
 &lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
 &lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
