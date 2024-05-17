@@ -28,6 +28,11 @@ wasirun ./myapp
 It is currently not possible to use `wasmedge`, since it [doesn't allow](https://github.com/dispatchrun/net/issues/34) sending of UDP datagrams.
 
 
+## Limitations
+
+It is not possible to use convenience functions like `quic.ListenAddr` and `quic.DialAddr`, since these functions create the UDP socket using the standard library `net` package.
+
+
 ## 📝 Future Work
 
 * Improve WASM support: [#4524](https://github.com/quic-go/quic-go/issues/4524)
