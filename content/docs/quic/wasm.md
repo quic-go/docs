@@ -26,3 +26,8 @@ wasirun ./myapp
 ```
 
 It is currently not possible to use `wasmedge`, since it [doesn't allow](https://github.com/dispatchrun/net/issues/34) sending of UDP datagrams.
+
+
+## 📝 Future Work
+
+* Improve WASM support: [#4524](https://github.com/quic-go/quic-go/issues/4524)
