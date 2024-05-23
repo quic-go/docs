@@ -1547,4 +1547,40 @@ title="Copy code"
 &lt;li>qlog support for HTTP/3: &lt;a href="https://github.com/quic-go/quic-go/issues/4124" target="_blank" rel="noopener">#4124&lt;/a>&lt;/li>
 &lt;li>move to a different JSON serializer: &lt;a href="https://github.com/quic-go/quic-go/issues/3373" target="_blank" rel="noopener">#3373&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Prometheus Metrics</title><link>https://quic-go.net/docs/quic/metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/metrics/</guid><description>
-&lt;p>It would be nice if it was easier to monitor quic-go internals using Prometheus. Currently this is not yet possible. Work on Prometheus integration is tracked in &lt;a href="https://github.com/quic-go/quic-go/issues/4077" target="_blank" rel="noopener">#4077&lt;/a>.&lt;/p></description></item></channel></rss>
+&lt;p>It would be nice if it was easier to monitor quic-go internals using Prometheus. Currently this is not yet possible. Work on Prometheus integration is tracked in &lt;a href="https://github.com/quic-go/quic-go/issues/4077" target="_blank" rel="noopener">#4077&lt;/a>.&lt;/p></description></item><item><title>WASM</title><link>https://quic-go.net/docs/quic/wasm/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/wasm/</guid><description>
+&lt;p>It is possible to compile an application using quic-go to WASM.&lt;/p>
+&lt;p>Since the &lt;code>wasip1&lt;/code> API &lt;a href="https://go.dev/blog/wasi" target="_blank" rel="noopener">lacks support&lt;/a> for network sockets, it&amp;rsquo;s necessary to create the UDP socket using the &lt;a href="https://github.com/dispatchrun/net" target="_blank" rel="noopener">WASI socket extension&lt;/a>.&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="s">&amp;#34;github.com/stealthrocket/net/wasip1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">wasip1&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ListenPacket&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;udp&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;127.0.0.1:443&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... handle error ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">ln&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Listen&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">&amp;gt;,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">&amp;gt;)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>Note that &lt;code>wasip1.ListenPacket&lt;/code> returns a &lt;code>net.PacketConn&lt;/code>, not a &lt;code>*net.UDPConn&lt;/code>, which means that quic-go won&amp;rsquo;t be able to use &lt;a href="https://quic-go.net/docs/quic/optimizations/" >optimizations&lt;/a> like GSO or ECN.&lt;/p>
+&lt;p>The code can then be compiled to wasm and run using &lt;a href="https://github.com/dispatchrun/wasi-go" target="_blank" rel="noopener">&lt;code>wasirun&lt;/code>&lt;/a>:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-sh" data-lang="sh">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">GOOS&lt;/span>&lt;span class="o">=&lt;/span>wasip1 &lt;span class="nv">GOARCH&lt;/span>&lt;span class="o">=&lt;/span>wasm go build -o myapp
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">wasirun ./myapp&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>It is currently not possible to use &lt;code>wasmedge&lt;/code>, since it &lt;a href="https://github.com/dispatchrun/net/issues/34" target="_blank" rel="noopener">doesn&amp;rsquo;t allow&lt;/a> sending of UDP datagrams.&lt;/p>
+&lt;h2>Limitations&lt;span class="absolute -mt-20" id="limitations">&lt;/span>
+&lt;a href="#limitations" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>It is not possible to use convenience functions like &lt;code>quic.ListenAddr&lt;/code> and &lt;code>quic.DialAddr&lt;/code>, since these functions create the UDP socket using the standard library &lt;code>net&lt;/code> package.&lt;/p>
+&lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
+&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>Improve WASM support: &lt;a href="https://github.com/quic-go/quic-go/issues/4524" target="_blank" rel="noopener">#4524&lt;/a>&lt;/li>
+&lt;/ul></description></item></channel></rss>
