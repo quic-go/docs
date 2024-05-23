@@ -19,7 +19,7 @@ ln, err := quic.Listen(conn, <tls.Config>, <quic.Config>)
 
 Note that `wasip1.ListenPacket` returns a `net.PacketConn`, not a `*net.UDPConn`, which means that quic-go won't be able to use [optimizations]({{< relref path="optimizations.md" >}}) like GSO or ECN.
 
-The code can then be compiled to wasm and run using `wasirun`:
+The code can then be compiled to wasm and run using [`wasirun`](https://github.com/dispatchrun/wasi-go):
 ```sh
 GOOS=wasip1 GOARCH=wasm go build -o myapp
 wasirun ./myapp
