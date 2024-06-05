@@ -11,11 +11,11 @@ qlog files can be processed by a number of 3rd-party tools. [qvis](https://qvis.
 ## Events associated with a Connection
 
 qlog can be activated by setting the `Tracer` callback on the `Config`. It is called as soon as quic-go decides to start the QUIC handshake for a new connection.
-`qlog.DefaultTracer` provides a tracer implementation which writes qlog files to a directory specified by the `QLOGDIR` environment variable, if set.
+`qlog.DefaultConnectionTracer` provides a connection tracer implementation which writes qlog files to a directory specified by the `QLOGDIR` environment variable, if set.
 The default qlog tracer can be used like this:
 ```go
 quic.Config{
-  Tracer: qlog.DefaultTracer,
+  Tracer: qlog.DefaultConnectionTracer,
 }
 ```
 
