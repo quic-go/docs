@@ -4,4 +4,37 @@ toc: true
 weight: 91
 ---
 
-It would be nice if it was easier to monitor quic-go internals using Prometheus. Currently this is not yet possible. Work on Prometheus integration is tracked in [#4077](https://github.com/quic-go/quic-go/issues/4077).
+quic-go can expose metrics via Prometheus, providing a comprehensive overview of its operation. By leveraging the Tracer and ConnectionTracer interfaces, quic-go captures various events. These are the same interfaces used for [qlog event logging]({{< relref "qlog.md" >}}).
+
+## Enabling Metrics Collection
+
+In your application, expose a Grafana endpoint on `http://localhost:5001/prometheus`:
+```go
+import "github.com/prometheus/client_golang/prometheus/promhttp"
+
+go func() {
+    http.Handle("/prometheus", promhttp.Handler())
+    log.Fatal(http.ListenAndServe("localhost:5001", nil))
+}()
+```
+
+Event that don't belong to any QUIC connection, such as the sending of Version Negotiation packets, are captured on the `Transport.Tracer`:
+
+```go
+quic.Transport{
+	Tracer: metrics.NewTracer(),
+}
+```
+
+Events belonging to a QUIC connection, such as the reason a connection was closed, are captured on the `ConnectionTracer` returned from `Config.Tracer`.
+
+```go
+quic.Config{
+	Tracer: metrics.DefaultConnectionTracer,
+}
+```
+
+
+## 📝 Future Work
+
+* Define more metrics: [#4554](https://github.com/quic-go/quic-go/issues/4554)
