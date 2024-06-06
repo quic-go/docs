@@ -460,6 +460,46 @@ title="Copy code"
 &lt;li>Happy Eyeballs for &lt;code>DialAddr&lt;/code>: &lt;a href="https://github.com/quic-go/quic-go/issues/3772" target="_blank" rel="noopener">#3772&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>QUIC Connection</title><link>https://quic-go.net/docs/quic/connection/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/connection/</guid><description>
 &lt;p>The &lt;code>quic.Connection&lt;/code> is the central object to send and receive application data. Data is not sent directly on the connection, but either on &lt;a href="https://quic-go.net/docs/quic/streams/" >streams&lt;/a>, or (optionally) in so-called &lt;a href="https://quic-go.net/docs/quic/datagrams/" >datagrams&lt;/a>.&lt;/p>
+&lt;h2>Using the Connection Context&lt;span class="absolute -mt-20" id="conn-context">&lt;/span>
+&lt;a href="#conn-context" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>When a new QUIC connection is established, a number of callbacks might be called during the different stages of the QUIC handshake. Among those are:&lt;/p>
+&lt;ul>
+&lt;li>TLS configuration callbacks, e.g. &lt;code>tls.Config.GetConfigForClient&lt;/code>, &lt;code>tls.Config.GetCertificate&lt;/code> and &lt;code>tls.Config.GetClientCertificate&lt;/code>&lt;/li>
+&lt;li>QUIC connection tracer configuration (using &lt;code>quic.Config.Tracer&lt;/code>), used for configuring &lt;a href="https://quic-go.net/docs/quic/qlog/" >qlog event logging&lt;/a>, among others&lt;/li>
+&lt;/ul>
+&lt;p>Applications can identify which QUIC connection these callbacks are called for by attaching values to the context using &lt;code>Transport.ConnContext&lt;/code> (for incoming connections) and the context passed to &lt;code>Dial&lt;/code> (for outgoing connections).&lt;/p>
+&lt;p>For example:&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">tr&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Transport&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ConnContext&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="kd">func&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Context&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Context&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// In practice, generate an identifier that&amp;#39;s unique to this one connection,
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// for example by incrementing a counter.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">return&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WithValue&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;foo&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;bar&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">ln&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">tr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Listen&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">GetConfigForClient&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="kd">func&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">info&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ClientHelloInfo&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// this context has a key &amp;#34;foo&amp;#34; with value &amp;#34;bar&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">_&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">info&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Context&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">},&lt;/span> &lt;span class="kc">nil&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">ln&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Accept&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// this context has a key &amp;#34;foo&amp;#34; with value &amp;#34;bar&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">_&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Context&lt;/span>&lt;span class="p">()&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>The context passed to &lt;code>ConnContext&lt;/code> is closed once the QUIC connection is closed, or if the handshake fails for any reason.
+This allows applications to clean up state that might they might have created in the &lt;code>ConnContext&lt;/code> callback (e.g. by using &lt;code>context.AfterFunc&lt;/code>).&lt;/p>
 &lt;h2>Closing a Connection&lt;span class="absolute -mt-20" id="closing">&lt;/span>
 &lt;a href="#closing" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>At any point during the connection, a &lt;code>quic.Connection&lt;/code> can be closed by calling &lt;code>CloseWithError&lt;/code>:&lt;/p>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">CloseWithError&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mh">0x42&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;I don&amp;#39;t want to talk to you anymore 🙉&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
@@ -986,7 +1026,7 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>The &lt;code>context.Context&lt;/code> passed to this callback is never closed, but it carries a &lt;code>quic.ConnectionTracingKey&lt;/code> value. This value is also set on the context returned from &lt;code>Connection.Context&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>context.Context&lt;/code> passed to this callback is never closed, and is derived from the context returned from &lt;a href="https://quic-go.net/docs/quic/connection/#conn-context" >&lt;code>quic.Config.ConnContext&lt;/code>&lt;/a>.&lt;/p>
 &lt;p>It is valid to return &lt;code>nil&lt;/code> for the &lt;code>*logging.ConnectionTracer&lt;/code> from this callback. In this case, qlogging will be disabled for this connection.&lt;/p>
 &lt;h2>Events not associated with a Connection&lt;span class="absolute -mt-20" id="events-not-associated-with-a-connection">&lt;/span>
 &lt;a href="#events-not-associated-with-a-connection" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>When listening for QUIC packets on a UDP socket, there are a couple of events that can happen before an incoming packet can be associated with a QUIC connection. For example, the QUIC packet header might be invalid, forcing us to drop the packet. Or the server might be overloaded and reject a new connection attempt.&lt;/p>
