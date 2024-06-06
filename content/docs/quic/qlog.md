@@ -32,7 +32,7 @@ quic.Config{
 }
 ```
 
-The `context.Context` passed to this callback is never closed, but it carries a `quic.ConnectionTracingKey` value. This value is also set on the context returned from `Connection.Context`.
+The `context.Context` passed to this callback is never closed, and is derived from the context returned from [`quic.Config.ConnContext`]({{< relref path="connection.md#conn-context" >}}).
 
 It is valid to return `nil` for the `*logging.ConnectionTracer` from this callback. In this case, qlogging will be disabled for this connection.
 

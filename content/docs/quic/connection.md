@@ -7,6 +7,43 @@ weight: 4
 The `quic.Connection` is the central object to send and receive application data. Data is not sent directly on the connection, but either on [streams]({{< relref "streams.md" >}}), or (optionally) in so-called [datagrams]({{< relref "datagrams.md" >}}).
 
 
+## Using the Connection Context {#conn-context}
+
+When a new QUIC connection is established, a number of callbacks might be called during the different stages of the QUIC handshake. Among those are:
+* TLS configuration callbacks, e.g. `tls.Config.GetConfigForClient`, `tls.Config.GetCertificate` and `tls.Config.GetClientCertificate`
+* QUIC connection tracer configuration (using `quic.Config.Tracer`), used for configuring [qlog event logging]({{< relref "qlog.md" >}}), among others
+
+Applications can identify which QUIC connection these callbacks are called for by attaching values to the context using `Transport.ConnContext` (for incoming connections) and the context passed to `Dial` (for outgoing connections).
+
+For example:
+```go
+tr := quic.Transport{
+  ConnContext: func(ctx context.Context) context.Context {
+    // In practice, generate an identifier that's unique to this one connection,
+    // for example by incrementing a counter.
+    return context.WithValue(ctx, "foo", "bar")
+  }
+}
+
+ln, err := tr.Listen(&tls.Config{
+  GetConfigForClient: func(info *tls.ClientHelloInfo) *tls.Config {
+    // this context has a key "foo" with value "bar"
+    _ = info.Context()
+    return <tls.Config>
+  }
+}, nil)
+// ... error handling
+conn, err := ln.Accept()
+// ... error handling
+
+// this context has a key "foo" with value "bar"
+_ = conn.Context()
+```
+
+The context passed to `ConnContext` is closed once the QUIC connection is closed, or if the handshake fails for any reason.
+This allows applications to clean up state that might they might have created in the `ConnContext` callback (e.g. by using `context.AfterFunc`).
+
+
 ## Closing a Connection {#closing}
 
 At any point during the connection, a `quic.Connection` can be closed by calling `CloseWithError`:
