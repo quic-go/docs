@@ -117,9 +117,9 @@ title="Copy code"
 &lt;p>To allow the client to immediately make use of the settings, the SETTINGS frame is sent in &lt;a href="https://quic-go.net/docs/quic/server/#05-rtt" >0.5-RTT data&lt;/a>.&lt;/p>
 &lt;h2>0-RTT&lt;span class="absolute -mt-20" id="0-rtt">&lt;/span>
 &lt;a href="#0-rtt" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>By default, the &lt;code>http3.Server&lt;/code> enables 0-RTT support on the QUIC layer, thereby allowing clients to send requests using 0-RTT. When using a user-provided &lt;code>quic.Config&lt;/code>, 0-RTT is only enabled when the &lt;code>Allow0RTT&lt;/code> config flag is set.&lt;/p>
-&lt;p>An &lt;code>http.Handler&lt;/code> can determine if a request was likely sent in 0-RTT by examining the &lt;code>tls.ConnectionState&lt;/code> associated with the request.&lt;/p>
+&lt;p>An &lt;code>http.Handler&lt;/code> can determine if a request was received before completion of the handshake by examining the &lt;code>tls.ConnectionState&lt;/code> associated with the request.&lt;/p>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">func&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">w&lt;/span> &lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ResponseWriter&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">r&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Request&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">wasLikely0RTT&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="p">!&lt;/span>&lt;span class="nx">r&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">TLS&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">HandshakeComplete&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">wasPotentiallyReplayed&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="p">!&lt;/span>&lt;span class="nx">r&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">TLS&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">HandshakeComplete&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
 &lt;button
 class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
@@ -130,13 +130,13 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-blue-200 bg-blue-100 text-blue-900 dark:border-blue-200/30 dark:bg-blue-900/30 dark:text-blue-200">
 &lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
-⚠️
+ℹ️
 &lt;/div>&lt;/div>
 &lt;div class="w-full min-w-0 leading-7">
 &lt;div class="mt-6 leading-7 first:mt-0">
-This is not a 100% reliable way of telling if a request was (fully or partially) sent in 0-RTT data. The &lt;code>tls.ConnectionState&lt;/code> is obtained from the &lt;code>quic.Connection&lt;/code> when the request stream is accepted. There&amp;rsquo;s a race condition here: The QUIC STREAM frames might have been sent in 0-RTT, but the handshake could have completed before the HTTP/3 was able to accept the stream.
+As soon as the QUIC handshake completes, it is certain that any HTTP requests sent on the connection were not replayed, even if they were sent in 0-RTT data.
 &lt;/div>
 &lt;/div>
 &lt;/div>
