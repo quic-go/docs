@@ -21,7 +21,7 @@ tr := &quic.Transport{
 }
 ```
 
-As a rule of thumb, it is only necessary to create separate `quic.Transport`s when listening on multiple UPD ports, or when binding sockets to different network interfaces.
+As a rule of thumb, it is only necessary to create separate `quic.Transport`s when listening on multiple UDP ports, or when binding sockets to different network interfaces.
 
 {{< callout type="warning" >}}
   Keep in mind that to achieve decent transfer performance, you might need to increase the kernel's [UDP send and receive buffer]({{< relref path="optimizations.md#udp-buffer-sizes" >}}) size.
