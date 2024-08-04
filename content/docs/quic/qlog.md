@@ -4,7 +4,7 @@ toc: true
 weight: 90
 ---
 
-quic-go logs a wide range of events defined in [draft-ietf-quic-qlog-quic-events](https://datatracker.ietf.org/doc/draft-ietf-quic-qlog-quic-events/), providing comprehensive insights in the internals of a QUIC connection. 
+quic-go logs a wide range of events defined in [draft-ietf-quic-qlog-quic-events](https://datatracker.ietf.org/doc/draft-ietf-quic-qlog-quic-events/), providing comprehensive insights in the internals of a QUIC connection. quic-go uses the streaming log format using JSON Text Sequences (JSON-SEQ), as defined in [draft-ietf-quic-qlog-main-schema](https://www.ietf.org/archive/id/draft-ietf-quic-qlog-main-schema-09.html#section-11.2).
 
 qlog files can be processed by a number of 3rd-party tools. [qvis](https://qvis.quictools.info/) has proven very useful for debugging all kinds of QUIC connection failures.
 
@@ -42,7 +42,7 @@ When listening for QUIC packets on a UDP socket, there are a couple of events th
 
 qlogging for these events can be enabled by configuring a `Tracer` on the [`Transport`]({{< relref path="transport.md" >}}):
 ```go
-f, err := os.Create("events.qlog")
+f, err := os.Create("events.sqlog")
 // ... error handling
 quic.Transport{
   Tracer: qlog.NewTracer(f),
