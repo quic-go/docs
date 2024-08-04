@@ -233,7 +233,7 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>As a rule of thumb, it is only necessary to create separate &lt;code>quic.Transport&lt;/code>s when listening on multiple UPD ports, or when binding sockets to different network interfaces.&lt;/p>
+&lt;p>As a rule of thumb, it is only necessary to create separate &lt;code>quic.Transport&lt;/code>s when listening on multiple UDP ports, or when binding sockets to different network interfaces.&lt;/p>
 &lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
 &lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
 ⚠️
