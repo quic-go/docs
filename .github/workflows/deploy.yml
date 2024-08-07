@@ -27,18 +27,14 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
           publish_branch: build
-      - name: Serve the site # needed so we can run the link checker
-        env:
-          NPM_CONFIG_PREFIX: "~/.npm-global"
-        run: |
-          npm install -g http-server
-          ~/.npm-global/bin/http-server build -p 8080 &
-      - name: Install filiph/linkcheck
-        run: |
-          wget https://github.com/filiph/linkcheck/releases/download/3.0.0/linkcheck-3.0.0-linux-x64.tar.gz
-          tar xfz linkcheck-3.0.0-linux-x64.tar.gz --strip-components=1
-      - name: Run linkcheck
-        run: ./linkcheck -e -d --check-anchors --skip-file .github/workflows/linkcheck-skipfile.txt http://localhost:8080
+      - name: Copy linkchecker skipfile
+        run: cp .github/workflows/linkcheck-skipfile.txt .lycheeignore
+      - name: Link Checker
+        id: lychee
+        uses: lycheeverse/lychee-action@2b973e86fc7b1f6b36a93795fe2c9c6ae1118621 # v1.10.0
+        with:
+          args: ./build
+          fail: true
       - uses: burnett01/rsync-deployments@796cf0d5e4b535745ce49d7429f77cf39e25ef39 # v7.0.1
         if: ${{ github.event_name == 'push' }}
         with:
