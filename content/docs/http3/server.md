@@ -119,4 +119,3 @@ func(w http.ResponseWriter, r *http.Request) {
 * Correctly deal with 0-RTT and HTTP/3 extensions: [#3855](https://github.com/quic-go/quic-go/issues/3855)
 * Support for Extensible Priorities ([RFC 9218](https://www.rfc-editor.org/rfc/rfc9218.html)): [#3470](https://github.com/quic-go/quic-go/issues/3470)
 * Support for httptrace: [#3342](https://github.com/quic-go/quic-go/issues/3342)
-* Support for HTTP Trailers: [#2266](https://github.com/quic-go/quic-go/issues/2266)
