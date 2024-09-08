@@ -211,7 +211,6 @@ As soon as the QUIC handshake completes, it is certain that any HTTP requests se
 &lt;li>Correctly deal with 0-RTT and HTTP/3 extensions: &lt;a href="https://github.com/quic-go/quic-go/issues/3855" target="_blank" rel="noopener">#3855&lt;/a>&lt;/li>
 &lt;li>Support for Extensible Priorities (&lt;a href="https://www.rfc-editor.org/rfc/rfc9218.html" target="_blank" rel="noopener">RFC 9218&lt;/a>): &lt;a href="https://github.com/quic-go/quic-go/issues/3470" target="_blank" rel="noopener">#3470&lt;/a>&lt;/li>
 &lt;li>Support for httptrace: &lt;a href="https://github.com/quic-go/quic-go/issues/3342" target="_blank" rel="noopener">#3342&lt;/a>&lt;/li>
-&lt;li>Support for HTTP Trailers: &lt;a href="https://github.com/quic-go/quic-go/issues/2266" target="_blank" rel="noopener">#2266&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Transport</title><link>https://quic-go.net/docs/quic/transport/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/transport/</guid><description>
 &lt;h2>Initializing a Transport&lt;span class="absolute -mt-20" id="initializing-a-transport">&lt;/span>
 &lt;a href="#initializing-a-transport" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>The central entrypoint into quic-go is the &lt;code>quic.Transport&lt;/code>. It used both when running a QUIC server and when dialing QUIC connections.&lt;/p>
@@ -421,7 +420,6 @@ title="Copy code"
 &lt;li>qlog Support: &lt;a href="https://github.com/quic-go/quic-go/issues/4124" target="_blank" rel="noopener">#4124&lt;/a>&lt;/li>
 &lt;li>Happy Eyeballs Support: &lt;a href="https://github.com/quic-go/quic-go/issues/3755" target="_blank" rel="noopener">#3755&lt;/a>&lt;/li>
 &lt;li>Support for Extensible Priorities (&lt;a href="https://www.rfc-editor.org/rfc/rfc9218.html" target="_blank" rel="noopener">RFC 9218&lt;/a>): &lt;a href="https://github.com/quic-go/quic-go/issues/3470" target="_blank" rel="noopener">#3470&lt;/a>&lt;/li>
-&lt;li>Support for HTTP Trailers: &lt;a href="https://github.com/quic-go/quic-go/issues/2266" target="_blank" rel="noopener">#2266&lt;/a>&lt;/li>
 &lt;li>Use &lt;a href="https://datatracker.ietf.org/doc/html/rfc8470#section-5.1" target="_blank" rel="noopener">&lt;code>Early-Data&lt;/code> header field&lt;/a> for 0-RTT requests, retry on 425 response status: &lt;a href="https://github.com/quic-go/quic-go/issues/4381" target="_blank" rel="noopener">#4381&lt;/a>&lt;/li>
 &lt;li>Use &lt;code>url.Error&lt;/code>s for all &lt;code>http3.RoundTripper&lt;/code> errors: &lt;a href="https://github.com/quic-go/quic-go/issues/4202" target="_blank" rel="noopener">#4204&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Running a Client</title><link>https://quic-go.net/docs/webtransport/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/webtransport/client/</guid><description>
