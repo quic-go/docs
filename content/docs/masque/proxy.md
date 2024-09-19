@@ -48,6 +48,10 @@ http.Handle("/masque", func(w http.ResponseWriter, r *http.Request) {
   err = proxy.Proxy(w, mreq)
   // ... error handling
 }
+
+// set up HTTP/3 server on :4443
+s := http3.Server{Addr: ":4443"}
+s.ListenAndServeTLS(<certfile>, <keyfile>)
 ```
 
 The error returned from `masque ParseRequest` is a `masque.RequestParseError`, which contains a field 'HTTPStatus'. This allows the proxy to reject
@@ -59,6 +63,9 @@ The `masque Request.Target` contains the requested target as `{target_host}:{tar
   Applications may add custom header fields to the response header, but must not call `WriteHeader` on the `http.ResponseWriter`
   The header is sent when `Proxy.Proxy` is called.
 {{< / callout >}}
+
+For more details on how to set up and configure an HTTP/3 server, see [Serving HTTP/3]({{< relref "../http3/server.md" >}}).
+
 
 ## Controlling the Socket
 
@@ -81,6 +88,7 @@ http.Handle("/masque", func(w http.ResponseWriter, r *http.Request) {
   // ... handle error ...
 }
 ```
+
 
 ## 📝 Future Work 
 
