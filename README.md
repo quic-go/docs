@@ -3,10 +3,11 @@
 This is documentation for the [quic-go.net](https://quic-go.net), the documentation website for the quic-go project, covering:
 * [quic-go](https://github.com/quic-go/quic-go) (both the QUIC and HTTP/3 layer)
 * [webtransport-go](https://github.com/quic-go/webtransport-go)
+* [masque-go](https://github.com/quic-go/masque-go)
 
 ## Version Compatibility
 
-This documentation is focused **exclusively** on the most recent releases of quic-go and webtransport-go.
+This documentation is focused **exclusively** on the most recent releases of the libraries.
 No effort is made to document older versions.
 
 ## Running locally
