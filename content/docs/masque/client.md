@@ -6,7 +6,7 @@ weight: 2
 
 ## Setting up a Proxied Connection
 
-A client needs to be configured with the same URI template as the proxy. For more information on URI templates, see the [URI Templates]({{< relref "proxy#uri-templates" >}}) section on the proxy page.
+A client needs to be configured with the same URI template as the proxy. For more information on URI templates, see [URI Templates]({{< relref "proxy#uri-templates" >}}).
 
 ```go
 t := uritemplate.MustNew("https://example.org:4443/masque?h={target_host}&p={target_port}")
@@ -37,8 +37,10 @@ if rsp.StatusCode < 200 && rsp.StatusCode > 299 {
   // The response status code and body might contain more information.
   return
 }
-// use conn to send and receive UDP packets to the target
+// use conn to send and receive UDP datagrams to the target
 ```
+
+Multiple UDP flows can be proxied over the same QUIC connection to the proxy by calling `DialAddr` and / or `Dial` multiple times on the same `Client`.
 
 ## 📝 Future Work
 
