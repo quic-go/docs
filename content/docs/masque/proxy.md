@@ -28,7 +28,7 @@ When receiving a request at the specified HTTP handler, the server decodes the U
 To run a CONNECT-UDP proxy on `https://example.org:4443` with the URI template `https://example.org:4443/masque?h={target_host}&p={target_port}`:
 
 ```go
-t, err := uritemplate.New("https://example.org:4443/masque?h={target_host}&p={target_port}")
+t := uritemplate.MustNew("https://example.org:4443/masque?h={target_host}&p={target_port}")
 // ... error handling
 var proxy masque.Proxy
 http.Handle("/masque", func(w http.ResponseWriter, r *http.Request) {

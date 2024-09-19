@@ -9,8 +9,7 @@ weight: 2
 A client needs to be configured with the same URI template as the proxy. For more information on URI templates, see the [URI Templates]({{< relref "proxy#uri-templates" >}}) section on the proxy page.
 
 ```go
-t, err := uritemplate.New("https://example.org:4443/masque?h={target_host}&p={target_port}")
-// ... handle error ...
+t := uritemplate.MustNew("https://example.org:4443/masque?h={target_host}&p={target_port}")
 cl := masque.Client{
   Template: t,
 }
