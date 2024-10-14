@@ -7,13 +7,13 @@ weight: 2
 This package provides a `http.RoundTripper` implementation that can be used on the `http.Client`:
 
 ```go
-roundTripper := &http3.RoundTripper{
+tr := &http3.Transport{
 	TLSClientConfig: &tls.Config{},  // set a TLS client config, if desired
 	QUICConfig:      &quic.Config{}, // QUIC connection options
 }
-defer roundTripper.Close()
+defer tr.Close()
 client := &http.Client{
-	Transport: roundTripper,
+	Transport: tr,
 }
 ```
 
@@ -25,7 +25,7 @@ The `http.Client` can then be used to perform HTTP requests over HTTP/3.
 To use a custom `quic.Transport`, the function used to dial new QUIC connections can be configured:
 ```go
 tr := quic.Transport{}
-roundTripper := &http3.RoundTripper{
+h3tr := &http3.Transport{
 	TLSClientConfig: &tls.Config{},  // set a TLS client config, if desired 
 	QUICConfig:      &quic.Config{}, // QUIC connection options 
 	Dial: func(ctx context.Context, addr string, tlsConf *tls.Config, quicConf *quic.Config) (quic.EarlyConnection, error) {
@@ -41,11 +41,11 @@ roundTripper := &http3.RoundTripper{
 This gives the application more fine-grained control over the configuration of the `quic.Transport`.
 
 
-## Using the same UDP Socket for Server and Roundtripper
+## Running Client and Server on the Same Socket
 
 Since QUIC demultiplexes packets based on their connection IDs, it is possible allows running a QUIC server and client on the same UDP socket. This also works when using HTTP/3: HTTP requests can be sent from the same socket that a server is listening on.
 
-To achieve this using this package, first initialize a single `quic.Transport`, and pass a `quic.EarlyListner` obtained from that transport to `http3.Server.ServeListener`, and use the `DialEarly` function of the transport as the `Dial` function for the `http3.RoundTripper`.
+To achieve this using this package, first initialize a single `quic.Transport`, and pass a `quic.EarlyListner` obtained from that transport to `http3.Server.ServeListener`, and use the `DialEarly` function of the transport as the `Dial` function for the `http3.Transport`.
 
 ## Using 0-RTT
 
@@ -59,14 +59,14 @@ It is the application's responsibility to make sure that it is actually safe to 
 
 
 ```go
-rt := &http3.RoundTripper{
+tr := &http3.Transport{
 	TLSClientConfig: &tls.Config{
 		ClientSessionCache: tls.NewLRUClientSessionCache(100),
 	},
 }
 req, err := http.NewRequest(http3.MethodGet0RTT, "https://my-server/path", nil)
 // ... handle error ...
-rt.RoundTrip(req)
+tr.RoundTrip(req)
 ```
 
 The code snippet shows all the knobs that need to be turned to send a request in 0-RTT data:
