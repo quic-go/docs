@@ -88,10 +88,9 @@ tlsConf := &tls.Config{
 // 2. Dial another connection to the same server
 conn, err := tr.DialEarly(ctx, <server address>, tlsConf, <quic.Config>)
 // ... error handling
-// Check if 0-RTT is being used
-uses0RTT := conn.ConnectionState().Used0RTT
 // If 0-RTT was used, DialEarly returned immediately.
-// Open a stream and send some application data in 0-RTT ...
+// Otherwise, the handshake is performed, and DialEarly returns when the handshake completes.
+// Open a stream and send some application data...
 str, err := conn.OpenStream()
 ```
 
