@@ -71,20 +71,19 @@ http.HandleFunc("/datagrams", func(w http.ResponseWriter, r *http.Request) {
 
 ## On the Client Side
 
-On the client side, the client needs to use an `http3.SingleDestinationRoundTripper`. It is not possible to use HTTP datagrams when using an `http3.RoundTripper`.
+On the client side, the client needs to use an `http3.ClientConn` from the `http3.Transport`. It is not possible to use HTTP datagrams when using the `Transport`'s `RoundTrip` method.
 
-The `http3.SingleDestinationRoundTripper` manages a single QUIC connection to a remote server.
+The `http3.ClientConn` manages a single QUIC connection to a remote server.
 
 The client is required to check that the server enabled HTTP datagrams support by checking the SETTINGS:
 
 ```go
 // ... dial a quic.Connection to the target server
 // make sure to set the "h3" ALPN
-rt := &http3.SingleDestinationRoundTripper{
-	Connection:      qconn,
+tr := &http3.Transport{
 	EnableDatagrams: true,
 }
-conn := rt.Start()
+conn := tr.NewClientConn(qconn)
 // wait for the server's SETTINGS
 select {
 case <-conn.ReceivedSettings():
@@ -125,4 +124,4 @@ rsp, err := str.ReadResponse()
 // ... handle error ...
 ```
 
-The `SingleDestinationRoundTripper` splits the sending of the HTTP request and the receiving of the HTTP response into two separate API calls (compare that to the standard library's `RoundTrip` function). The reason is that sending an HTTP request and receiving the HTTP response from the server takes (at least) one network roundtrip. RFC 9297 allows the sending of HTTP datagrams as soon as the request has been sent.
+The `ClientCon` splits the sending of the HTTP request and the receiving of the HTTP response into two separate API calls (compare that to the standard library's `RoundTrip` function). The reason is that sending an HTTP request and receiving the HTTP response from the server takes (at least) one network roundtrip. RFC 9297 allows the sending of HTTP datagrams as soon as the request has been sent.
