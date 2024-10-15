@@ -252,6 +252,16 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
+⚠️
+&lt;/div>&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+It is the caller&amp;rsquo;s responsibility to close QUIC connections passed to &lt;code>ServeQUICConn&lt;/code>. Specifically, closing the server does not close the connection, and &lt;code>Close&lt;/code> will block until all active requests have been served.
+&lt;/div>
+&lt;/div>
+&lt;/div>
 &lt;h2>Advertising HTTP/3 via Alt-Svc&lt;span class="absolute -mt-20" id="advertising-http3-via-alt-svc">&lt;/span>
 &lt;a href="#advertising-http3-via-alt-svc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>An HTTP/1.1 or HTTP/2 server can advertise that it is also offering the same resources on HTTP/3 using &lt;a href="https://datatracker.ietf.org/doc/html/rfc7838#section-3" target="_blank" rel="noopener">HTTP Alternative Services&lt;/a> (Alt-Svc) header field. &lt;a href="https://datatracker.ietf.org/doc/html/rfc9114#section-3.1.1" target="_blank" rel="noopener">Section 3.1.1 of RFC 9114&lt;/a> specifies how to use this field to advertise support for HTTP/3.&lt;/p>
 &lt;p>This allows HTTP clients to discover support for HTTP/3. Clients may still continue using the existing HTTP connection on top of TCP, but might decide to connect via QUIC the next time.&lt;/p>
@@ -318,9 +328,44 @@ As soon as the QUIC handshake completes, it is certain that any HTTP requests se
 &lt;/div>
 &lt;/div>
 &lt;/div>
+&lt;h2>Graceful Shutdown&lt;span class="absolute -mt-20" id="graceful-shutdown">&lt;/span>
+&lt;a href="#graceful-shutdown" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>The &lt;code>http3.Server&lt;/code> can be gracefully closed by calling the &lt;code>Shutdown&lt;/code>. The server then stops accepting new connections. Existing connections are served until all active requests have completed.&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">cancel&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WithTimeout&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Background&lt;/span>&lt;span class="p">(),&lt;/span> &lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Minute&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">defer&lt;/span> &lt;span class="nf">cancel&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">server&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Shutdown&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>On the wire, graceful shutdown is signaled by sending a GOAWAY frame. This tells clients that the server will not accept any new requests. Clients are expected to finish processing existing requests and then close the QUIC connection.&lt;/p>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-blue-200 bg-blue-100 text-blue-900 dark:border-blue-200/30 dark:bg-blue-900/30 dark:text-blue-200">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
+ℹ️
+&lt;/div>&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+Client behavior for handling GOAWAY frames is currently not implemented in quic-go yet, see &lt;a href="https://github.com/quic-go/quic-go/issues/153" target="_blank" rel="noopener">#153&lt;/a>.
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>&lt;code>Shutdown&lt;/code> returns when all active requests have been served, or when the context is canceled. In that case, all remaining active QUIC connections are closed, which abruptly terminates the remaining requests.&lt;/p>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
+⚠️
+&lt;/div>&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+As noted above, it is the caller&amp;rsquo;s responsibility to close QUIC connections passed to &lt;code>ServeQUICConn&lt;/code>. &lt;code>Shutdown&lt;/code> sends the GOAWAY frame on these connections, but it doesn&amp;rsquo;t close them. However, &lt;code>Shutdown&lt;/code> blocks until these connections are closed.
+&lt;/div>
+&lt;/div>
+&lt;/div>
 &lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
-&lt;li>Graceful shutdown: &lt;a href="https://github.com/quic-go/quic-go/issues/153" target="_blank" rel="noopener">#153&lt;/a>&lt;/li>
 &lt;li>Correctly deal with 0-RTT and HTTP/3 extensions: &lt;a href="https://github.com/quic-go/quic-go/issues/3855" target="_blank" rel="noopener">#3855&lt;/a>&lt;/li>
 &lt;li>Support for Extensible Priorities (&lt;a href="https://www.rfc-editor.org/rfc/rfc9218.html" target="_blank" rel="noopener">RFC 9218&lt;/a>): &lt;a href="https://github.com/quic-go/quic-go/issues/3470" target="_blank" rel="noopener">#3470&lt;/a>&lt;/li>
 &lt;li>Support for httptrace: &lt;a href="https://github.com/quic-go/quic-go/issues/3342" target="_blank" rel="noopener">#3342&lt;/a>&lt;/li>
