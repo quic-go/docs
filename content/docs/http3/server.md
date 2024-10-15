@@ -60,6 +60,10 @@ for {
 }
 ```
 
+{{< callout type="warning" >}}
+  It is the caller's responsibility to close QUIC connections passed to `ServeQUICConn`. Specifically, closing the server does not close the connection, and `Close` will block until all active requests have been served.
+{{< /callout >}}
+
 ## Advertising HTTP/3 via Alt-Svc
 
 An HTTP/1.1 or HTTP/2 server can advertise that it is also offering the same resources on HTTP/3 using [HTTP Alternative Services](https://datatracker.ietf.org/doc/html/rfc7838#section-3) (Alt-Svc) header field. [Section 3.1.1 of RFC 9114](https://datatracker.ietf.org/doc/html/rfc9114#section-3.1.1) specifies how to use this field to advertise support for HTTP/3.
@@ -112,10 +116,31 @@ func(w http.ResponseWriter, r *http.Request) {
   As soon as the QUIC handshake completes, it is certain that any HTTP requests sent on the connection were not replayed, even if they were sent in 0-RTT data.
 {{< /callout >}}
 
+## Graceful Shutdown
+
+The `http3.Server` can be gracefully closed by calling the `Shutdown`. The server then stops accepting new connections. Existing connections are served until all active requests have completed.
+
+```go
+ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+defer cancel()
+server.Shutdown(ctx)
+```
+
+On the wire, graceful shutdown is signaled by sending a GOAWAY frame. This tells clients that the server will not accept any new requests. Clients are expected to finish processing existing requests and then close the QUIC connection.
+
+{{< callout type="info" >}}
+  Client behavior for handling GOAWAY frames is currently not implemented in quic-go yet, see [#153](https://github.com/quic-go/quic-go/issues/153).
+{{< /callout >}}
+
+`Shutdown` returns when all active requests have been served, or when the context is canceled. In that case, all remaining active QUIC connections are closed, which abruptly terminates the remaining requests.
+
+{{< callout type="warning" >}}
+  As noted above, it is the caller's responsibility to close QUIC connections passed to `ServeQUICConn`. `Shutdown` sends the GOAWAY frame on these connections, but it doesn't close them. However, `Shutdown` blocks until these connections are closed.
+{{< /callout >}}
+
 
 ## 📝 Future Work
 
-* Graceful shutdown: [#153](https://github.com/quic-go/quic-go/issues/153)
 * Correctly deal with 0-RTT and HTTP/3 extensions: [#3855](https://github.com/quic-go/quic-go/issues/3855)
 * Support for Extensible Priorities ([RFC 9218](https://www.rfc-editor.org/rfc/rfc9218.html)): [#3470](https://github.com/quic-go/quic-go/issues/3470)
 * Support for httptrace: [#3342](https://github.com/quic-go/quic-go/issues/3342)
