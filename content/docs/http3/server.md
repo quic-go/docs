@@ -118,7 +118,7 @@ func(w http.ResponseWriter, r *http.Request) {
 
 ## Graceful Shutdown
 
-The `http3.Server` can be gracefully shut down by calling the `Shutdown`. This will stop the server from accepting new connections. It continues serving existing connections until all active requests have completed.
+The `http3.Server` can be gracefully shut down by calling the `Shutdown`. The server then stops accepting new connections. Existing connections are served until all active requests have completed.
 
 ```go
 ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
@@ -126,10 +126,10 @@ defer cancel()
 server.Shutdown(ctx)
 ```
 
-On the wire, graceful shutdown is signaled by sending a GOAWAY frame. This signals to clients that the server will not accept any new requests. Clients are expected to finish existing requests and then close the QUIC connection.
+On the wire, graceful shutdown is signaled by sending a GOAWAY frame. This tells clients that the server will not accept any new requests. Clients are expected to finish processing existing requests and then close the QUIC connection.
 
 {{< callout type="info" >}}
-Client behavior for handling GOAWAY frames is currently not implemented in quic-go yet, see [#153](https://github.com/quic-go/quic-go/issues/153).
+  Client behavior for handling GOAWAY frames is currently not implemented in quic-go yet, see [#153](https://github.com/quic-go/quic-go/issues/153).
 {{< /callout >}}
 
 `Shutdown` returns when all active requests have been served, or when the context is canceled. In that case, all remaining active QUIC connections are closed, which abruptly terminates the remaining requests.
