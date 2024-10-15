@@ -118,7 +118,7 @@ func(w http.ResponseWriter, r *http.Request) {
 
 ## Graceful Shutdown
 
-The `http3.Server` can be gracefully shut down by calling the `Shutdown`. The server then stops accepting new connections. Existing connections are served until all active requests have completed.
+The `http3.Server` can be gracefully closed by calling the `Shutdown`. The server then stops accepting new connections. Existing connections are served until all active requests have completed.
 
 ```go
 ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
