@@ -9,28 +9,26 @@ weight: 2
 A client needs to be configured with the same URI template as the proxy. For more information on URI templates, see [URI Templates]({{< relref "proxy#uri-templates" >}}).
 
 ```go
-t := uritemplate.MustNew("https://example.org:4443/masque?h={target_host}&p={target_port}")
-cl := masque.Client{
-  Template: t,
-}
+template := uritemplate.MustNew("https://example.org:4443/masque?h={target_host}&p={target_port}")
 ```
 
 `Client.DialAddr` can then be used establish proxied connections to servers by hostname.
 In this case, DNS resolution is handled by the proxy:
 ```go
+cl := masque.Client{}
 // dial a target with a hostname
-conn, rsp, err := cl.DialAddr(ctx, "quic-go.net:443")
+conn, rsp, err := cl.DialAddr(ctx, template, "quic-go.net:443")
 ```
 
 `Client.Dial` can be used to establish proxied connections to servers by IP address:
 ```go
-conn, rsp, err := cl.Dial(ctx, <*net.UDPAddr>)
+conn, rsp, err := cl.Dial(ctx, template,<*net.UDPAddr>)
 ```
 
 The `net.PacketConn` returned from these methods is only non-nil if the proxy accepted the proxying request.
 This is the case if the HTTP status code is in the 2xx range:
 ```go
-conn, rsp, err := cl.DialAddr(ctx, "quic-go.net:443")
+conn, rsp, err := cl.DialAddr(ctx, template, "quic-go.net:443")
 // ... handle error ...
 if rsp.StatusCode < 200 && rsp.StatusCode > 299 {
   // proxying request rejected
