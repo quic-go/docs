@@ -4,7 +4,7 @@
 &lt;li>First establishes an HTTP/3 connection to the server.&lt;/li>
 &lt;li>It sends an HTTP request (using the Extended CONNECT protocol) to the server, requesting to establish a WebTransport session.&lt;/li>
 &lt;/ol>
-&lt;h2>Accepting a WebTransport Session&lt;span class="absolute -mt-20" id="accepting-a-webtransport-session">&lt;/span>
+&lt;h2>Accepting a WebTransport Session&lt;span class="hx-absolute -hx-mt-20" id="accepting-a-webtransport-session">&lt;/span>
 &lt;a href="#accepting-a-webtransport-session" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>To start a WebTransport server, it is necessary to:&lt;/p>
 &lt;ol>
 &lt;li>Set up an HTTP/3 server.&lt;/li>
@@ -13,7 +13,8 @@
 &lt;p>The &lt;code>webtransport.Server&lt;/code> wraps an &lt;code>http3.Server&lt;/code>. For more details on how to set up and configure an HTTP/3 server, see &lt;a href="https://quic-go.net/docs/http3/server/" >Serving HTTP/3&lt;/a>.&lt;/p>
 &lt;p>Assume a server is running on &lt;code>example.com&lt;/code>. This code starts an HTTP/3 server on (UDP) port 443. The server can handle regular HTTP/3 requests to &lt;code>https://example.com&lt;/code>.&lt;/p>
 &lt;p>To accept the Extended CONNECT request, the application needs to define an HTTP handler. In this example, we want to accept WebTransport sessions at &lt;code>https://example.com/webtransport&lt;/code>. It is possible to reject an upgrade request by sending a non-2xx status code. Inside the handler, calling &lt;code>webtransport.Server.Upgrade&lt;/code> accepts the &lt;a href="https://quic-go.net/docs/webtransport/session/" >WebTransport session&lt;/a>, and it returns a &lt;code>webtransport.Session&lt;/code>.&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">s&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">webtransport&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Server&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">s&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">webtransport&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Server&lt;/span>&lt;span class="p">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">H3&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">http3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Server&lt;/span>&lt;span class="p">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Addr&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s">&amp;#34;:443&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">TLSConfig&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">tls&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{},&lt;/span> &lt;span class="c1">// use your tls.Config here
@@ -31,61 +32,63 @@
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Handle the session. Here goes the application logic.
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">})&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">s&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ListenAndServeTLS&lt;/span>&lt;span class="p">(&amp;lt;&lt;/span>&lt;span class="nx">certFile&lt;/span>&lt;span class="p">&amp;gt;,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">keyFile&lt;/span>&lt;span class="p">&amp;gt;)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">s&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ListenAndServeTLS&lt;/span>&lt;span class="p">(&amp;lt;&lt;/span>&lt;span class="nx">certFile&lt;/span>&lt;span class="p">&amp;gt;,&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">keyFile&lt;/span>&lt;span class="p">&amp;gt;)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;h2>Origin Validation&lt;span class="absolute -mt-20" id="origin-validation">&lt;/span>
+&lt;h2>Origin Validation&lt;span class="hx-absolute -hx-mt-20" id="origin-validation">&lt;/span>
 &lt;a href="#origin-validation" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>By default, the &lt;code>Upgrade&lt;/code> function checks that the client&amp;rsquo;s request origin matches the host of the server. This prevents cross-site request forgery (CSRF) attacks, where an attacker could use a malicious web page to establish a WebTransport connection to a vulnerable application, with the application processing the connection as if it were part of the victim user&amp;rsquo;s session.&lt;/p>
 &lt;p>Applications can change this default behavior by setting the &lt;code>webtransport.Server.CheckOrigin&lt;/code> callback:&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">s&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">webtransport&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Server&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">s&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">webtransport&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Server&lt;/span>&lt;span class="p">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">H3&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">http3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Server&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="nx">Addr&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s">&amp;#34;:443&amp;#34;&lt;/span>&lt;span class="p">},&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">CheckOrigin&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="kd">func&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">r&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Request&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="kt">bool&lt;/span> &lt;span class="p">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// custom validation logic
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="p">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
+&lt;h2>📝 Future Work&lt;span class="hx-absolute -hx-mt-20" id="-future-work">&lt;/span>
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
 &lt;li>Subprotocol Negotiation: &lt;a href="https://github.com/quic-go/webtransport-go/issues/132" target="_blank" rel="noopener">#132&lt;/a>&lt;/li>
 &lt;li>Properly check Validity of the client&amp;rsquo;s SETTINGS: &lt;a href="https://github.com/quic-go/webtransport-go/issues/106" target="_blank" rel="noopener">#106&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Running a Client</title><link>https://quic-go.net/docs/webtransport/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/webtransport/client/</guid><description>
 &lt;p>To dial a WebTransport session, initialize a &lt;code>webtransport.Dialer&lt;/code>, and call the &lt;code>Dial&lt;/code> function.&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">d&lt;/span> &lt;span class="nx">webtransport&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Dialer&lt;/span>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">d&lt;/span> &lt;span class="nx">webtransport&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Dialer&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// optionally, add custom headers
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kd">var&lt;/span> &lt;span class="nx">headers&lt;/span> &lt;span class="nx">http&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Header&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">headers&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Add&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;foo&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;bar&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">rsp&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">sess&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">d&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Dial&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;https://example.com/webtransport&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">headers&lt;/span>&lt;span class="p">)&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// err is only nil if rsp.StatusCode is a 2xx
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// Handle the session. Here goes the application logic.
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;p>This initiates a new WebTransport session with the server by sending an Extended CONNECT request to the server.
 The server might reject this request, in which case the status code of the HTTP response will not be in the 2xx range.&lt;/p>
 &lt;p>The parameters for the underlying QUIC connection can be adjusted by setting the &lt;code>QUICConfig&lt;/code> on the &lt;code>Dialer&lt;/code>. &lt;a href="https://quic-go.net/docs/quic/datagrams/" >Datagram support&lt;/a> is required by WebTransport, and must be enabled on using &lt;code>quic.Config.EnableDatagrams&lt;/code>.&lt;/p>
-&lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
+&lt;h2>📝 Future Work&lt;span class="hx-absolute -hx-mt-20" id="-future-work">&lt;/span>
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
 &lt;li>Using the same QUIC connection for WebTransport and HTTP/3: &lt;a href="https://github.com/quic-go/webtransport-go/issues/147" target="_blank" rel="noopener">#147&lt;/a>&lt;/li>
 &lt;li>Allow Optimistic Opening of Streams: &lt;a href="https://github.com/quic-go/webtransport-go/issues/136" target="_blank" rel="noopener">#136&lt;/a>&lt;/li>
@@ -93,65 +96,68 @@ The server might reject this request, in which case the status code of the HTTP 
 &lt;/ul></description></item><item><title>Session</title><link>https://quic-go.net/docs/webtransport/session/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/webtransport/session/</guid><description>
 &lt;p>A WebTransport Session functions similarly to a &lt;a href="https://quic-go.net/docs/quic/connection/" >QUIC Connection&lt;/a>, enabling the opening and accepting of streams, as well as the sending and receiving of datagrams.&lt;/p>
 &lt;p>The API of &lt;code>webtransport.Session&lt;/code> is &lt;em>almost&lt;/em> identical to that of &lt;code>quic.Connection&lt;/code>, with a few minor differences: For example, QUIC allows streams to be reset using a 62-bit error code, whereas WebTransport limits the error code range to 32 bits.&lt;/p>
-&lt;h2>Closing a WebTransport Session&lt;span class="absolute -mt-20" id="closing-a-webtransport-session">&lt;/span>
+&lt;h2>Closing a WebTransport Session&lt;span class="hx-absolute -hx-mt-20" id="closing-a-webtransport-session">&lt;/span>
 &lt;a href="#closing-a-webtransport-session" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>The WebTransport session can be closed by calling the &lt;code>CloseWithError&lt;/code> method:&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">sess&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">CloseWithError&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1234&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;please stop talking to me 🤐&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">sess&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">CloseWithError&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1234&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;please stop talking to me 🤐&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;p>Similar to closing a &lt;code>quic.Connection&lt;/code>, this action causes all calls to &lt;code>AcceptStream&lt;/code> and &lt;code>OpenStream&lt;/code>, as well as stream &lt;code>Read&lt;/code> and &lt;code>Write&lt;/code> calls, to return immediately.&lt;/p>
-&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-yellow-100 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-700/30 dark:text-yellow-200">
-&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-rounded-lg hx-border hx-py-2 ltr:hx-pr-4 rtl:hx-pl-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-yellow-100 hx-bg-yellow-50 hx-text-yellow-900 dark:hx-border-yellow-200/30 dark:hx-bg-yellow-700/30 dark:hx-text-yellow-200">
+&lt;div class="ltr:hx-pl-3 ltr:hx-pr-2 rtl:hx-pr-3 rtl:hx-pl-2">&lt;div class="hx-select-none hx-text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
 ⚠️
 &lt;/div>&lt;/div>
-&lt;div class="w-full min-w-0 leading-7">
-&lt;div class="mt-6 leading-7 first:mt-0">
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">
 &lt;code>CloseWithError&lt;/code> only closes the WebTransport session, but not the underlying QUIC connection.
 &lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;p>On the receiver side, this error will be surfaced as a &lt;code>webtransport.SessionError&lt;/code>:&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">sessErr&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">webtransport&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">SessionError&lt;/span>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">sessErr&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">webtransport&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">SessionError&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="nx">errors&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">As&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">err&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">sessErr&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">errorCode&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">sessErr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ErrorCode&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">errorMessage&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">sessErr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Message&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;p>Additionally, the underlying QUIC connection might close for various reasons, potentially triggering any of the errors detailed in the &lt;a href="https://quic-go.net/docs/quic/connection/#error-assertion" >error assertion section&lt;/a>.&lt;/p>
-&lt;h2>📝 Future Work&lt;span class="absolute -mt-20" id="-future-work">&lt;/span>
+&lt;h2>📝 Future Work&lt;span class="hx-absolute -hx-mt-20" id="-future-work">&lt;/span>
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
 &lt;li>WebTransport Datagrams: &lt;a href="https://github.com/quic-go/webtransport-go/issues/8" target="_blank" rel="noopener">#8&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Streams</title><link>https://quic-go.net/docs/webtransport/streams/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/webtransport/streams/</guid><description>
 &lt;p>A WebTransport stream functions similarly to a &lt;a href="https://quic-go.net/docs/quic/streams/" >QUIC Stream&lt;/a>. In particular, the stream state machines are exactly the same, as detailed in the &lt;a href="https://quic-go.net/docs/quic/streams/#states" >QUIC Stream documentation&lt;/a>. WebTransport supports both unidirectional and bidirectional streams.&lt;/p>
 &lt;p>The main difference between a QUIC stream and a WebTransport stream lies in the type of error codes used to reset the stream: QUIC allows error codes up to a 62-bit unsigned integer, while WebTransport error codes are limited to a 32-bit unsigned integer.&lt;/p>
-&lt;h2>Stream Errors&lt;span class="absolute -mt-20" id="stream-errors">&lt;/span>
+&lt;h2>Stream Errors&lt;span class="hx-absolute -hx-mt-20" id="stream-errors">&lt;/span>
 &lt;a href="#stream-errors" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>When a stream is reset (i.e. when &lt;code>CancelRead&lt;/code> or &lt;code>CancelWrite&lt;/code> are used), applications can communicate an error code to the peer. Subsequent calls to Read and Write may return an error that can be type-asserted as a &lt;code>quic.StreamError&lt;/code>.&lt;/p>
 &lt;p>WebTransport itself does not interpret this value; instead, it is the responsibility of the application layer to assign specific meanings to different error codes.&lt;/p>
 &lt;p>Below is an example of how to type-assert an error as a &lt;code>webtransport.StreamError&lt;/code>:&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">streamErr&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">webtransport&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">StreamError&lt;/span>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">streamErr&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">webtransport&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">StreamError&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="nx">errors&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">As&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">err&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">streamErr&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">errorCode&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">streamErr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ErrorCode&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div></description></item></channel></rss>
