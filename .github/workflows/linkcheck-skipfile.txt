@@ -2,3 +2,6 @@ https://github.com/quic-go/docs
 https://analytics.seemann.io
 https://quic-go.net
 http://localhost:5001/prometheus
+
+# qvis is down every now and then
+https://qvis.quictools.info/
