@@ -4,7 +4,7 @@ toc: true
 weight: 1
 ---
 
-To create a MASQUE proxy server, the following steps are necessary:
+To create a CONNECT-UDP proxy server, the following steps are necessary:
 
 1. Set up an HTTP/3 server that defines an `http.Handler` for the URI template.
 2. Decode the client's request and create a socket to the target.
@@ -58,7 +58,7 @@ s.ListenAndServeTLS(<certfile>, <keyfile>)
 
 `masque.ParseRequest` parses the Extended CONNECT request, and extracts the target host and port from the URI template. If parsing of the request fails, it returns a `masque.RequestParseError`. This struct contains a field 'HTTPStatus', allowing the application to reject invalid requests with the correct HTTP status code.
 
-The `masque Request.Target` contains the requested target encoded as `{target_host}:{target_port}`. Applications can implement custom logic to decide which proxying requests are permissible.
+The `masque.Request.Target` contains the requested target encoded as `{target_host}:{target_port}`. Applications can implement custom logic to decide which proxying requests are permissible.
 
 {{< callout type="warning" >}}
   Applications may add custom header fields to the response header, but must not call `WriteHeader` on the `http.ResponseWriter`
