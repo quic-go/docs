@@ -105,4 +105,4 @@ The `net.UDPConn` passed to `ProxyConnectedSocket` is closed by the proxy after 
 * Use the Proxy-Status HTTP header ([RFC 9209](https://datatracker.ietf.org/doc/html/rfc9209)) to communicate failures: [#2](https://github.com/quic-go/masque-go/issues/2)
 * Use GSO and GRO to speed up UDP packet processing: [#31](https://github.com/quic-go/masque-go/issues/31) and [#32](https://github.com/quic-go/masque-go/issues/32)
 * Logging / Tracing: [#59](https://github.com/quic-go/masque-go/issues/59)
-* Proxying IP packets over HTTP ([RFC 9484](https://datatracker.ietf.org/doc/html/rfc9484)): [#63](https://github.com/quic-go/masque-go/issues/63)
+* Proxying a UDP Listener: [#64](https://github.com/quic-go/masque-go/issues/64)
