@@ -43,4 +43,4 @@ Multiple UDP flows can be proxied over the same QUIC connection to the proxy by 
 ## 📝 Future Work
 
 * Logging / Tracing: [#59](https://github.com/quic-go/masque-go/issues/59)
-* Proxying IP packets over HTTP ([RFC 9484](https://datatracker.ietf.org/doc/html/rfc9484)): [#63](https://github.com/quic-go/masque-go/issues/63)
+* Proxying a UDP Listener: [#64](https://github.com/quic-go/masque-go/issues/64)
