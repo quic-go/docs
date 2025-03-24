@@ -6,7 +6,7 @@ weight: 20
 
 ## Generic Segmentation Offload (GSO) {#gso}
 
-`net.UDPConn.WriteMsgUDP` sends a single UDP packet. Under the hood, the standard library uses the `sendmsg` syscall. In principle, this is all we need to make QUIC work. However, for high-troughput transfers, the cost of these syscalls adds up.
+`net.UDPConn.WriteMsgUDP` sends a single UDP packet. Under the hood, the standard library uses the `sendmsg` syscall. In principle, this is all we need to make QUIC work. However, for high-throughput transfers, the cost of these syscalls adds up.
 
 Generic Segmentation Offload (GSO) allows applications to pass a large (up to 64 kB) buffer to the kernel, and have the kernel chop this buffer up into smaller pieces. This comes with a few requirements: all packets are sent to the same receiver address, and all packets except the last one need to have exactly the same size. quic-go handles all this complexity, and is able to optimize the creation of new packets by creating them in GSO-sized batched.
 
