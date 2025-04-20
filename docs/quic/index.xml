@@ -1002,24 +1002,104 @@ title="Copy code"
 &lt;li>Handle decreasing MTUs: &lt;a href="https://github.com/quic-go/quic-go/issues/3955" target="_blank" rel="noopener">#3955&lt;/a>&lt;/li>
 &lt;li>Make the maximum packet size configurable: &lt;a href="https://github.com/quic-go/quic-go/issues/3385" target="_blank" rel="noopener">#3385&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Connection Migration</title><link>https://quic-go.net/docs/quic/connection-migration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/connection-migration/</guid><description>
-&lt;p>Whereas TCP identifies connection by their 4-tuple (i.e. the combination of the client&amp;rsquo;s and server&amp;rsquo;s IP address and port), QUIC uses connection IDs to demultiplex connections. This allows QUIC connections to migrate between paths.&lt;/p>
-&lt;p>This can be useful when a mobile phone moves away from a WiFi networks, and wishes to use the cellular connection instead. Connection migration is completely transparent to the application, as the entire connection, including all streams, is migrated to the new path.&lt;/p>
+&lt;p>Whereas TCP identifies connections by their 4-tuple (i.e. the combination of the client&amp;rsquo;s and server&amp;rsquo;s IP address and port), QUIC uses connection IDs to demultiplex connections. This allows QUIC connections to migrate between paths.&lt;/p>
+&lt;p>This can be useful when a mobile phone moves away from a WiFi network, and wishes to use the cellular connection instead. Connection migration is completely transparent to the application, as the entire connection, including all streams and datagram flows, is migrated to the new path.&lt;/p>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-rounded-lg hx-border hx-py-2 ltr:hx-pr-4 rtl:hx-pl-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-yellow-100 hx-bg-yellow-50 hx-text-yellow-900 dark:hx-border-yellow-200/30 dark:hx-bg-yellow-700/30 dark:hx-text-yellow-200">
 &lt;div class="ltr:hx-pl-3 ltr:hx-pr-2 rtl:hx-pr-3 rtl:hx-pl-2">&lt;div class="hx-select-none hx-text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
 ⚠️
 &lt;/div>&lt;/div>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">
-&lt;p>Note that this is not equivalent to multipath support. Using connection migration as defined in RFC 9000, only a single path can be used to send application at a time.&lt;/p>
-&lt;p>See &lt;a href="https://quic-go.net/docs/quic/multipath/" >Multipath&lt;/a> for the QUIC Multipath extension.&lt;/p>
+Note that there&amp;rsquo;s a big difference between connection migration and multipath. Using connection migration, as defined in RFC 9000, only a single path can be used to send application data at a time. The &lt;a href="https://quic-go.net/docs/quic/multipath/" >Multipath Extension for QUIC&lt;/a> describes the framing layer for multipath usage of QUIC.
 &lt;/div>
 &lt;/div>
 &lt;/div>
+&lt;h2>Probing Paths&lt;span class="hx-absolute -hx-mt-20" id="probing-paths">&lt;/span>
+&lt;a href="#probing-paths" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Before a new path (i.e. a new 4-tuple) can be used to send application data, QUIC needs to make sure that the path actually works. This ensures that the connection doesn&amp;rsquo;t break after migration, and it defends against a variety of packet injection attacks.&lt;/p>
+&lt;p>To probe a path, the endpoint sends a PATH_CHALLENGE frame in a packet sent over the new path. Once the peer receives the PATH_CHALLENGE frame, it responds with a PATH_RESPONSE frame on the same path, which confirms that the path works.&lt;/p>
+&lt;p>Path probing packets use fresh connection IDs, which prevents an on-path observer from linking the new path to the old path.&lt;/p>
+&lt;h2>Probing and Switching Paths&lt;span class="hx-absolute -hx-mt-20" id="probing-and-switching-paths">&lt;/span>
+&lt;a href="#probing-and-switching-paths" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>According to RFC 9000, connection migration is always initiated by the client. With the exception of the Preferred Address mechanism (see below), there is no way for the server to initiate or even request a migration.&lt;/p>
+&lt;p>Migrating a connection is a two-step process:&lt;/p>
+&lt;ol>
+&lt;li>The client needs to probe the new path to ensure it can actually be used to send application data.&lt;/li>
+&lt;li>At some later point, the client can decide to switch the connection to the new path.&lt;/li>
+&lt;/ol>
+&lt;p>To create a new path, it is necessary to create a new &lt;code>quic.Transport&lt;/code> that is used to send packets for the new path. For example, the client might want to migrate a connection from WiFi to cellular.&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">tr1&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Transport&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Conn&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">conn1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// for example: a connection bound to the WiFi interface
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">tr2&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Transport&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Conn&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">conn2&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// for example: a connection bound to the cellular interface
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">conn&lt;/span> &lt;span class="nx">quic&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Connection&lt;/span> &lt;span class="c1">// connection established on tr1
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">path&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">conn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">AddPath&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">tr2&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>This code does nothing more than creating a new &lt;code>quic.Path&lt;/code>. No packets are sent over the new path yet.
+Path probing is started by calling the &lt;code>Probe&lt;/code> method on the &lt;code>Path&lt;/code>.&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">cancel&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WithTimeout&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Background&lt;/span>&lt;span class="p">(),&lt;/span> &lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Second&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">defer&lt;/span> &lt;span class="nf">cancel&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">path&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Probe&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>If the error returned by &lt;code>Probe&lt;/code> is &lt;code>nil&lt;/code>, the path has been successfully probed and the client can switch to the new path by calling &lt;code>Switch&lt;/code>.&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">path&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Switch&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>From this point on, all application data sent on the connection will now be sent over the new path.&lt;/p>
+&lt;p>If the application decides that it doesn&amp;rsquo;t need a path created with &lt;code>AddPath&lt;/code>, it can clean up resources by calling the &lt;code>Close&lt;/code> method on the &lt;code>Path&lt;/code>:&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">err&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">path&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Close&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ... error handling
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h2>NAT Rebindings&lt;span class="hx-absolute -hx-mt-20" id="nat-rebindings">&lt;/span>
+&lt;a href="#nat-rebindings" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>A QUIC client might be located behind a NAT, which is a device that rewrites the client&amp;rsquo;s IP address and port to a public IP address and port. This is often the case for devices in home or corporate networks. Sometimes, usually after periods of inactivity, the NAT might have garbage collected the old mapping and created a new mapping for the same client. This is called a NAT rebinding.&lt;/p>
+&lt;p>In TCP, this is an irrecoverable event since the 4-tuple has changed. However, QUIC can recover from this by migrating the connection to the new 4-tuple.&lt;/p>
+&lt;p>Neither the client nor the server can predict when a NAT rebinding will happen. When the server receives a packet for an existing connection from a new IP address and port, it probes the path to ensure that the client is still reachable. quic-go handles this automatically, so no action is needed from the application.&lt;/p>
 &lt;h2>📝 Future Work&lt;span class="hx-absolute -hx-mt-20" id="-future-work">&lt;/span>
-&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>quic-go currently doesn&amp;rsquo;t implement connection migration at this point.&lt;/p>
-&lt;ul>
-&lt;li>Tracking Issue: &lt;a href="https://github.com/quic-go/quic-go/issues/234" target="_blank" rel="noopener">#234&lt;/a>&lt;/li>
-&lt;li>API Proposal: &lt;a href="https://github.com/quic-go/quic-go/issues/3990" target="_blank" rel="noopener">#3990&lt;/a>&lt;/li>
+&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>Support for Preferred Address: &lt;a href="https://github.com/quic-go/quic-go/issues/4965" target="_blank" rel="noopener">#4965&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Multipath</title><link>https://quic-go.net/docs/quic/multipath/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/multipath/</guid><description>
 &lt;p>&lt;a href="https://datatracker.ietf.org/doc/draft-ietf-quic-multipath/" target="_blank" rel="noopener">Multipath QUIC&lt;/a> is a QUIC extension currently under development in the IETF QUIC working group. It allows the simultaneous use of multiple path for transferring application data.&lt;/p>
 &lt;p>The implementation status in quic-go is tracked in &lt;a href="https://github.com/quic-go/quic-go/issues/3343" target="_blank" rel="noopener">#3343&lt;/a>.&lt;/p></description></item><item><title>Event Logging using qlog</title><link>https://quic-go.net/docs/quic/qlog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/qlog/</guid><description>
