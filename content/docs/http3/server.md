@@ -118,7 +118,7 @@ func(w http.ResponseWriter, r *http.Request) {
 
 ## Graceful Shutdown
 
-The `http3.Server` can be gracefully closed by calling the `Shutdown`. The server then stops accepting new connections. Existing connections are served until all active requests have completed.
+The `http3.Server` can be gracefully closed by calling the `Shutdown` method. The server then stops accepting new connections and new requests, but allows existing requests to finish.
 
 ```go
 ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
@@ -126,17 +126,9 @@ defer cancel()
 server.Shutdown(ctx)
 ```
 
-On the wire, graceful shutdown is signaled by sending a GOAWAY frame. This tells clients that the server will not accept any new requests. Clients are expected to finish processing existing requests and then close the QUIC connection.
+On the wire, graceful shutdown is signaled by sending a GOAWAY frame. This tells clients that the server will not accept any new requests. Requests received after sending the GOAWAY frame are rejected (using the `H3_REQUEST_REJECTED` error code). Existing connections are not closed; clients are expected to close them after they finish processing their requests.
 
-{{< callout type="info" >}}
-  Client behavior for handling GOAWAY frames is currently not implemented in quic-go yet, see [#153](https://github.com/quic-go/quic-go/issues/153).
-{{< /callout >}}
-
-`Shutdown` returns when all active requests have been served, or when the context is canceled. In that case, all remaining active QUIC connections are closed, which abruptly terminates the remaining requests.
-
-{{< callout type="warning" >}}
-  As noted above, it is the caller's responsibility to close QUIC connections passed to `ServeQUICConn`. `Shutdown` sends the GOAWAY frame on these connections, but it doesn't close them. However, `Shutdown` blocks until these connections are closed.
-{{< /callout >}}
+`Shutdown` returns when all existing connections have been closed, or when the context is canceled. In that case, all remaining active QUIC connections are closed, which abruptly terminates the remaining requests.
 
 
 ## 📝 Future Work
