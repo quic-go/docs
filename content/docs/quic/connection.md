@@ -18,10 +18,10 @@ Applications can identify which QUIC connection these callbacks are called for b
 For example:
 ```go
 tr := quic.Transport{
-  ConnContext: func(ctx context.Context) context.Context {
+  ConnContext: func(ctx context.Context, info *quic.ClientInfo) (context.Context, error) {
     // In practice, generate an identifier that's unique to this one connection,
     // for example by incrementing a counter.
-    return context.WithValue(ctx, "foo", "bar")
+    return context.WithValue(ctx, "foo", "bar"), nil
   }
 }
 
@@ -43,6 +43,10 @@ _ = conn.Context()
 The context passed to `ConnContext` is closed once the QUIC connection is closed, or if the handshake fails for any reason.
 This allows applications to clean up state that might they might have created in the `ConnContext` callback (e.g. by using `context.AfterFunc`).
 
+{{< callout type="info" >}}
+  By returning an error, `ConnContext` can also be used to reject a connection attempt at a very early stage, before the QUIC handshake is started.
+  In that case, the connection is closed with a CONNECTION_REFUSED error code.
+{{< /callout >}}
 
 ## Closing a Connection {#closing}
 
