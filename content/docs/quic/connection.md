@@ -45,6 +45,7 @@ This allows applications to clean up state that might they might have created in
 
 {{< callout type="info" >}}
   By returning an error, `ConnContext` can also be used to reject a connection attempt at a very early stage, before the QUIC handshake is started.
+  In that case, the connection is closed with a CONNECTION_REFUSED error code.
 {{< /callout >}}
 
 ## Closing a Connection {#closing}
