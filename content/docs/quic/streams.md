@@ -46,11 +46,11 @@ These functions return an error when the underlying QUIC connection is closed.
 
 As described in [Flow Control for Streams]({{< relref "flowcontrol.md#stream-num" >}}), endpoints impose limits on how many streams a peer may open. The receiver may grant additional streams at any point in the connection (typically when existing streams are closed), but it means that at the time we want to open a new stream, we might not be able to do so.
 
-`OpenStream` attempts to open a new bidirectional stream  (`quic.Stream`), and it never blocks. If it's currently not possible to open a new stream, it returns a `net.Error` timeout error:
+`OpenStream` attempts to open a new bidirectional stream (`quic.Stream`), and it never blocks. If it's currently not possible to open a new stream, it returns a `quic.StreamLimitReachedError` error:
 
 ```go
 str, err := conn.OpenStream()
-if nerr, ok := err.(net.Error); ok && nerr.Timeout() {
+if errors.Is(err, &quic.StreamLimitReachedError{}) {
   // It's currently not possible to open another stream,
   // but it might be possible later, once the peer allowed us to do so.
 }
