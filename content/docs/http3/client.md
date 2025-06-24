@@ -8,7 +8,10 @@ This package provides a `http.RoundTripper` implementation that can be used on t
 
 ```go
 tr := &http3.Transport{
-	TLSClientConfig: &tls.Config{},  // set a TLS client config, if desired
+	// set a TLS client config, if desired
+	TLSClientConfig: &tls.Config{
+		NextProtos: []string{http3.NextProtoH3}, // set the ALPN for HTTP/3
+	},
 	QUICConfig:      &quic.Config{}, // QUIC connection options
 }
 defer tr.Close()
