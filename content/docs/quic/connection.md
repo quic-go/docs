@@ -4,7 +4,7 @@ toc: true
 weight: 4
 ---
 
-The `quic.Connection` is the central object to send and receive application data. Data is not sent directly on the connection, but either on [streams]({{< relref "streams.md" >}}), or (optionally) in so-called [datagrams]({{< relref "datagrams.md" >}}).
+The `quic.Conn` is the central object to send and receive application data. Data is not sent directly on the connection, but either on [streams]({{< relref "streams.md" >}}), or (optionally) in so-called [datagrams]({{< relref "datagrams.md" >}}).
 
 
 ## Using the Connection Context {#conn-context}
@@ -50,7 +50,7 @@ This allows applications to clean up state that might they might have created in
 
 ## Closing a Connection {#closing}
 
-At any point during the connection, a `quic.Connection` can be closed by calling `CloseWithError`:
+At any point during the connection, a `quic.Conn` can be closed by calling `CloseWithError`:
 
 ```go
 conn.CloseWithError(0x42, "I don't want to talk to you anymore 🙉")

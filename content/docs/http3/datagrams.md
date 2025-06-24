@@ -78,7 +78,7 @@ The `http3.ClientConn` manages a single QUIC connection to a remote server.
 The client is required to check that the server enabled HTTP datagrams support by checking the SETTINGS:
 
 ```go
-// ... dial a quic.Connection to the target server
+// ... dial a quic.Conn to the target server
 // make sure to set the "h3" ALPN
 tr := &http3.Transport{
 	EnableDatagrams: true,

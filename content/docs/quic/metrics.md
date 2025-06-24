@@ -4,7 +4,7 @@ toc: true
 weight: 91
 ---
 
-quic-go can expose metrics via Prometheus, providing a comprehensive overview of its operation. By leveraging the Tracer and ConnectionTracer interfaces, quic-go captures various events. These are the same interfaces used for [qlog event logging]({{< relref "qlog.md" >}}).
+quic-go can expose metrics via Prometheus, providing a comprehensive overview of its operation. By leveraging the `Tracer` and `ConnectionTracer` structs, quic-go captures various events. These are the same structs used for [qlog event logging]({{< relref "qlog.md" >}}).
 
 ## Enabling Metrics Collection
 

@@ -4,11 +4,11 @@ toc: true
 weight: 6
 ---
 
-QUIC is a stream-multiplexed transport. A `quic.Connection` fundamentally differs from the `net.Conn` and the `net.PacketConn` interface defined in the standard library.
+QUIC is a stream-multiplexed transport. A QUIC connection fundamentally differs from the `net.Conn` and the `net.PacketConn` interface defined in the standard library.
 
-Data is sent and received on (unidirectional and bidirectional) streams, not on the connection itself. The stream state machine is described in detail in [Section 3 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-3).
+Application data is sent and received on (unidirectional and bidirectional) streams, not on the connection itself. The stream state machine is described in detail in [Section 3 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-3).
 
-In addition to QUIC streams, application data can also sent in so-called QUIC datagram frames (see [datagrams]({{< relref path="datagrams.md" >}})), if implementations can negotiate support for it.
+In addition to QUIC streams, application data can also sent in so-called QUIC datagram frames (see [datagrams]({{< relref path="datagrams.md" >}})), if endpoints negotiate support for it.
 
 
 ## Stream Types
@@ -97,7 +97,7 @@ In case the application is no longer interest in receiving data from a `quic.Rec
 
 ### Bidirectional Stream
 
-Using QUIC streams is pretty straightforward. A bidirectional stream (`quic.Stream`) implements both these interfaces. Conceptually, a bidirectional stream can be thought of as the composition of two unidirectional streams in opposite directions.
+Using QUIC streams is pretty straightforward. Conceptually, a bidirectional stream (`quic.Stream`)can be thought of as the composition of two unidirectional streams in opposite directions.
 
 {{< callout type="warning" >}}
   Calling `Close` on a `quic.Stream` closes the send side of the stream. Note that for bidirectional streams, `Close` _only_ closes the send side of the stream. It is still possible to read from the stream until the peer closes or resets the stream.

@@ -39,7 +39,7 @@ tr1 := &quic.Transport{
 tr2 := &quic.Transport{
   Conn: conn2, // for example: a connection bound to the cellular interface
 }
-var conn quic.Connection // connection established on tr1
+var conn *quic.Conn // connection established on tr1
 
 path, err := conn.AddPath(tr2)
 // ... error handling

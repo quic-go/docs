@@ -23,7 +23,7 @@ for {
 }
 ```
 
-The listener `ln` can now be used to accept incoming QUIC connections by (repeatedly) calling the `Accept` method (see below for more information on the `quic.Connection`).
+The listener `ln` can now be used to accept incoming QUIC connections by (repeatedly) calling the `Accept` method (see below for more information on the `quic.Conn`).
 
 This listener can be closed independently from the underlying transport. Connections that are already established and accepted won't be affected, but clients won't be able to establish new connections.
 
@@ -103,7 +103,7 @@ go func() {
 
 As soon as the connection is accepted, it can open streams and send application data. If [datagram support]({{< relref "datagrams.md" >}}) is negotiated, datagrams can be sent as well.
 
-At any point, the application can wait for completion of the handshake by blocking on the channel returned by `Connection.HandshakeComplete()`.
+At any point, the application can wait for completion of the handshake by blocking on the channel returned by `Conn.HandshakeComplete()`.
 
 
 ## 0-RTT
