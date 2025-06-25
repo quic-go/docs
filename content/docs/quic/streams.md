@@ -97,7 +97,7 @@ In case the application is no longer interest in receiving data from a `quic.Rec
 
 ### Bidirectional Stream
 
-Using QUIC streams is pretty straightforward. Conceptually, a bidirectional stream (`quic.Stream`)can be thought of as the composition of two unidirectional streams in opposite directions.
+Using QUIC streams is pretty straightforward. Conceptually, a bidirectional stream (`quic.Stream`) can be thought of as the composition of two unidirectional streams in opposite directions.
 
 {{< callout type="warning" >}}
   Calling `Close` on a `quic.Stream` closes the send side of the stream. Note that for bidirectional streams, `Close` _only_ closes the send side of the stream. It is still possible to read from the stream until the peer closes or resets the stream.
