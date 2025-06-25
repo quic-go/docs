@@ -8,7 +8,7 @@ QUIC is a stream-multiplexed transport. A QUIC connection fundamentally differs 
 
 Application data is sent and received on (unidirectional and bidirectional) streams, not on the connection itself. The stream state machine is described in detail in [Section 3 of RFC 9000](https://datatracker.ietf.org/doc/html/rfc9000#section-3).
 
-In addition to QUIC streams, application data can also sent in so-called QUIC datagram frames (see [datagrams]({{< relref path="datagrams.md" >}})), if endpoints negotiate support for it.
+In addition to QUIC streams, application data can also be sent in so-called QUIC datagram frames (see [datagrams]({{< relref path="datagrams.md" >}})), if endpoints declare support for it.
 
 
 ## Stream Types
