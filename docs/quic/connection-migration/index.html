@@ -85,7 +85,7 @@ hx-text-gray-500 hover:hx-bg-gray-100 hover:hx-text-gray-900 contrast-more:hx-bo
 </span></span><span class=line><span class=cl><span class=nx>tr2</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>quic</span><span class=p>.</span><span class=nx>Transport</span><span class=p>{</span>
 </span></span><span class=line><span class=cl>  <span class=nx>Conn</span><span class=p>:</span> <span class=nx>conn2</span><span class=p>,</span> <span class=c1>// for example: a connection bound to the cellular interface
 </span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
-</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>conn</span> <span class=nx>quic</span><span class=p>.</span><span class=nx>Connection</span> <span class=c1>// connection established on tr1
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>conn</span> <span class=o>*</span><span class=nx>quic</span><span class=p>.</span><span class=nx>Conn</span> <span class=c1>// connection established on tr1
 </span></span></span><span class=line><span class=cl><span class=c1></span>
 </span></span><span class=line><span class=cl><span class=nx>path</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>conn</span><span class=p>.</span><span class=nf>AddPath</span><span class=p>(</span><span class=nx>tr2</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=c1>// ... error handling

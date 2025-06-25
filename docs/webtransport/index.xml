@@ -95,7 +95,7 @@ The server might reject this request, in which case the status code of the HTTP 
 &lt;li>Subprotocol Negotiation: &lt;a href="https://github.com/quic-go/webtransport-go/issues/132" target="_blank" rel="noopener">#132&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Session</title><link>https://quic-go.net/docs/webtransport/session/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/webtransport/session/</guid><description>
 &lt;p>A WebTransport Session functions similarly to a &lt;a href="https://quic-go.net/docs/quic/connection/" >QUIC Connection&lt;/a>, enabling the opening and accepting of streams, as well as the sending and receiving of datagrams.&lt;/p>
-&lt;p>The API of &lt;code>webtransport.Session&lt;/code> is &lt;em>almost&lt;/em> identical to that of &lt;code>quic.Connection&lt;/code>, with a few minor differences: For example, QUIC allows streams to be reset using a 62-bit error code, whereas WebTransport limits the error code range to 32 bits.&lt;/p>
+&lt;p>The API of &lt;code>webtransport.Session&lt;/code> is &lt;em>almost&lt;/em> identical to that of &lt;code>quic.Conn&lt;/code>, with a few minor differences: For example, QUIC allows streams to be reset using a 62-bit error code, whereas WebTransport limits the error code range to 32 bits.&lt;/p>
 &lt;h2>Closing a WebTransport Session&lt;span class="hx-absolute -hx-mt-20" id="closing-a-webtransport-session">&lt;/span>
 &lt;a href="#closing-a-webtransport-session" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>The WebTransport session can be closed by calling the &lt;code>CloseWithError&lt;/code> method:&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
@@ -109,7 +109,7 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>Similar to closing a &lt;code>quic.Connection&lt;/code>, this action causes all calls to &lt;code>AcceptStream&lt;/code> and &lt;code>OpenStream&lt;/code>, as well as stream &lt;code>Read&lt;/code> and &lt;code>Write&lt;/code> calls, to return immediately.&lt;/p>
+&lt;p>Similar to closing a &lt;code>quic.Conn&lt;/code>, this action causes all calls to &lt;code>AcceptStream&lt;/code> and &lt;code>OpenStream&lt;/code>, as well as stream &lt;code>Read&lt;/code> and &lt;code>Write&lt;/code> calls, to return immediately.&lt;/p>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-rounded-lg hx-border hx-py-2 ltr:hx-pr-4 rtl:hx-pl-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-yellow-100 hx-bg-yellow-50 hx-text-yellow-900 dark:hx-border-yellow-200/30 dark:hx-bg-yellow-700/30 dark:hx-text-yellow-200">
 &lt;div class="ltr:hx-pl-3 ltr:hx-pr-2 rtl:hx-pr-3 rtl:hx-pl-2">&lt;div class="hx-select-none hx-text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
 ⚠️
