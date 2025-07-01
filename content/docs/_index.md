@@ -15,8 +15,14 @@ With this package, it is possible to run a Go server that serves HTTP/1.1, HTTP/
 
 ## WebTransport
 
+WebTransport enables web applications to establish bidirectional, multiplexed connections to servers, allowing for real-time communication and data streaming.
+
 Support for WebTransport over HTTP/3 ([draft-ietf-webtrans-http3](https://datatracker.ietf.org/doc/draft-ietf-webtrans-http3/)) is implemented in [webtransport-go](https://github.com/quic-go/webtransport-go).
 
-## MASQUE
+## Proxying UDP in HTTP (CONNECT-UDP)
 
-Support for Proxying UDP in HTTP ([RFC 9298](https://datatracker.ietf.org/doc/html/rfc9298)) will be added soon.
+Support for Proxying UDP in HTTP ([RFC 9298](https://datatracker.ietf.org/doc/html/rfc9298)), sometimes also called MASQUE or CONNECT-UDP,  is implemented in [masque-go](https://github.com/quic-go/masque-go).
+
+## Proxying IP in HTTP (CONNECT-IP)
+
+Support for Proxying IP in HTTP ([RFC 9484](https://datatracker.ietf.org/doc/html/rfc9484)), sometimes also called CONNECT-IP, is implemented in [connect-ip-go](https://github.com/quic-go/connect-ip-go).
