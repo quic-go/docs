@@ -1,0 +1,169 @@
+{
+  "version": "v1.0.0",
+  "entity": {
+    "type": "individual",
+    "role": "maintainer",
+    "name": "Marten Seemann",
+    "email": "martenseemann@gmail.com",
+    "phone": "",
+    "description": "Software engineer specializing in internet transport protocols. Maintainer of quic-go, webtransport-go, and masque-go.",
+    "webpageUrl": {
+      "url": "https://seemann.io/",
+      "wellKnown": ""
+    }
+  },
+  "projects": [
+    {
+      "guid": "quic-go",
+      "name": "quic-go",
+      "description": "A production-ready QUIC implementation in pure Go.",
+      "webpageUrl": {
+        "url": "https://quic-go.net/",
+        "wellKnown": ""
+      },
+      "repositoryUrl": {
+        "url": "https://github.com/quic-go/quic-go",
+        "wellKnown": ""
+      },
+      "licenses": [
+        "spdx:MIT"
+      ],
+      "tags": [
+        "quic",
+        "http3",
+        "networking",
+        "go",
+        "protocol"
+      ]
+    },
+    {
+      "guid": "webtransport-go",
+      "name": "webtransport-go",
+      "description": "WebTransport implementation based on quic-go.",
+      "webpageUrl": {
+        "url": "https://quic-go.net/docs/",
+        "wellKnown": ""
+      },
+      "repositoryUrl": {
+        "url": "https://github.com/quic-go/webtransport-go",
+        "wellKnown": ""
+      },
+      "licenses": [
+        "spdx:MIT"
+      ],
+      "tags": [
+        "webtransport",
+        "quic",
+        "go"
+      ]
+    },
+    {
+      "guid": "masque-go",
+      "name": "masque-go",
+      "description": "MASQUE: Proxying UDP in HTTP/3, RFC 9298. Implementation of the CONNECT-UDP protocol.",
+      "webpageUrl": {
+        "url": "https://quic-go.net/docs/connect-udp/",
+        "wellKnown": ""
+      },
+      "repositoryUrl": {
+        "url": "https://github.com/quic-go/masque-go",
+        "wellKnown": ""
+      },
+      "licenses": [
+        "spdx:MIT"
+      ],
+      "tags": [
+        "masque",
+        "proxy",
+        "udp",
+        "http3",
+        "go"
+      ]
+    }
+  ],
+  "funding": {
+    "channels": [
+      {
+        "guid": "github-sponsors",
+        "type": "payment-provider",
+        "address": "https://github.com/sponsors/marten-seemann",
+        "description": "Sponsor via GitHub Sponsors"
+      }
+    ],
+    "plans": [
+      {
+        "guid": "individual",
+        "status": "active",
+        "name": "Individual",
+        "description": "Thanks for supporting the project.",
+        "amount": 25,
+        "currency": "USD",
+        "frequency": "monthly",
+        "channels": [
+          "github-sponsors"
+        ]
+      },
+      {
+        "guid": "individual-plus",
+        "status": "active",
+        "name": "Individual+",
+        "description": "Occasional email support. If you want, you get listed in the Sponsors section of the quic-go README.",
+        "amount": 100,
+        "currency": "USD",
+        "frequency": "monthly",
+        "channels": [
+          "github-sponsors"
+        ]
+      },
+      {
+        "guid": "startup",
+        "status": "active",
+        "name": "Startup",
+        "description": "Occasional email support. If you want, you get listed in the Sponsors section of the quic-go README, including a logo.",
+        "amount": 250,
+        "currency": "USD",
+        "frequency": "monthly",
+        "channels": [
+          "github-sponsors"
+        ]
+      },
+      {
+        "guid": "startup-plus",
+        "status": "active",
+        "name": "Startup+",
+        "description": "Occasional email support. If you want, you get listed in the Sponsors section of the quic-go README, including a logo. Jump on a call.",
+        "amount": 995,
+        "currency": "USD",
+        "frequency": "monthly",
+        "channels": [
+          "github-sponsors"
+        ]
+      },
+      {
+        "guid": "enterprise",
+        "status": "active",
+        "name": "Enterprise",
+        "description": "Dedicated support (email, phone, video calls). Optional publicity (brand sharing, case study page, tweets, etc.). Triage priority.",
+        "amount": 5000,
+        "currency": "USD",
+        "frequency": "monthly",
+        "channels": [
+          "github-sponsors"
+        ]
+      },
+      {
+        "guid": "enterprise-plus",
+        "status": "active",
+        "name": "Enterprise+",
+        "description": "Dedicated support (email, phone, video calls). Optional publicity (brand sharing, case study page, tweets, etc.). Triage priority. Custom patches.",
+        "amount": 11000,
+        "currency": "USD",
+        "frequency": "monthly",
+        "channels": [
+          "github-sponsors"
+        ]
+      }
+    ],
+    "history": []
+  }
+}
