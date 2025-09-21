@@ -22,7 +22,7 @@
         "wellKnown": "https://quic-go.net/.well-known/funding-manifest-urls"
       },
       "repositoryUrl": {
-        "url": "https://github.com/quic-go/quic-go",
+        "url": "https://github.com/quic-go/quic-go"
       },
       "licenses": [
         "spdx:MIT"
@@ -44,7 +44,7 @@
         "wellKnown": "https://quic-go.net/.well-known/funding-manifest-urls"
       },
       "repositoryUrl": {
-        "url": "https://github.com/quic-go/webtransport-go",
+        "url": "https://github.com/quic-go/webtransport-go"
       },
       "licenses": [
         "spdx:MIT"
@@ -64,7 +64,7 @@
         "wellKnown": "https://quic-go.net/.well-known/funding-manifest-urls"
       },
       "repositoryUrl": {
-        "url": "https://github.com/quic-go/masque-go",
+        "url": "https://github.com/quic-go/masque-go"
       },
       "licenses": [
         "spdx:MIT"
