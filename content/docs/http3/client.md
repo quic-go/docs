@@ -88,7 +88,7 @@ When a server initiates a graceful shutdown, it sends a [GOAWAY frame](https://d
   The `http3.Transport` manages GOAWAY handling transparently. Applications using `http.Client` with `http3.Transport` don't need to implement special logic for server shutdown scenarios - the transport will automatically retry requests on new connections as needed.
 {{< /callout >}}
 
-If a request is rejected by the server after a GOAWAY (with the `H3_REQUEST_REJECTED` error code), the transport treats this as a retriable error. The `http.Client` can be configured to automatically retry such requests by using a custom `http.RoundTripper` wrapper or by handling the error at the application level.
+When a request is rejected by the server after a GOAWAY (with the `H3_REQUEST_REJECTED` error code), the `http3.Transport` automatically retries it on a new connection. This retry behavior is built into the transport and requires no additional configuration.
 
 ## 📝 Future Work {#future-work}
 

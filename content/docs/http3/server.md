@@ -139,7 +139,7 @@ When a server sends a GOAWAY frame:
 `Shutdown` returns when all existing connections have been closed, or when the context is canceled. In that case, all remaining active QUIC connections are closed, which abruptly terminates the remaining requests.
 
 {{< callout type="info" >}}
-  Unlike HTTP/2, HTTP/3 uses a GOAWAY frame to perform graceful shutdown, but does not require immediate connection closure. The underlying QUIC connection can remain open to allow in-flight requests to complete.
+  HTTP/3's GOAWAY behavior is similar to HTTP/2, but operates over QUIC connections instead of TCP connections, allowing the underlying transport to remain open for in-flight requests.
 {{< /callout >}}
 
 
