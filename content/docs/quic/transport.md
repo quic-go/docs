@@ -109,4 +109,4 @@ quic.Transport{
 
 ## 📝 Future Work
 
-* Compatible Version Negotiation [RFC 9368](https://datatracker.ietf.org/doc/html/rfc9369): [#3640](https://github.com/quic-go/quic-go/issues/3640)
+* Compatible Version Negotiation [RFC 9368](https://datatracker.ietf.org/doc/html/rfc9368): [#3640](https://github.com/quic-go/quic-go/issues/3640)
