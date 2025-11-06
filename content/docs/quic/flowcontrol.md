@@ -29,7 +29,7 @@ The Bandwidth Delay Product (BDP), i.e. the product of the connection's RTT and 
 
 For example, on a connection with an available bandwidth of 1 Gbit/s and an RTT of 50ms, the BDP would be 6.25 MB.
 
-If the receiver's flow control window is smaller than the BDP, the receiver won't be able to send any more data before receiving additional flow control credit, making it impossible to fully utilize the available bandwidth. quic-go therefore 
+If the receiver's flow control window is smaller than the BDP, the sender won't be able to send any more data before receiving additional flow control credit, making it impossible to fully utilize the available bandwidth. quic-go therefore implements an auto-tuning algorithm to dynamically adjust the receive window size. 
 
 ### Configuring Limits
 
