@@ -124,7 +124,7 @@ title="Copy code"
 &lt;/div>
 &lt;h2>📝 Future Work&lt;span class="hx-absolute -hx-mt-20" id="-future-work">&lt;/span>
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
-&lt;li>Compatible Version Negotiation &lt;a href="https://datatracker.ietf.org/doc/html/rfc9369" target="_blank" rel="noopener">RFC 9368&lt;/a>: &lt;a href="https://github.com/quic-go/quic-go/issues/3640" target="_blank" rel="noopener">#3640&lt;/a>&lt;/li>
+&lt;li>Compatible Version Negotiation &lt;a href="https://datatracker.ietf.org/doc/html/rfc9368" target="_blank" rel="noopener">RFC 9368&lt;/a>: &lt;a href="https://github.com/quic-go/quic-go/issues/3640" target="_blank" rel="noopener">#3640&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>Running a QUIC Server</title><link>https://quic-go.net/docs/quic/server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/server/</guid><description>
 &lt;h2>Using a &lt;code>quic.Transport&lt;/code>&lt;span class="hx-absolute -hx-mt-20" id="using-a-quictransport">&lt;/span>
 &lt;a href="#using-a-quictransport" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>The central entry point is the &lt;code>quic.Transport&lt;/code>. A &lt;code>Transport&lt;/code> manages all QUIC connections running on a single UDP socket. Since QUIC uses Connection IDs, it can demultiplex a listener (accepting incoming connections) and an arbitrary number of outgoing QUIC connections on the same UDP socket.&lt;/p>
