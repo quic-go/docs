@@ -76,6 +76,20 @@ The code snippet shows all the knobs that need to be turned to send a request in
 1. TLS session resumption must be enabled by configuring a `tls.ClientSessionCache` on the `tls.Config`.
 2. The request method needs to be set to `http3.MethodGet0RTT`.
 
+## Handling Server Shutdown (GOAWAY)
+
+When a server initiates a graceful shutdown, it sends a [GOAWAY frame](https://datatracker.ietf.org/doc/html/rfc9114#section-5.2) to inform clients that it will not accept new requests. The `http3.Transport` handles GOAWAY frames automatically:
+
+1. When a GOAWAY frame is received, the transport stops sending new requests on that connection.
+2. Requests that are already in-flight continue to completion normally.
+3. New requests automatically trigger establishment of a new connection to the server.
+
+{{< callout type="info" >}}
+  The `http3.Transport` manages GOAWAY handling transparently. Applications using `http.Client` with `http3.Transport` don't need to implement special logic for server shutdown scenarios - the transport will automatically retry requests on new connections as needed.
+{{< /callout >}}
+
+If a request is rejected by the server after a GOAWAY (with the `H3_REQUEST_REJECTED` error code), the transport treats this as a retriable error. The `http.Client` can be configured to automatically retry such requests by using a custom `http.RoundTripper` wrapper or by handling the error at the application level.
+
 ## 📝 Future Work {#future-work}
 
 * Support for zstd Content Encoding: [#4100](https://github.com/quic-go/quic-go/issues/4100)

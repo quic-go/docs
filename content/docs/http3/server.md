@@ -126,9 +126,21 @@ defer cancel()
 server.Shutdown(ctx)
 ```
 
-On the wire, graceful shutdown is signaled by sending a GOAWAY frame. This tells clients that the server will not accept any new requests. Requests received after sending the GOAWAY frame are rejected (using the `H3_REQUEST_REJECTED` error code). Existing connections are not closed; clients are expected to close them after they finish processing their requests.
+### How GOAWAY Works
+
+On the wire, graceful shutdown is signaled by sending a [GOAWAY frame](https://datatracker.ietf.org/doc/html/rfc9114#section-5.2). The GOAWAY frame informs the client that the server will not accept any new requests. It contains a stream ID that indicates the highest request stream ID that the server might have processed. Clients can use this information to determine which requests were potentially processed and which were not.
+
+When a server sends a GOAWAY frame:
+1. The server stops accepting new HTTP/3 connections.
+2. The server rejects any new requests received on existing connections after the GOAWAY frame was sent (using the `H3_REQUEST_REJECTED` error code).
+3. Existing requests that were initiated before the GOAWAY are allowed to complete normally.
+4. The QUIC connection itself remains open; clients are expected to close it once they've finished processing their requests.
 
 `Shutdown` returns when all existing connections have been closed, or when the context is canceled. In that case, all remaining active QUIC connections are closed, which abruptly terminates the remaining requests.
+
+{{< callout type="info" >}}
+  Unlike HTTP/2, HTTP/3 uses a GOAWAY frame to perform graceful shutdown, but does not require immediate connection closure. The underlying QUIC connection can remain open to allow in-flight requests to complete.
+{{< /callout >}}
 
 
 ## 📝 Future Work
