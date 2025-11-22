@@ -865,7 +865,6 @@ title="Copy code"
 &lt;h2&gt;📝 Future Work&lt;span class="hx-absolute -hx-mt-20" id="-future-work"&gt;&lt;/span&gt;
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Add support for the QPACK dynamic table: &lt;a href="https://github.com/quic-go/quic-go/issues/2424" target="_blank" rel="noopener"&gt;#2424&lt;/a&gt; and &lt;a href="https://github.com/quic-go/qpack/issues/33" target="_blank" rel="noopener"&gt;qpack#33&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;QPACK Error Codes: &lt;a href="https://github.com/quic-go/quic-go/issues/4406" target="_blank" rel="noopener"&gt;#4406&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Running a QUIC Client</title><link>https://quic-go.net/docs/quic/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/client/</guid><description>
 &lt;h2&gt;Using a &lt;code&gt;quic.Transport&lt;/code&gt;&lt;span class="hx-absolute -hx-mt-20" id="using-a-quictransport"&gt;&lt;/span&gt;
 &lt;a href="#using-a-quictransport" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Since QUIC uses connection IDs to demultiplex connections, multiple outgoing connections can share a single UDP socket.&lt;/p&gt;
