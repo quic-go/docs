@@ -15,4 +15,3 @@ If you think that your application would benefit from higher compression efficie
 ## 📝 Future Work
 
 * Add support for the QPACK dynamic table: [#2424](https://github.com/quic-go/quic-go/issues/2424) and [qpack#33](https://github.com/quic-go/qpack/issues/33)
-* QPACK Error Codes: [#4406](https://github.com/quic-go/quic-go/issues/4406)
