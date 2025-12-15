@@ -1,5 +1,5 @@
 module github.com/quic-go/docs
 
-go 1.22.0
+go 1.24.0
 
-require github.com/imfing/hextra v0.8.6 // indirect
+require github.com/imfing/hextra v0.11.1 // indirect
