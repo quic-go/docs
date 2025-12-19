@@ -57,6 +57,3 @@ quic.Transport{
 }
 ```
 
-## 📝 Future Work
-
-* qlog support for HTTP/3: [#4124](https://github.com/quic-go/quic-go/issues/4124)
