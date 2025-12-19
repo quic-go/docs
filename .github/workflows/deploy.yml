@@ -1,11 +1,11 @@
 name: Deploy
-permissions:
-  contents: write
 on:
   push:
     branches:
       - master
   pull_request:
+permissions:
+  contents: write
 
 jobs:
   deploy:
