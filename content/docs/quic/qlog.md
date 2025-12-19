@@ -22,11 +22,7 @@ quic.Config{
 For more sophisticated use cases, applications can implement the callback:
 ```go
 quic.Config{
-  Tracer: func(
-    ctx context.Context, 
-    p logging.Perspective, 
-    connID quic.ConnectionID,
-  ) *logging.ConnectionTracer {
+  Tracer: func(ctx context.Context, client bool, id quic.ConnectionID) qlogwriter.Trace {
     // application-defined logic
   }
 }
@@ -34,7 +30,19 @@ quic.Config{
 
 The `context.Context` passed to this callback is never closed, and is derived from the context returned from [`quic.Config.ConnContext`]({{< relref path="connection.md#conn-context" >}}).
 
-It is valid to return `nil` for the `*logging.ConnectionTracer` from this callback. In this case, qlogging will be disabled for this connection.
+It is valid to return `nil` for the `qlogwriter.Trace` from this callback. In this case, qlogging will be disabled for this connection.
+
+For example, to log to a file, `qlogwriter.NewConnectionFileSeq` can be used:
+```go
+quic.Config{
+  Tracer: func(ctx context.Context, client bool, id quic.ConnectionID) qlogwriter.Trace {
+    // application-defined logic, e.g. to conditionally enable qlogging
+    f, err := os.Create(fmt.Sprintf("connection_%x.sqlog", id))
+    // ... error handling
+    return qlogwriter.NewConnectionFileSeq(f)
+  }
+}
+```
 
 ## Events not associated with a Connection
 
@@ -45,11 +53,10 @@ qlogging for these events can be enabled by configuring a `Tracer` on the [`Tran
 f, err := os.Create("events.sqlog")
 // ... error handling
 quic.Transport{
-  Tracer: qlog.NewTracer(f),
+  Tracer: qlogwriter.NewFileSeq(f).AddProducer(),
 }
 ```
 
 ## 📝 Future Work
 
 * qlog support for HTTP/3: [#4124](https://github.com/quic-go/quic-go/issues/4124)
-* move to a different JSON serializer: [#3373](https://github.com/quic-go/quic-go/issues/3373)
