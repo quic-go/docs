@@ -56,6 +56,6 @@ params:
     base: "https://github.com/quic-go/docs/tree/master/content"
   analytics:
     umami:
-      serverURL: "analytics.seemann.io"
+      serverURL: "https://analytics.seemann.io"
       websiteID: "97428108-30bc-4019-9782-418bf1a6b17f"
-      trackerScriptName: "script.js"
+      scriptName: "script.js"
