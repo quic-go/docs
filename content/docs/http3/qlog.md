@@ -68,6 +68,10 @@ For more sophisticated use cases, applications can implement a custom tracer cal
 
 ```go
 import (
+	"context"
+	"fmt"
+	"os"
+
 	"github.com/quic-go/quic-go"
 	"github.com/quic-go/quic-go/qlog"
 	h3qlog "github.com/quic-go/quic-go/http3/qlog"
