@@ -4,7 +4,7 @@ toc: true
 weight: 90
 ---
 
-quic-go logs HTTP/3 events defined in [draft-ietf-quic-qlog-http3-events](https://datatracker.ietf.org/doc/draft-ietf-quic-qlog-h3-events/), providing detailed insights into HTTP/3 frame processing and datagram handling. This complements the QUIC-layer events to give a complete picture of HTTP/3 connections.
+quic-go logs HTTP/3 events defined in [draft-ietf-quic-qlog-h3-events](https://datatracker.ietf.org/doc/draft-ietf-quic-qlog-h3-events/), providing detailed insights into HTTP/3 frame processing and datagram handling. This complements the QUIC-layer events to give a complete picture of HTTP/3 connections.
 
 ## Enabling qlog for HTTP/3
 
