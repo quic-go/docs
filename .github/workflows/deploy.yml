@@ -37,7 +37,7 @@ jobs:
         with:
           args: ./build
           fail: true
-      - uses: burnett01/rsync-deployments@0c902521b8b9135f0dae7841a01d7d3b19629cb2 # v8.0.2
+      - uses: burnett01/rsync-deployments@dc0d5d44c4728aad3f02154a87309809e62a960f # v8.0.4
         if: ${{ github.event_name == 'push' }}
         with:
           switches: -avzr --delete
