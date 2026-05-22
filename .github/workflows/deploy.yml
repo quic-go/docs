@@ -35,7 +35,7 @@ jobs:
         id: lychee
         uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0
         with:
-          args: ./build
+          args: --root-dir ${{ github.workspace }}/build ./build
           fail: true
       - uses: burnett01/rsync-deployments@66257cad6bfeb2171d3b6bfa6c9a22279dd9c3a1 # v8.0.5
         if: ${{ github.event_name == 'push' }}
