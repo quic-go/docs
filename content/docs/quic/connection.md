@@ -117,35 +117,26 @@ The most common way to handle an error is by interface-asserting it to `net.Erro
 The following example shows how to inspect an error in detail:
 
 ```go
-var (
-  statelessResetErr   *quic.StatelessResetError
-  handshakeTimeoutErr *quic.HandshakeTimeoutError
-  idleTimeoutErr      *quic.IdleTimeoutError
-  appErr              *quic.ApplicationError
-  transportErr        *quic.TransportError
-  vnErr               *quic.VersionNegotiationError
-)
-switch {
-case errors.As(err, &statelessResetErr):
+if _, ok := errors.AsType[*quic.StatelessResetError](err); ok {
   // stateless reset
-case errors.As(err, &handshakeTimeoutErr):
+} else if _, ok := errors.AsType[*quic.HandshakeTimeoutError](err); ok {
   // connection timed out before completion of the handshake
-case errors.As(err, &idleTimeoutErr):
+} else if _, ok := errors.AsType[*quic.IdleTimeoutError](err); ok {
   // idle timeout
-case errors.As(err, &appErr):
+} else if appErr, ok := errors.AsType[*quic.ApplicationError](err); ok {
   // application error
   remote := appErr.Remote             // was the error triggered by the peer?
   errorCode := appErr.ErrorCode       // application-defined error code
   errorMessage := appErr.ErrorMessage // application-defined error message
-case errors.As(err, &transportErr):
+} else if transportErr, ok := errors.AsType[*quic.TransportError](err); ok {
   // transport error
   remote := transportErr.Remote             // was the error triggered by the peer?
   errorCode := transportErr.ErrorCode       // error code (RFC 9000, section 20.1)
   errorMessage := transportErr.ErrorMessage // error message
-case errors.As(err, &vnErr):
-  // version negotation error
+} else if vnErr, ok := errors.AsType[*quic.VersionNegotiationError](err); ok {
+  // version negotiation error
   ourVersions := vnErr.Ours     // locally supported QUIC versions
-  theirVersions := vnErr.Theirs // QUIC versions support by the remote
+  theirVersions := vnErr.Theirs // QUIC versions supported by the remote
 }
 ```
 

@@ -115,8 +115,7 @@ When a stream is reset (i.e. when `CancelRead` or `CancelWrite` are used), appli
 QUIC itself does not interpret this value; instead, it is the responsibility of the application layer to assign specific meanings to different error codes. 
 
 ```go
-var streamErr *quic.StreamError
-if errors.As(err, &streamErr) {
+if streamErr, ok := errors.AsType[*quic.StreamError](err); ok {
   errorCode := streamErr.ErrorCode
 }
 ```

@@ -35,8 +35,7 @@ http.Handle("/masque", func(w http.ResponseWriter, r *http.Request) {
   // parse the UDP proxying request
   mreq, err := masque.ParseRequest(r, t)
   if err != nil {
-    var perr *masque.RequestParseError
-    if errors.As(err, &perr) {
+    if perr, ok := errors.AsType[*masque.RequestParseError](err); ok {
       w.WriteHeader(perr.HTTPStatus)
       return
     }

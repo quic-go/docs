@@ -18,8 +18,7 @@ WebTransport itself does not interpret this value; instead, it is the responsibi
 Below is an example of how to type-assert an error as a `webtransport.StreamError`:
 
 ```go
-var streamErr *webtransport.StreamError
-if errors.As(err, &streamErr) {
+if streamErr, ok := errors.AsType[*webtransport.StreamError](err); ok {
   errorCode := streamErr.ErrorCode
 }
 ```
