@@ -134,7 +134,7 @@ if _, ok := errors.AsType[*quic.StatelessResetError](err); ok {
   errorCode := transportErr.ErrorCode       // error code (RFC 9000, section 20.1)
   errorMessage := transportErr.ErrorMessage // error message
 } else if vnErr, ok := errors.AsType[*quic.VersionNegotiationError](err); ok {
-  // version negotation error
+  // version negotiation error
   ourVersions := vnErr.Ours     // locally supported QUIC versions
   theirVersions := vnErr.Theirs // QUIC versions support by the remote
 }
