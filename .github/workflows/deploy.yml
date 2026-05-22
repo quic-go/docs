@@ -33,9 +33,9 @@ jobs:
         run: cp .github/workflows/linkcheck-skipfile.txt .lycheeignore
       - name: Link Checker
         id: lychee
-        uses: lycheeverse/lychee-action@a8c4c7cb88f0c7386610c35eb25108e448569cb0 # v2.7.0
+        uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0
         with:
-          args: ./build
+          args: --root-dir ${{ github.workspace }}/build ./build
           fail: true
       - uses: burnett01/rsync-deployments@66257cad6bfeb2171d3b6bfa6c9a22279dd9c3a1 # v8.0.5
         if: ${{ github.event_name == 'push' }}
