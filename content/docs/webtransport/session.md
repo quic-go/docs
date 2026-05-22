@@ -23,8 +23,7 @@ Similar to closing a `quic.Conn`, this action causes all calls to `AcceptStream`
 
 On the receiver side, this error will be surfaced as a `webtransport.SessionError`:
 ```go
-var sessErr *webtransport.SessionError
-if errors.As(err, &sessErr) {
+if sessErr, ok := errors.AsType[*webtransport.SessionError](err); ok {
   errorCode := sessErr.ErrorCode
   errorMessage := sessErr.Message
 }
