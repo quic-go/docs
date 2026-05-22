@@ -136,7 +136,7 @@ if _, ok := errors.AsType[*quic.StatelessResetError](err); ok {
 } else if vnErr, ok := errors.AsType[*quic.VersionNegotiationError](err); ok {
   // version negotiation error
   ourVersions := vnErr.Ours     // locally supported QUIC versions
-  theirVersions := vnErr.Theirs // QUIC versions support by the remote
+  theirVersions := vnErr.Theirs // QUIC versions supported by the remote
 }
 ```
 
