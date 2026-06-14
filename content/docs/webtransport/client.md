@@ -21,8 +21,27 @@ The server might reject this request, in which case the status code of the HTTP 
 
 The parameters for the underlying QUIC connection can be adjusted by setting the `QUICConfig` on the `Dialer`. [Datagram support]({{< relref "../quic/datagrams.md" >}}) is required by WebTransport, and must be enabled on using `quic.Config.EnableDatagrams`.
 
+## Application Protocol Negotiation
+
+A client can advertise WebTransport application protocols by setting `ApplicationProtocols` on the `Dialer`. This is the WebTransport-specific negotiation described in the [Application Protocol Negotiation section](https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http3#section-3.3) of the WebTransport over HTTP/3 draft, not TLS ALPN.
+
+```go
+d := webtransport.Dialer{
+    ApplicationProtocols: []string{"foo", "bar"},
+}
+
+_, sess, err := d.Dial(ctx, "https://example.com/webtransport", nil)
+// ... error handling
+
+selected := sess.SessionState().ApplicationProtocol
+if selected == "" {
+    // The server accepted the session without selecting an application protocol.
+}
+```
+
+If the server selects one of the offered protocols, it is available through `sess.SessionState().ApplicationProtocol`. If the server accepts the session without selecting a protocol, `ApplicationProtocol` is empty.
+
 ## 📝 Future Work
 
 * Using the same QUIC connection for WebTransport and HTTP/3: [#147](https://github.com/quic-go/webtransport-go/issues/147)
 * Allow Optimistic Opening of Streams: [#136](https://github.com/quic-go/webtransport-go/issues/136)
-* Subprotocol Negotiation: [#132](https://github.com/quic-go/webtransport-go/issues/132)
