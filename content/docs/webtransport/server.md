@@ -42,6 +42,44 @@ http.HandleFunc("/webtransport", func(w http.ResponseWriter, r *http.Request) {
 s.ListenAndServeTLS(<certFile>, <keyFile>)
 ```
 
+## Application Protocol Negotiation
+
+A server can select a WebTransport application protocol offered by the client by setting `ApplicationProtocols`. This is the WebTransport-specific negotiation described in the [Application Protocol Negotiation section](https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http3#section-3.3) of the WebTransport over HTTP/3 draft, not TLS ALPN.
+
+```go
+s := webtransport.Server{
+    H3: &http3.Server{
+        Addr:      ":443",
+        TLSConfig: &tls.Config{}, // use your tls.Config here
+    },
+    ApplicationProtocols: []string{"foo", "bar"},
+}
+```
+
+`Upgrade` selects the first client-offered protocol that also appears in `ApplicationProtocols`. The selected protocol is available on the returned session:
+
+```go
+http.HandleFunc("/webtransport", func(w http.ResponseWriter, r *http.Request) {
+    sess, err := s.Upgrade(w, r)
+    if err != nil {
+        log.Printf("upgrading failed: %s", err)
+        w.WriteHeader(500)
+        return
+    }
+
+    switch sess.SessionState().ApplicationProtocol {
+    case "foo":
+        // handle foo
+    case "bar":
+        // handle bar
+    default:
+        // No application protocol was negotiated.
+    }
+})
+```
+
+If there is no overlap between the client's offered protocols and the server's `ApplicationProtocols`, `Upgrade` accepts the session without selecting a protocol and `ApplicationProtocol` is empty.
+
 ## Origin Validation
 
 By default, the `Upgrade` function checks that the client's request origin matches the host of the server. This prevents cross-site request forgery (CSRF) attacks, where an attacker could use a malicious web page to establish a WebTransport connection to a vulnerable application, with the application processing the connection as if it were part of the victim user's session.
@@ -60,5 +98,4 @@ s := webtransport.Server{
 
 ## 📝 Future Work
 
-* Subprotocol Negotiation: [#132](https://github.com/quic-go/webtransport-go/issues/132)
 * Properly check Validity of the client's SETTINGS: [#106](https://github.com/quic-go/webtransport-go/issues/106)
