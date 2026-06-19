@@ -138,4 +138,3 @@ Conversely, the receiver does not need to wait for all data to be delivered befo
 ## 📝 Future Work
 
 * Stream Priorities: [#437](https://github.com/quic-go/quic-go/issues/437)
-* QUIC [Reliable Stream Reset](https://datatracker.ietf.org/doc/draft-ietf-quic-reliable-stream-reset/) extension: [#4139](https://github.com/quic-go/quic-go/issues/4139)
