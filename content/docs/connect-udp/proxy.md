@@ -33,9 +33,9 @@ t := uritemplate.MustNew("https://example.org:4443/masque?h={target_host}&p={tar
 var proxy masque.Proxy
 http.Handle("/masque", func(w http.ResponseWriter, r *http.Request) {
   // parse the UDP proxying request
-  mreq, err := masque.ParseRequest(r, t)
+  preq, err := masque.ParseProxyRequest(r, t)
   if err != nil {
-    if perr, ok := errors.AsType[*masque.RequestParseError](err); ok {
+    if perr, ok := errors.AsType[*masque.ProxyRequestParseError](err); ok {
       w.WriteHeader(perr.HTTPStatus)
       return
     }
@@ -46,7 +46,7 @@ http.Handle("/masque", func(w http.ResponseWriter, r *http.Request) {
   // optional: whitelisting / blacklisting logic
 
   // start proxying UDP datagrams back and forth
-  err = proxy.Proxy(w, mreq)
+  err = proxy.Proxy(w, preq)
   // ... error handling
 }
 
@@ -55,9 +55,9 @@ s := http3.Server{Addr: ":4443"}
 s.ListenAndServeTLS(<certfile>, <keyfile>)
 ```
 
-`masque.ParseRequest` parses the Extended CONNECT request, and extracts the target host and port from the URI template. If parsing of the request fails, it returns a `masque.RequestParseError`. This struct contains a field 'HTTPStatus', allowing the application to reject invalid requests with the correct HTTP status code.
+`masque.ParseProxyRequest` parses the Extended CONNECT request, and extracts the target host and port from the URI template. If parsing of the request fails, it returns a `masque.ProxyRequestParseError`. This struct contains a field 'HTTPStatus', allowing the application to reject invalid requests with the correct HTTP status code.
 
-The `masque.Request.Target` contains the requested target encoded as `{target_host}:{target_port}`. Applications can implement custom logic to decide which proxying requests are permissible.
+The `masque.ProxyRequest.Target` contains the requested target encoded as `{target_host}:{target_port}`. Applications can implement custom logic to decide which proxying requests are permissible.
 
 {{< callout type="warning" >}}
   Applications may add custom header fields to the response header, but must not call `WriteHeader` on the `http.ResponseWriter`
@@ -70,21 +70,22 @@ For more details on how to set up and configure an HTTP/3 server, see [Serving H
 ## Managing UDP Sockets
 
 The `proxy.Proxy` function used above creates a new connected UDP socket on `:0` to send UDP datagrams to the target.
+When it creates the socket, it also sends a Proxy-Status response header ([RFC 9209](https://datatracker.ietf.org/doc/html/rfc9209)) with details such as DNS errors or the resolved next hop.
 
 An application that wishes a more fine-grained control over the socket can instead use `Proxy.ProxyConnectedSocket`:
 ```go
 http.Handle("/masque", func(w http.ResponseWriter, r *http.Request) {
   // parse the UDP proxying request
-  mreq, err := masque.ParseRequest(r, t)
+  preq, err := masque.ParseProxyRequest(r, t)
   // ... handle error, as above ...
 
   // custom logic to resolve and create a UDP socket
-  addr, err := net.ResolveUDPAddr("udp", mreq.Target)
+  addr, err := net.ResolveUDPAddr("udp", preq.Target)
   // ... handle error ...
-  conn, err := net.DialUDP("udp", addr)
+  conn, err := net.DialUDP("udp", nil, addr)
   // ... handle error ...
 
-  err = proxy.ProxyConnectedSocket(w, mreq, conn)
+  err = proxy.ProxyConnectedSocket(w, preq, conn)
   // ... handle error ...
 }
 ```
@@ -101,7 +102,6 @@ The `net.UDPConn` passed to `ProxyConnectedSocket` is closed by the proxy after 
 ## 📝 Future Work 
 
 * Unconnected UDP sockets: [#3](https://github.com/quic-go/masque-go/issues/3)
-* Use the Proxy-Status HTTP header ([RFC 9209](https://datatracker.ietf.org/doc/html/rfc9209)) to communicate failures: [#2](https://github.com/quic-go/masque-go/issues/2)
 * Use GSO and GRO to speed up UDP packet processing: [#31](https://github.com/quic-go/masque-go/issues/31) and [#32](https://github.com/quic-go/masque-go/issues/32)
 * Logging / Tracing: [#59](https://github.com/quic-go/masque-go/issues/59)
 * Proxying a UDP Listener: [#64](https://github.com/quic-go/masque-go/issues/64)
