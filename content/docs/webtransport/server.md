@@ -94,8 +94,3 @@ s := webtransport.Server{
     },
 }
 ```
-
-
-## 📝 Future Work
-
-* Properly check Validity of the client's SETTINGS: [#106](https://github.com/quic-go/webtransport-go/issues/106)
