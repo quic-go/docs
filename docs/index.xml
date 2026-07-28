@@ -214,11 +214,7 @@ title="Copy code"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;h2&gt;📝 Future Work&lt;span class="hx:absolute hx:-mt-20" id="-future-work"&gt;&lt;/span&gt;
-&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;Properly check Validity of the client&amp;rsquo;s SETTINGS: &lt;a href="https://github.com/quic-go/webtransport-go/issues/106"target="_blank" rel="noopener"&gt;#106&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Serving HTTP/3</title><link>https://quic-go.net/docs/http3/server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/http3/server/</guid><description>
+&lt;/div&gt;</description></item><item><title>Serving HTTP/3</title><link>https://quic-go.net/docs/http3/server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/http3/server/</guid><description>
 &lt;h2&gt;Using &lt;code&gt;ListenAndServeQUIC&lt;/code&gt;&lt;span class="hx:absolute hx:-mt-20" id="using-listenandservequic"&gt;&lt;/span&gt;
 &lt;a href="#using-listenandservequic" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The easiest way to start an HTTP/3 server is using&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
@@ -1145,11 +1141,7 @@ title="Copy code"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;Additionally, the underlying QUIC connection might close for various reasons, potentially triggering any of the errors detailed in the &lt;a href="https://quic-go.net/docs/quic/connection/#error-assertion"&gt;error assertion section&lt;/a&gt;.&lt;/p&gt;
-&lt;h2&gt;📝 Future Work&lt;span class="hx:absolute hx:-mt-20" id="-future-work"&gt;&lt;/span&gt;
-&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;WebTransport Datagrams: &lt;a href="https://github.com/quic-go/webtransport-go/issues/8"target="_blank" rel="noopener"&gt;#8&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>QUIC Connection</title><link>https://quic-go.net/docs/quic/connection/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/connection/</guid><description>
+&lt;p&gt;Additionally, the underlying QUIC connection might close for various reasons, potentially triggering any of the errors detailed in the &lt;a href="https://quic-go.net/docs/quic/connection/#error-assertion"&gt;error assertion section&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>QUIC Connection</title><link>https://quic-go.net/docs/quic/connection/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/connection/</guid><description>
 &lt;p&gt;The &lt;code&gt;quic.Conn&lt;/code&gt; is the central object to send and receive application data. Data is not sent directly on the connection, but either on &lt;a href="https://quic-go.net/docs/quic/streams/"&gt;streams&lt;/a&gt;, or (optionally) in so-called &lt;a href="https://quic-go.net/docs/quic/datagrams/"&gt;datagrams&lt;/a&gt;.&lt;/p&gt;
 &lt;h2&gt;Using the Connection Context&lt;span class="hx:absolute hx:-mt-20" id="conn-context"&gt;&lt;/span&gt;
 &lt;a href="#conn-context" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;When a new QUIC connection is established, a number of callbacks might be called during the different stages of the QUIC handshake. Among those are:&lt;/p&gt;
