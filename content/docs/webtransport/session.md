@@ -30,8 +30,3 @@ if sessErr, ok := errors.AsType[*webtransport.SessionError](err); ok {
 ```
 
 Additionally, the underlying QUIC connection might close for various reasons, potentially triggering any of the errors detailed in the [error assertion section]({{< relref "../quic/connection.md#error-assertion" >}}).
-
-
-## 📝 Future Work
-
-* WebTransport Datagrams: [#8](https://github.com/quic-go/webtransport-go/issues/8)
