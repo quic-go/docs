@@ -9,7 +9,7 @@
     "description": "Software engineer specializing in internet transport protocols. Maintainer of quic-go, webtransport-go, and masque-go.",
     "webpageUrl": {
       "url": "https://seemann.io/",
-      "wellKnown": ""
+      "wellKnown": "https://seemann.io/.well-known/funding-manifest-urls"
     }
   },
   "projects": [
