@@ -28,6 +28,8 @@ s := webtransport.Server{
     },
 }
 
+webtransport.ConfigureHTTP3Server(s.H3)
+
 // Create a new HTTP endpoint /webtransport.
 http.HandleFunc("/webtransport", func(w http.ResponseWriter, r *http.Request) {
     sess, err := s.Upgrade(w, r)
