@@ -26,3 +26,23 @@ quic.Config{
 This tracer writes qlog files to a directory specified by the `QLOGDIR` environment variable, if set. Each connection will produce a separate qlog file containing both QUIC and HTTP/3 events.
 
 As described in the [qlog documentation]({{< relref "../quic/qlog.md" >}}), applications can implement the `quic.Config.Tracer` callback to add custom logic to the qlog tracing.
+
+## Redacting Field Values
+
+By default, qlog logs HTTP/3 `HEADERS` frames, including all header and trailer field values. Applications can redact sensitive values by wrapping a connection tracer with `h3qlog.RedactHeaders`:
+
+```go
+tracer := h3qlog.RedactHeaders(
+  h3qlog.DefaultConnectionTracer,
+  func(name, value string) string {
+    switch name {
+    case "Authorization", "Cookie", "Set-Cookie":
+      return "***"
+    default:
+      return value
+    }
+  },
+)
+```
+
+The callback receives canonical field names (e.g. `Authorization`) for sent and received header and trailer fields. Pseudo-header fields are excluded.
