@@ -39,7 +39,9 @@ quic.Config{
     // application-defined logic, e.g. to conditionally enable qlogging
     f, err := os.Create(fmt.Sprintf("connection_%x.sqlog", id))
     // ... error handling
-    return qlogwriter.NewConnectionFileSeq(f)
+    trace := qlogwriter.NewConnectionFileSeq(f, client, id, []string{qlog.EventSchema})
+    go trace.Run()
+    return trace
   }
 }
 ```
