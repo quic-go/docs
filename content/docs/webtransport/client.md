@@ -19,7 +19,7 @@ rsp, sess, err := d.Dial(ctx, "https://example.com/webtransport", headers)
 This initiates a new WebTransport session with the server by sending an Extended CONNECT request to the server.
 The server might reject this request, in which case the status code of the HTTP response will not be in the 2xx range.
 
-The parameters for the underlying QUIC connection can be adjusted by setting the `QUICConfig` on the `Transport`. [Datagram support]({{< relref "../quic/datagrams.md" >}}) is required by WebTransport, and must be enabled on using `quic.Config.EnableDatagrams`.
+The parameters for the underlying QUIC connection can be adjusted by setting the `QUICConfig` on the `Transport`. A custom config must enable [datagram support]({{< relref "../quic/datagrams.md" >}}) using `quic.Config.EnableDatagrams`, and stream resets with partial delivery using `quic.Config.EnableStreamResetPartialDelivery`.
 
 ## Application Protocol Negotiation
 
