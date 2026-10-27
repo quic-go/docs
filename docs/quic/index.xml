@@ -620,7 +620,7 @@ title="Copy code"
 &lt;/div&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;quic.VersionNegotiationError&lt;/code&gt;: Happens during the handshake, if &lt;a href="https://quic-go.net/docs/quic/transport/#version-negotiation"&gt;Version Negotiation&lt;/a&gt; fails, i.e. when there is no overlap between the client&amp;rsquo;s and the server&amp;rsquo;s supported QUIC versions.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;quic.HandshakeTimeoutError&lt;/code&gt;: Happens if the QUIC handshake doesn&amp;rsquo;t complete within the time specified in &lt;code&gt;quic.Config.HandshakeTimeout&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;quic.HandshakeTimeoutError&lt;/code&gt;: Happens if no packets are received for &lt;code&gt;quic.Config.HandshakeIdleTimeout&lt;/code&gt; during the handshake, or if the handshake doesn&amp;rsquo;t complete within twice that duration.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;quic.IdleTimeoutError&lt;/code&gt;: Happens after completion of the handshake if the connection is &lt;a href="#idle-timeout"&gt;idle&lt;/a&gt; for longer than the minimum of both peers idle timeouts.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;quic.StatelessResetError&lt;/code&gt;: Happens when a &lt;a href="https://quic-go.net/docs/quic/transport/#stateless-reset"&gt;Stateless Reset&lt;/a&gt; is received.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;quic.TransportError&lt;/code&gt;: Happens if the QUIC protocol is violated. Unless the error code is &lt;code&gt;APPLICATION_ERROR&lt;/code&gt;, this will not happen unless one of the QUIC stacks involved is misbehaving. Please open an issue if you encounter this error.&lt;/li&gt;
