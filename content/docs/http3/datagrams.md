@@ -43,7 +43,7 @@ After HTTP datagram has been verified, it is possible to "take over" the stream 
 
 Once `HTTPStream` has been called, the stream behaves akin to a [QUIC Stream]({{< relref "../quic/streams.md" >}}) in terms of reads, writes and stream cancellations.
 
-When writing to the `http.ResponseWriter`, the HTTP/3 layer applies framing using HTTP/3 DATA frames. By taking over the streams we gain access to the underlying QUIC stream: data passed to `Write` is written to the stream directly, and `Read` reads from the stream directly. This is a requirement for the Capsule protocol defined in [section 3 of RFC 9297](https://datatracker.ietf.org/doc/html/rfc9297#section-3).
+The `http3.Stream` still applies HTTP/3 DATA framing to reads and writes. The Capsule protocol defined in [section 3 of RFC 9297](https://datatracker.ietf.org/doc/html/rfc9297#section-3) sends capsules inside these DATA frames.
 
 
 Continuing the code sample from above:
@@ -63,7 +63,7 @@ http.HandleFunc("/datagrams", func(w http.ResponseWriter, r *http.Request) {
 	data, err := str.ReceiveDatagram(context.Background())
 	// ... handle error ...
 
-	// send data directly on the QUIC stream
+	// send data in HTTP/3 DATA frames
 	str.Write([]byte("message"))
 	str.Close()
 })
