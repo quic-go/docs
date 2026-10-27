@@ -450,4 +450,4 @@ title="Copy code"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;The callback receives canonical field names (e.g. &lt;code&gt;Authorization&lt;/code&gt;) for sent and received header and trailer fields. Pseudo-header fields are excluded.&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;The callback receives canonical field names (e.g. &lt;code&gt;Authorization&lt;/code&gt;) for sent and received header and trailer fields. Pseudo-header names, such as &lt;code&gt;:path&lt;/code&gt;, are passed unchanged.&lt;/p&gt;</description></item></channel></rss>
