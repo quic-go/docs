@@ -58,7 +58,7 @@ The use of 0-RTT was not anticipated by Go's standard library, and Go doesn't ha
   Support for the "Early-Data" header field, as well as the "Too Early" status code (425) defined in [RFC 8470](https://datatracker.ietf.org/doc/html/rfc8470#section-5.2) is not yet implemented. See [📝 Future Work](#future-work).
 {{< /callout >}}
 
-It is the application's responsibility to make sure that it is actually safe to send a request in 0-RTT, as outlined in [Security Properties of 0-RTT]({{< relref "../quic/client.md#0rtt-security" >}}). Requests sent in 0-RTT can be replayed on a new connection by an on-path attacker, so 0-RTT should only be used for idempotent requests. [RFC 8740](https://datatracker.ietf.org/doc/html/rfc8470) defines some guidance on how to use 0-RTT in HTTP.
+It is the application's responsibility to make sure that it is actually safe to send a request in 0-RTT, as outlined in [Security Properties of 0-RTT]({{< relref "../quic/client.md#0rtt-security" >}}). Requests sent in 0-RTT can be replayed on a new connection by an on-path attacker, so 0-RTT should only be used for idempotent requests. [RFC 8470](https://datatracker.ietf.org/doc/html/rfc8470) defines some guidance on how to use 0-RTT in HTTP.
 
 
 ```go
