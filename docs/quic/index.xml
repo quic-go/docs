@@ -623,7 +623,7 @@ title="Copy code"
 &lt;li&gt;&lt;code&gt;quic.HandshakeTimeoutError&lt;/code&gt;: Happens if no packets are received for &lt;code&gt;quic.Config.HandshakeIdleTimeout&lt;/code&gt; during the handshake, or if the handshake doesn&amp;rsquo;t complete within twice that duration.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;quic.IdleTimeoutError&lt;/code&gt;: Happens after completion of the handshake if the connection is &lt;a href="#idle-timeout"&gt;idle&lt;/a&gt; for longer than the minimum of both peers idle timeouts.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;quic.StatelessResetError&lt;/code&gt;: Happens when a &lt;a href="https://quic-go.net/docs/quic/transport/#stateless-reset"&gt;Stateless Reset&lt;/a&gt; is received.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;quic.TransportError&lt;/code&gt;: Happens if the QUIC protocol is violated. Unless the error code is &lt;code&gt;APPLICATION_ERROR&lt;/code&gt;, this will not happen unless one of the QUIC stacks involved is misbehaving. Please open an issue if you encounter this error.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;quic.TransportError&lt;/code&gt;: Can indicate a QUIC protocol violation, a rejected connection attempt (e.g. &lt;code&gt;CONNECTION_REFUSED&lt;/code&gt;), or a TLS handshake error.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;quic.ApplicationError&lt;/code&gt;: Happens when the remote decides to close the connection, see above.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2&gt;📝 Future Work&lt;span class="hx:absolute hx:-mt-20" id="-future-work"&gt;&lt;/span&gt;
