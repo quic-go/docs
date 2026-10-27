@@ -73,14 +73,14 @@ This allows HTTP clients to discover support for HTTP/3. Clients may still conti
 An `http.Handler` can be wrapped to automatically add the Alt-Svc header field for non-HTTP/3 requests:
 ```go
 server := http3.Server{}
-var handler http.Handler = http.NewServeMux()
+mux := http.NewServeMux()
 // ... add HTTP handlers ...
-handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	if r.ProtoMajor < 3 {
 		err := server.SetQUICHeaders(w.Header())
 		// ... handle error ...
 	}
-	handler.ServeHTTP(w, r)
+	mux.ServeHTTP(w, r)
 })
 ```
 
