@@ -6,7 +6,7 @@ weight: 10
 
 ## The Unreliable Datagram Extension
 
-Unreliable datagrams are not part of QUIC (RFC 9000) itself, but a feature that is added by a QUIC extension ([RFC 9221](https://datatracker.ietf.org/doc/html/rfc9221)). As other extensions, it can be negotiated during the handshake. Support can be enabled by setting the `quic.Config.EnableDatagram` flag. Note that this doesn't guarantee that the peer also supports datagrams. Whether or not the feature negotiation succeeded can be learned from the `ConnectionState.SupportsDatagrams` obtained from `Conn.ConnectionState()`.
+Unreliable datagrams are not part of QUIC (RFC 9000) itself, but a feature that is added by a QUIC extension ([RFC 9221](https://datatracker.ietf.org/doc/html/rfc9221)). As other extensions, it can be negotiated during the handshake. Receiving datagrams can be enabled by setting the `quic.Config.EnableDatagrams` flag. This is reflected in `ConnectionState.SupportsDatagrams.Local`. Whether the peer supports receiving datagrams is indicated by `ConnectionState.SupportsDatagrams.Remote`, obtained from `Conn.ConnectionState()`.
 
 QUIC DATAGRAMs are a new QUIC frame type sent in QUIC 1-RTT packets (i.e. after completion of the handshake). Therefore, they're end-to-end encrypted and congestion-controlled. However, if a DATAGRAM frame is deemed lost by QUIC's loss detection mechanism, they are not retransmitted.
 
