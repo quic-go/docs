@@ -24,7 +24,7 @@ To accept the Extended CONNECT request, the application needs to define an HTTP 
 s := webtransport.Server{
     H3: &http3.Server{
       Addr: ":443",
-      TLSConfig: &tls.Config{}, // use your tls.Config here
+      TLSConfig: http3.ConfigureTLSConfig(&tls.Config{}), // use your tls.Config here
     },
 }
 
@@ -50,7 +50,7 @@ A server can select a WebTransport application protocol offered by the client by
 s := webtransport.Server{
     H3: &http3.Server{
         Addr:      ":443",
-        TLSConfig: &tls.Config{}, // use your tls.Config here
+        TLSConfig: http3.ConfigureTLSConfig(&tls.Config{}), // use your tls.Config here
     },
     ApplicationProtocols: []string{"foo", "bar"},
 }
