@@ -45,4 +45,4 @@ tracer := h3qlog.RedactHeaders(
 )
 ```
 
-The callback receives canonical field names (e.g. `Authorization`) for sent and received header and trailer fields. Pseudo-header fields are excluded.
+The callback receives canonical field names (e.g. `Authorization`) for sent and received header and trailer fields. Pseudo-header names, such as `:path`, are passed unchanged.
