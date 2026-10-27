@@ -169,8 +169,6 @@ title="Copy code"
 &lt;h2&gt;📝 Future Work&lt;span class="hx:absolute hx:-mt-20" id="-future-work"&gt;&lt;/span&gt;
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Correctly deal with 0-RTT and HTTP/3 extensions: &lt;a href="https://github.com/quic-go/quic-go/issues/3855"target="_blank" rel="noopener"&gt;#3855&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Support for Extensible Priorities (&lt;a href="https://www.rfc-editor.org/rfc/rfc9218.html"target="_blank" rel="noopener"&gt;RFC 9218&lt;/a&gt;): &lt;a href="https://github.com/quic-go/quic-go/issues/3470"target="_blank" rel="noopener"&gt;#3470&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Support for httptrace: &lt;a href="https://github.com/quic-go/quic-go/issues/3342"target="_blank" rel="noopener"&gt;#3342&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Dialing HTTP/3</title><link>https://quic-go.net/docs/http3/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/http3/client/</guid><description>
 &lt;p&gt;This package provides a &lt;code&gt;http.RoundTripper&lt;/code&gt; implementation that can be used on the &lt;code&gt;http.Client&lt;/code&gt;:&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
@@ -259,7 +257,6 @@ title="Copy code"
 &lt;a href="#future-work" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Support for zstd Content Encoding: &lt;a href="https://github.com/quic-go/quic-go/issues/4100"target="_blank" rel="noopener"&gt;#4100&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Happy Eyeballs Support: &lt;a href="https://github.com/quic-go/quic-go/issues/3755"target="_blank" rel="noopener"&gt;#3755&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Support for Extensible Priorities (&lt;a href="https://www.rfc-editor.org/rfc/rfc9218.html"target="_blank" rel="noopener"&gt;RFC 9218&lt;/a&gt;): &lt;a href="https://github.com/quic-go/quic-go/issues/3470"target="_blank" rel="noopener"&gt;#3470&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Use &lt;a href="https://datatracker.ietf.org/doc/html/rfc8470#section-5.1"target="_blank" rel="noopener"&gt;&lt;code&gt;Early-Data&lt;/code&gt; header field&lt;/a&gt; for 0-RTT requests, retry on 425 response status: &lt;a href="https://github.com/quic-go/quic-go/issues/4381"target="_blank" rel="noopener"&gt;#4381&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>QPACK Header Field Compression</title><link>https://quic-go.net/docs/http3/qpack/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/http3/qpack/</guid><description>
 &lt;p&gt;HTTP/3 utilizes QPACK (&lt;a href="https://datatracker.ietf.org/doc/html/rfc9204"target="_blank" rel="noopener"&gt;RFC 9204&lt;/a&gt;) for efficient HTTP header field compression. Our implementation, available at &lt;a href="https://github.com/quic-go/qpack"target="_blank" rel="noopener"&gt;quic-go/qpack&lt;/a&gt;, provides a minimal implementation of the protocol.&lt;/p&gt;
