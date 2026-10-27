@@ -144,7 +144,7 @@ if _, ok := errors.AsType[*quic.StatelessResetError](err); ok {
 * `quic.HandshakeTimeoutError`: Happens if no packets are received for `quic.Config.HandshakeIdleTimeout` during the handshake, or if the handshake doesn't complete within twice that duration.
 * `quic.IdleTimeoutError`: Happens after completion of the handshake if the connection is [idle](#idle-timeout) for longer than the minimum of both peers idle timeouts.
 * `quic.StatelessResetError`: Happens when a [Stateless Reset]({{< relref "transport.md#stateless-reset" >}}) is received.
-* `quic.TransportError`: Happens if the QUIC protocol is violated. Unless the error code is `APPLICATION_ERROR`, this will not happen unless one of the QUIC stacks involved is misbehaving. Please open an issue if you encounter this error.
+* `quic.TransportError`: Can indicate a QUIC protocol violation, a rejected connection attempt (e.g. `CONNECTION_REFUSED`), or a TLS handshake error.
 * `quic.ApplicationError`: Happens when the remote decides to close the connection, see above.
 
 ## 📝 Future Work
