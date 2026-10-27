@@ -82,8 +82,3 @@ These configuration flags determine the number of concurrent streams and not the
 {{< callout type="warning" >}}
   The `MaxIncomingStreams` and `MaxIncomingUniStreams` configuration flags only impose a limit on how many streams the peer can open. They do not limit how many streams the endpoint itself can open.
 {{< /callout >}}
-
-
-## 📝 Future Work
-
-* queue stream-related frames with their respective stream: [#4271](https://github.com/quic-go/quic-go/issues/4271)
