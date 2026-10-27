@@ -11,7 +11,7 @@ The main difference between a QUIC stream and a WebTransport stream lies in the 
 
 ## Stream Errors
 
-When a stream is reset (i.e. when `CancelRead` or `CancelWrite` are used), applications can communicate an error code to the peer. Subsequent calls to Read and Write may return an error that can be type-asserted as a `quic.StreamError`.
+When a stream is reset (i.e. when `CancelRead` or `CancelWrite` are used), applications can communicate an error code to the peer. Subsequent calls to Read and Write may return an error that can be type-asserted as a `webtransport.StreamError`.
 
 WebTransport itself does not interpret this value; instead, it is the responsibility of the application layer to assign specific meanings to different error codes. 
 
