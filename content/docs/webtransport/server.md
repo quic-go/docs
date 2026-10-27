@@ -22,7 +22,7 @@ To accept the Extended CONNECT request, the application needs to define an HTTP 
 
 ```go
 s := webtransport.Server{
-    H3: http3.Server{
+    H3: &http3.Server{
       Addr: ":443",
       TLSConfig: &tls.Config{}, // use your tls.Config here
     },
@@ -88,7 +88,7 @@ Applications can change this default behavior by setting the `webtransport.Serve
 
 ```go
 s := webtransport.Server{
-    H3: http3.Server{Addr: ":443"},
+    H3: &http3.Server{Addr: ":443"},
     CheckOrigin: func(r *http.Request) bool {
       // custom validation logic
     },
