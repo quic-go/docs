@@ -83,7 +83,7 @@ The `quic.SendStream` is a unidirectional stream opened by us. It implements the
 
 If the application needs to abruptly stop sending data on a stream, it can do so by by calling `CancelWrite` with an application-defined error code (an unsigned 62-bit number). This call immediately halts data transmission; any pending data will not be retransmitted. On the receiver side, this is surfaced as a `quic.StreamError` containing that error code on `stream.Read`.
 
-Once `CancelWrite` has been called to abort the stream, subsequent calls to Close are ineffective (no-op) - the stream's abortive state cannot be reversed.
+Calling `Close` after `CancelWrite` does not undo the cancellation.
 
 It is valid to call `CancelWrite` after `Close`. This immediately aborts transmission of stream data. Depending on the order in which the QUIC packets are received, the receiver will either surface this a normal or an abrupt stream termination to the application.
 
