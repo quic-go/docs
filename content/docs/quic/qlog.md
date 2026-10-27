@@ -54,8 +54,10 @@ qlogging for these events can be enabled by configuring a `Tracer` on the [`Tran
 ```go
 f, err := os.Create("events.sqlog")
 // ... error handling
+trace := qlogwriter.NewFileSeq(f)
+go trace.Run()
 quic.Transport{
-  Tracer: qlogwriter.NewFileSeq(f).AddProducer(),
+  Tracer: trace.AddProducer(),
 }
 ```
 
