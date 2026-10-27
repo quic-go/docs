@@ -18,7 +18,7 @@ sess.CloseWithError(1234, "please stop talking to me 🤐")
 Similar to closing a `quic.Conn`, this action causes all calls to `AcceptStream` and `OpenStream`, as well as stream `Read` and `Write` calls, to return immediately.
 
 {{< callout type="warning" >}}
-  `CloseWithError` only closes the WebTransport session, but not the underlying QUIC connection.
+  For sessions created using `Transport.Dial`, `CloseWithError` also closes the underlying QUIC connection. For sessions created using `ClientConn.Dial`, it only closes the session.
 {{< /callout >}}
 
 On the receiver side, this error will be surfaced as a `webtransport.SessionError`:
