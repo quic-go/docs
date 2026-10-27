@@ -102,7 +102,7 @@ It is invalid to pass an unconnected socket to &lt;code&gt;ProxyConnectedSocket&
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Unconnected UDP sockets: &lt;a href="https://github.com/quic-go/masque-go/issues/3"target="_blank" rel="noopener"&gt;#3&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Use GSO and GRO to speed up UDP packet processing: &lt;a href="https://github.com/quic-go/masque-go/issues/31"target="_blank" rel="noopener"&gt;#31&lt;/a&gt; and &lt;a href="https://github.com/quic-go/masque-go/issues/32"target="_blank" rel="noopener"&gt;#32&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Logging / Tracing: &lt;a href="https://github.com/quic-go/masque-go/issues/59"target="_blank" rel="noopener"&gt;#59&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Connection Statistics: &lt;a href="https://github.com/quic-go/masque-go/issues/59"target="_blank" rel="noopener"&gt;#59&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Proxying a UDP Listener: &lt;a href="https://github.com/quic-go/masque-go/issues/64"target="_blank" rel="noopener"&gt;#64&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Running a Server</title><link>https://quic-go.net/docs/webtransport/server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/webtransport/server/</guid><description>
 &lt;p&gt;When a client establishes a new WebTransport session it:&lt;/p&gt;
@@ -702,7 +702,7 @@ title="Copy code"
 &lt;/div&gt;
 &lt;h2&gt;📝 Future Work&lt;span class="hx:absolute hx:-mt-20" id="-future-work"&gt;&lt;/span&gt;
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;Logging / Tracing: &lt;a href="https://github.com/quic-go/masque-go/issues/59"target="_blank" rel="noopener"&gt;#59&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Connection Statistics: &lt;a href="https://github.com/quic-go/masque-go/issues/59"target="_blank" rel="noopener"&gt;#59&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Proxying a UDP Listener: &lt;a href="https://github.com/quic-go/masque-go/issues/64"target="_blank" rel="noopener"&gt;#64&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Running a Client</title><link>https://quic-go.net/docs/webtransport/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/webtransport/client/</guid><description>
 &lt;p&gt;To dial a WebTransport session, initialize a &lt;code&gt;webtransport.Transport&lt;/code&gt;, and call the &lt;code&gt;Dial&lt;/code&gt; function.&lt;/p&gt;
