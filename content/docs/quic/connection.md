@@ -101,7 +101,7 @@ quic.Config{
 }
 ```
 
-This will cause a PING frame to be sent _at least_ every `KeepAlivePeriod`. If the idle timeout negotiated between the two endpoints is shorter than the `KeepAlivePeriod`, PING frames will be sent more frequently.
+This will cause a PING frame to be sent approximately every `KeepAlivePeriod` while the connection is idle. If the idle timeout negotiated between the two endpoints is shorter than the `KeepAlivePeriod`, PING frames may be sent more frequently.
 
 {{< callout type="warning" >}}
   Enabling Keep-Alives doesn't mean that the connection can't experience an idle timeout. For example, the remote node could have crashed, or the path could have become unusable for a number of reasons.
