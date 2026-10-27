@@ -64,7 +64,7 @@ Datagram Packetization Layer Path MTU Discovery (DPLPMTUD) allows a QUIC endpoin
 DPLPMTUD is enabled by default. If desired, it can be disabled on a per-connection basis using the `quic.Config`:
 ```go
 quic.Config{
-  DisablePathMTUDiscovery: false,
+  DisablePathMTUDiscovery: true,
 }
 ```
 
