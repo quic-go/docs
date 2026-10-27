@@ -14,11 +14,11 @@ Since HTTP Datagram support is an HTTP/3 extension, it needs to be negotiated us
 
 For example, if a client sends a request immediately after the handshake completes and the QUIC packet containing the SETTINGS is lost, the SETTINGS will not be available until a retransmission is received.
 
-To use HTTP datagrams, the server is required to check that support is actually enabled.
+To use HTTP datagrams, the server must set `http3.Server.EnableDatagrams` and check that the peer enabled support.
 
 ```go
 http.HandleFunc("/datagrams", func(w http.ResponseWriter, r *http.Request) {
-	conn := w.(http3.Hijacker).Connection()
+	conn := w.(http3.Settingser)
 	// wait for the client's SETTINGS
 	select {
 	case <-conn.ReceivedSettings():
@@ -79,7 +79,7 @@ The client is required to check that the server enabled HTTP datagrams support b
 
 ```go
 // ... dial a quic.Conn to the target server
-// make sure to set the "h3" ALPN
+// make sure to enable QUIC datagrams and set the "h3" ALPN
 tr := &http3.Transport{
 	EnableDatagrams: true,
 }
@@ -101,7 +101,7 @@ if !settings.EnableDatagrams {
 Since an HTTP/3 server can [send SETTINGS]({{< relref "server.md#settings" >}}) in 0.5-RTT data, the SETTINGS are usually available right after completion of the QUIC handshake (barring packet loss, or an unoptimized HTTP/3 server implementation).
 
 ```go
-str, err := rt.OpenRequestStream(ctx)
+str, err := conn.OpenRequestStream(ctx)
 // ... handle error ...
 
 // send the HTTP request
