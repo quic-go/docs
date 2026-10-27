@@ -72,6 +72,15 @@ str, err := conn.OpenStreamSync(ctx)
 Both `OpenStream` and `OpenStreamSync` return an error when the underlying QUIC connection is closed.
 
 
+## Stream Priorities
+
+Applications can set the send priority of a `quic.Stream` or `quic.SendStream` using `SetPriority(urgency, incremental)`. Urgency values range from 0 to 7, with lower values taking priority. Streams with the same urgency share bandwidth when `incremental` is `true`.
+
+```go
+str.SetPriority(0, false)
+```
+
+
 ## Stream States {#states}
 
 quic-go exposes three different stream abstractions: A `quic.SendStream` and a `quic.ReceiveStream`, for the two directions of unidirectional streams, and a `quic.Stream` for bidirectional streams.
@@ -139,8 +148,3 @@ Conversely, the receiver does not need to wait for all data to be delivered befo
 The [Stream Resets with Partial Delivery](https://datatracker.ietf.org/doc/draft-ietf-quic-reliable-stream-reset/) extension allows reliable delivery of a prefix of the stream. Receivers enable this extension using `quic.Config.EnableStreamResetPartialDelivery`.
 
 If the peer supports this extension, the sender can call `SetReliableBoundary` on a `quic.Stream` or `quic.SendStream` to mark all data written so far as reliable. This data will still be retransmitted after `CancelWrite`, and the receiver will deliver it before reporting the stream reset.
-
-
-## 📝 Future Work
-
-* Stream Priorities: [#437](https://github.com/quic-go/quic-go/issues/437)
