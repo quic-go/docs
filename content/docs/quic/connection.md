@@ -33,7 +33,7 @@ ln, err := tr.Listen(&tls.Config{
   }
 }, nil)
 // ... error handling
-conn, err := ln.Accept()
+conn, err := ln.Accept(context.Background())
 // ... error handling
 
 // this context has a key "foo" with value "bar"

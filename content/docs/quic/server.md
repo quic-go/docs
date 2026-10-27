@@ -17,7 +17,7 @@ tr := quic.Transport{
 ln, err := tr.Listen(tlsConf, quicConf)
 // ... error handling
 for {
-  conn, err := ln.Accept()
+  conn, err := ln.Accept(context.Background())
   // ... error handling
   // handle the connection, usually in a new Go routine
 }
@@ -84,7 +84,7 @@ A connection can be accepted at this early stage by using `ListenEarly` instead 
 ```go
 ln, err := tr.ListenEarly(tlsConf, quicConf)
 // ... error handling
-conn, err := ln.Accept()
+conn, err := ln.Accept(context.Background())
 // ... error handling
 go func() {
   // It is now possible to open streams and send data in 0.5-RTT data
@@ -142,11 +142,11 @@ To allow clients to use 0-RTT resumption, the `Allow0RTT` flag needs to be set o
 quicConf := &quic.Config{Allow0RTT: true}
 ln, err := tr.ListenEarly(tlsConf, quicConf)
 // ... error handling
-conn, err := ln.Accept()
+conn, err := ln.Accept(context.Background())
 // ... error handling
 go func() {
   // It is now possible to accept the streams which the client opened in 0-RTT.
-  str, err := conn.AcceptStream()
+  str, err := conn.AcceptStream(context.Background())
   // ... error handling
 
   // Optionally, wait for the handshake to complete
