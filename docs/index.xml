@@ -1537,11 +1537,7 @@ title="Copy code"
 &lt;div class="hx:w-full hx:min-w-0 hx:leading-7"&gt;
 &lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0"&gt;The &lt;code&gt;MaxIncomingStreams&lt;/code&gt; and &lt;code&gt;MaxIncomingUniStreams&lt;/code&gt; configuration flags only impose a limit on how many streams the peer can open. They do not limit how many streams the endpoint itself can open.&lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;h2&gt;📝 Future Work&lt;span class="hx:absolute hx:-mt-20" id="-future-work"&gt;&lt;/span&gt;
-&lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;queue stream-related frames with their respective stream: &lt;a href="https://github.com/quic-go/quic-go/issues/4271"target="_blank" rel="noopener"&gt;#4271&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Congestion Control</title><link>https://quic-go.net/docs/quic/congestion-control/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/congestion-control/</guid><description>
+&lt;/div&gt;</description></item><item><title>Congestion Control</title><link>https://quic-go.net/docs/quic/congestion-control/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/congestion-control/</guid><description>
 &lt;p&gt;A congestion controller aims to regulate network traffic to prevent overloading the network, ensuring efficient data transmission while minimizing packet loss and delays. QUIC implementations have the flexibility to explore innovative congestion control algorithms. Currently, quic-go implements the congestion control algorithm specified in &lt;a href="https://datatracker.ietf.org/doc/html/rfc9002#section-7"target="_blank" rel="noopener"&gt;Section 7 of RFC 9002&lt;/a&gt;.&lt;/p&gt;
 &lt;h2&gt;📝 Future Work&lt;span class="hx:absolute hx:-mt-20" id="-future-work"&gt;&lt;/span&gt;
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
