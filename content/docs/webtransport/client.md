@@ -41,7 +41,10 @@ if selected == "" {
 
 If the server selects one of the offered protocols, it is available through `sess.SessionState().ApplicationProtocol`. If the server accepts the session without selecting a protocol, `ApplicationProtocol` is empty.
 
+## Reusing a QUIC Connection
+
+To reuse an established QUIC connection, call `Transport.NewClientConn`. The returned `ClientConn` can create multiple WebTransport sessions using `Dial`, and send regular HTTP requests using `RoundTrip`. The application is responsible for closing the QUIC connection when it is no longer needed.
+
 ## 📝 Future Work
 
-* Using the same QUIC connection for WebTransport and HTTP/3: [#147](https://github.com/quic-go/webtransport-go/issues/147)
 * Allow Optimistic Opening of Streams: [#136](https://github.com/quic-go/webtransport-go/issues/136)
