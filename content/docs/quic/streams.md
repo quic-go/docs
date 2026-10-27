@@ -101,7 +101,7 @@ It is valid to call `CancelWrite` after `Close`. This immediately aborts transmi
 
 The `quic.ReceiveStream` is a unidirectional stream opened by the peer. It implements the `io.Reader` interface. It returns an `io.EOF` once the peer closes the stream, i.e. once we receive a STREAM frame with the FIN bit set.
 
-In case the application is no longer interest in receiving data from a `quic.ReceiveStream`, it can ask the sender to abort data transmission by calling `CancelRead` with an application-defined error code (an unsigned 62-bit number). On the receiver side, this surfaced as a `quic.StreamError` containing that error code on the `io.Writer`. 
+In case the application is no longer interest in receiving data from a `quic.ReceiveStream`, it can ask the sender to abort data transmission by calling `CancelRead` with an application-defined error code (an unsigned 62-bit number). On the sender side, this is surfaced as a `quic.StreamError` containing that error code on `stream.Write`.
 
 
 ### Bidirectional Stream
