@@ -31,7 +31,7 @@ To run a CONNECT-UDP proxy on `https://example.org:4443` with the URI template `
 t := uritemplate.MustNew("https://example.org:4443/masque?h={target_host}&p={target_port}")
 // ... error handling
 var proxy masque.Proxy
-http.Handle("/masque", func(w http.ResponseWriter, r *http.Request) {
+http.HandleFunc("/masque", func(w http.ResponseWriter, r *http.Request) {
   // parse the UDP proxying request
   preq, err := masque.ParseProxyRequest(r, t)
   if err != nil {
@@ -48,10 +48,10 @@ http.Handle("/masque", func(w http.ResponseWriter, r *http.Request) {
   // start proxying UDP datagrams back and forth
   err = proxy.Proxy(w, preq)
   // ... error handling
-}
+})
 
 // set up HTTP/3 server on :4443
-s := http3.Server{Addr: ":4443"}
+s := http3.Server{Addr: ":4443", EnableDatagrams: true}
 s.ListenAndServeTLS(<certfile>, <keyfile>)
 ```
 
@@ -74,7 +74,7 @@ When it creates the socket, it also sends a Proxy-Status response header ([RFC 9
 
 An application that wishes a more fine-grained control over the socket can instead use `Proxy.ProxyConnectedSocket`:
 ```go
-http.Handle("/masque", func(w http.ResponseWriter, r *http.Request) {
+http.HandleFunc("/masque", func(w http.ResponseWriter, r *http.Request) {
   // parse the UDP proxying request
   preq, err := masque.ParseProxyRequest(r, t)
   // ... handle error, as above ...
@@ -87,7 +87,7 @@ http.Handle("/masque", func(w http.ResponseWriter, r *http.Request) {
 
   err = proxy.ProxyConnectedSocket(w, preq, conn)
   // ... handle error ...
-}
+})
 ```
 
 The `net.UDPConn` passed to `ProxyConnectedSocket` is closed by the proxy after proxying is done.
