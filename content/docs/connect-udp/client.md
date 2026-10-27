@@ -69,5 +69,5 @@ conn, rsp, err := cconn.Dial(req)
 
 ## 📝 Future Work
 
-* Logging / Tracing: [#59](https://github.com/quic-go/masque-go/issues/59)
+* Connection Statistics: [#59](https://github.com/quic-go/masque-go/issues/59)
 * Proxying a UDP Listener: [#64](https://github.com/quic-go/masque-go/issues/64)
