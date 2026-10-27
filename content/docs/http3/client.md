@@ -31,7 +31,7 @@ tr := quic.Transport{}
 h3tr := &http3.Transport{
 	TLSClientConfig: &tls.Config{},  // set a TLS client config, if desired 
 	QUICConfig:      &quic.Config{}, // QUIC connection options 
-	Dial: func(ctx context.Context, addr string, tlsConf *tls.Config, quicConf *quic.Config) (quic.EarlyConnection, error) {
+	Dial: func(ctx context.Context, addr string, tlsConf *tls.Config, quicConf *quic.Config) (*quic.Conn, error) {
 		a, err := net.ResolveUDPAddr("udp", addr)
 		if err != nil {
 			return nil, err
@@ -48,7 +48,7 @@ This gives the application more fine-grained control over the configuration of t
 
 Since QUIC demultiplexes packets based on their connection IDs, it is possible allows running a QUIC server and client on the same UDP socket. This also works when using HTTP/3: HTTP requests can be sent from the same socket that a server is listening on.
 
-To achieve this using this package, first initialize a single `quic.Transport`, and pass a `quic.EarlyListner` obtained from that transport to `http3.Server.ServeListener`, and use the `DialEarly` function of the transport as the `Dial` function for the `http3.Transport`.
+To achieve this using this package, first initialize a single `quic.Transport`, and pass a `*quic.EarlyListener` obtained from that transport to `http3.Server.ServeListener`, and use the `DialEarly` function of the transport as the `Dial` function for the `http3.Transport`.
 
 ## Using 0-RTT
 
