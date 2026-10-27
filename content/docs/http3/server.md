@@ -51,7 +51,7 @@ quicConf := &quic.Config{} // QUIC connection options
 server := http3.Server{}
 ln, _ := tr.ListenEarly(tlsConf, quicConf)
 for {
-	c, _ := ln.Accept()
+	c, _ := ln.Accept(context.Background())
 	switch c.ConnectionState().TLS.NegotiatedProtocol {
 	case http3.NextProtoH3:
 		go server.ServeQUICConn(c) 

@@ -139,10 +139,11 @@ The `quic.Conn` returned by `DialEarly` behaves as if it had been [closed]({{< r
 ```go
 conn, err := tr.DialEarly(ctx, <server address>, <tls.Config>, <quic.Config>)
 // ... error handling
-_, err :=conn.AcceptStream()
+_, err = conn.AcceptStream(ctx)
 if errors.Is(err, quic.Err0RTTRejected) {
   // The server rejected 0-RTT. None of the data sent so far was processed.
-  newConn := conn.NextConnection()
+  newConn, err := conn.NextConnection(ctx)
+  // ... error handling
 }
 ```
 
