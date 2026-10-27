@@ -52,7 +52,6 @@ kern.ipc.maxsockbuf=8441037
 ### 📝 Open Questions
 
 * Setting UDP buffer sizes when using Docker: [#3801](https://github.com/quic-go/quic-go/issues/3801) 
-* Setting UDP buffer sizes on OpenBSD: [#3476](https://github.com/quic-go/quic-go/issues/3476)
 
 
 ## Path MTU Discovery (DPLPMTUD)
@@ -73,4 +72,3 @@ DPLPMTUD works by occasionally sending larger "probe packets". If these packets 
 ### 📝 Future Work
 
 * Handle decreasing MTUs: [#3955](https://github.com/quic-go/quic-go/issues/3955)
-* Make the maximum packet size configurable: [#3385](https://github.com/quic-go/quic-go/issues/3385)
