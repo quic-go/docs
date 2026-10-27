@@ -725,7 +725,7 @@ title="Copy code"
 &lt;/div&gt;
 &lt;p&gt;This initiates a new WebTransport session with the server by sending an Extended CONNECT request to the server.
 The server might reject this request, in which case the status code of the HTTP response will not be in the 2xx range.&lt;/p&gt;
-&lt;p&gt;The parameters for the underlying QUIC connection can be adjusted by setting the &lt;code&gt;QUICConfig&lt;/code&gt; on the &lt;code&gt;Transport&lt;/code&gt;. &lt;a href="https://quic-go.net/docs/quic/datagrams/"&gt;Datagram support&lt;/a&gt; is required by WebTransport, and must be enabled on using &lt;code&gt;quic.Config.EnableDatagrams&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The parameters for the underlying QUIC connection can be adjusted by setting the &lt;code&gt;QUICConfig&lt;/code&gt; on the &lt;code&gt;Transport&lt;/code&gt;. A custom config must enable &lt;a href="https://quic-go.net/docs/quic/datagrams/"&gt;datagram support&lt;/a&gt; using &lt;code&gt;quic.Config.EnableDatagrams&lt;/code&gt;, and stream resets with partial delivery using &lt;code&gt;quic.Config.EnableStreamResetPartialDelivery&lt;/code&gt;.&lt;/p&gt;
 &lt;h2&gt;Application Protocol Negotiation&lt;span class="hx:absolute hx:-mt-20" id="application-protocol-negotiation"&gt;&lt;/span&gt;
 &lt;a href="#application-protocol-negotiation" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;A client can advertise WebTransport application protocols by setting &lt;code&gt;ApplicationProtocols&lt;/code&gt; on the &lt;code&gt;Transport&lt;/code&gt;. This is the WebTransport-specific negotiation described in the &lt;a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http3#section-3.3"target="_blank" rel="noopener"&gt;Application Protocol Negotiation section&lt;/a&gt; of the WebTransport over HTTP/3 draft, not TLS ALPN.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
@@ -750,9 +750,10 @@ title="Copy code"
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;If the server selects one of the offered protocols, it is available through &lt;code&gt;sess.SessionState().ApplicationProtocol&lt;/code&gt;. If the server accepts the session without selecting a protocol, &lt;code&gt;ApplicationProtocol&lt;/code&gt; is empty.&lt;/p&gt;
+&lt;h2&gt;Reusing a QUIC Connection&lt;span class="hx:absolute hx:-mt-20" id="reusing-a-quic-connection"&gt;&lt;/span&gt;
+&lt;a href="#reusing-a-quic-connection" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;To reuse an established QUIC connection, call &lt;code&gt;Transport.NewClientConn&lt;/code&gt;. The returned &lt;code&gt;ClientConn&lt;/code&gt; can create multiple WebTransport sessions using &lt;code&gt;Dial&lt;/code&gt;, and send regular HTTP requests using &lt;code&gt;RoundTrip&lt;/code&gt;. The application is responsible for closing the QUIC connection when it is no longer needed.&lt;/p&gt;
 &lt;h2&gt;📝 Future Work&lt;span class="hx:absolute hx:-mt-20" id="-future-work"&gt;&lt;/span&gt;
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;Using the same QUIC connection for WebTransport and HTTP/3: &lt;a href="https://github.com/quic-go/webtransport-go/issues/147"target="_blank" rel="noopener"&gt;#147&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Allow Optimistic Opening of Streams: &lt;a href="https://github.com/quic-go/webtransport-go/issues/136"target="_blank" rel="noopener"&gt;#136&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Running a QUIC Server</title><link>https://quic-go.net/docs/quic/server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/server/</guid><description>
 &lt;h2&gt;Using a &lt;code&gt;quic.Transport&lt;/code&gt;&lt;span class="hx:absolute hx:-mt-20" id="using-a-quictransport"&gt;&lt;/span&gt;
