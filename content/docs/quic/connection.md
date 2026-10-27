@@ -141,7 +141,7 @@ if _, ok := errors.AsType[*quic.StatelessResetError](err); ok {
 ```
 
 * `quic.VersionNegotiationError`: Happens during the handshake, if [Version Negotiation]({{< relref "transport.md#version-negotiation" >}}) fails, i.e. when there is no overlap between the client's and the server's supported QUIC versions.
-* `quic.HandshakeTimeoutError`: Happens if the QUIC handshake doesn't complete within the time specified in `quic.Config.HandshakeTimeout`.
+* `quic.HandshakeTimeoutError`: Happens if no packets are received for `quic.Config.HandshakeIdleTimeout` during the handshake, or if the handshake doesn't complete within twice that duration.
 * `quic.IdleTimeoutError`: Happens after completion of the handshake if the connection is [idle](#idle-timeout) for longer than the minimum of both peers idle timeouts.
 * `quic.StatelessResetError`: Happens when a [Stateless Reset]({{< relref "transport.md#stateless-reset" >}}) is received.
 * `quic.TransportError`: Happens if the QUIC protocol is violated. Unless the error code is `APPLICATION_ERROR`, this will not happen unless one of the QUIC stacks involved is misbehaving. Please open an issue if you encounter this error.
