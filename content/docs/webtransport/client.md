@@ -4,12 +4,12 @@ toc: true
 weight: 2
 ---
 
-To dial a WebTransport session, initialize a `webtransport.Dialer`, and call the `Dial` function.
+To dial a WebTransport session, initialize a `webtransport.Transport`, and call the `Dial` function.
 
 ```go
-var d webtransport.Dialer
+var d webtransport.Transport
 // optionally, add custom headers
-var headers http.Header
+headers := http.Header{}
 headers.Add("foo", "bar")
 rsp, sess, err := d.Dial(ctx, "https://example.com/webtransport", headers)
 // err is only nil if rsp.StatusCode is a 2xx
@@ -19,14 +19,14 @@ rsp, sess, err := d.Dial(ctx, "https://example.com/webtransport", headers)
 This initiates a new WebTransport session with the server by sending an Extended CONNECT request to the server.
 The server might reject this request, in which case the status code of the HTTP response will not be in the 2xx range.
 
-The parameters for the underlying QUIC connection can be adjusted by setting the `QUICConfig` on the `Dialer`. [Datagram support]({{< relref "../quic/datagrams.md" >}}) is required by WebTransport, and must be enabled on using `quic.Config.EnableDatagrams`.
+The parameters for the underlying QUIC connection can be adjusted by setting the `QUICConfig` on the `Transport`. [Datagram support]({{< relref "../quic/datagrams.md" >}}) is required by WebTransport, and must be enabled on using `quic.Config.EnableDatagrams`.
 
 ## Application Protocol Negotiation
 
-A client can advertise WebTransport application protocols by setting `ApplicationProtocols` on the `Dialer`. This is the WebTransport-specific negotiation described in the [Application Protocol Negotiation section](https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http3#section-3.3) of the WebTransport over HTTP/3 draft, not TLS ALPN.
+A client can advertise WebTransport application protocols by setting `ApplicationProtocols` on the `Transport`. This is the WebTransport-specific negotiation described in the [Application Protocol Negotiation section](https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http3#section-3.3) of the WebTransport over HTTP/3 draft, not TLS ALPN.
 
 ```go
-d := webtransport.Dialer{
+d := webtransport.Transport{
     ApplicationProtocols: []string{"foo", "bar"},
 }
 
