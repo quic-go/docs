@@ -134,8 +134,13 @@ When the sender cancels sending on a stream (either unidirectional or bidirectio
 
 Conversely, the receiver does not need to wait for all data to be delivered before indicating to the application that the stream has been reset.
 
+### Stream Resets with Partial Delivery
+
+The [Stream Resets with Partial Delivery](https://datatracker.ietf.org/doc/draft-ietf-quic-reliable-stream-reset/) extension allows reliable delivery of a prefix of the stream. Receivers enable this extension using `quic.Config.EnableStreamResetPartialDelivery`.
+
+If the peer supports this extension, the sender can call `SetReliableBoundary` on a `quic.Stream` or `quic.SendStream` to mark all data written so far as reliable. This data will still be retransmitted after `CancelWrite`, and the receiver will deliver it before reporting the stream reset.
+
 
 ## 📝 Future Work
 
 * Stream Priorities: [#437](https://github.com/quic-go/quic-go/issues/437)
-* QUIC [Reliable Stream Reset](https://datatracker.ietf.org/doc/draft-ietf-quic-reliable-stream-reset/) extension: [#4139](https://github.com/quic-go/quic-go/issues/4139)
