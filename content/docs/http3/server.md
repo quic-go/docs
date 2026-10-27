@@ -70,9 +70,8 @@ An HTTP/1.1 or HTTP/2 server can advertise that it is also offering the same res
 
 This allows HTTP clients to discover support for HTTP/3. Clients may still continue using the existing HTTP connection on top of TCP, but might decide to connect via QUIC the next time.
 
-An `http.Handler` can be wrapped to automatically add the Alt-Svc header field for non-HTTP/3 requests:
+An `http.Handler` can be wrapped to automatically add the Alt-Svc header field for non-HTTP/3 requests, using the running `http3.Server` from above:
 ```go
-server := http3.Server{}
 mux := http.NewServeMux()
 // ... add HTTP handlers ...
 handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
