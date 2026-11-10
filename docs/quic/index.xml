@@ -297,7 +297,6 @@ title="Copy code"
 &lt;h2&gt;📝 Future Work&lt;span class="hx:absolute hx:-mt-20" id="-future-work"&gt;&lt;/span&gt;
 &lt;a href="#-future-work" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Call &lt;code&gt;GetConfigForClient&lt;/code&gt; after processing the ClientHello: &lt;a href="https://github.com/quic-go/quic-go/issues/3862"target="_blank" rel="noopener"&gt;#3862&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Save the RTT measurement in the resumption token (not the session ticket): &lt;a href="https://github.com/quic-go/quic-go/issues/4158"target="_blank" rel="noopener"&gt;#4158&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Running a QUIC Client</title><link>https://quic-go.net/docs/quic/client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/client/</guid><description>
 &lt;h2&gt;Using a &lt;code&gt;quic.Transport&lt;/code&gt;&lt;span class="hx:absolute hx:-mt-20" id="using-a-quictransport"&gt;&lt;/span&gt;
 &lt;a href="#using-a-quictransport" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Since QUIC uses connection IDs to demultiplex connections, multiple outgoing connections can share a single UDP socket.&lt;/p&gt;
@@ -940,7 +939,6 @@ title="Copy code"
 &lt;h3&gt;📝 Open Questions&lt;span class="hx:absolute hx:-mt-20" id="-open-questions"&gt;&lt;/span&gt;
 &lt;a href="#-open-questions" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;Setting UDP buffer sizes when using Docker: &lt;a href="https://github.com/quic-go/quic-go/issues/3801"target="_blank" rel="noopener"&gt;#3801&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Setting UDP buffer sizes on OpenBSD: &lt;a href="https://github.com/quic-go/quic-go/issues/3476"target="_blank" rel="noopener"&gt;#3476&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2&gt;Path MTU Discovery (DPLPMTUD)&lt;span class="hx:absolute hx:-mt-20" id="path-mtu-discovery-dplpmtud"&gt;&lt;/span&gt;
 &lt;a href="#path-mtu-discovery-dplpmtud" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;RFC 9000 requires any QUIC path to support MTUs of at least 1200 bytes, but many paths on the internet support larger MTUs, some up to 1500 bytes. On some path, even larger MTUs are possible.&lt;/p&gt;
@@ -963,7 +961,6 @@ title="Copy code"
 &lt;h3&gt;📝 Future Work&lt;span class="hx:absolute hx:-mt-20" id="-future-work-1"&gt;&lt;/span&gt;
 &lt;a href="#-future-work-1" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;Handle decreasing MTUs: &lt;a href="https://github.com/quic-go/quic-go/issues/3955"target="_blank" rel="noopener"&gt;#3955&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Make the maximum packet size configurable: &lt;a href="https://github.com/quic-go/quic-go/issues/3385"target="_blank" rel="noopener"&gt;#3385&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Connection Migration</title><link>https://quic-go.net/docs/quic/connection-migration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quic-go.net/docs/quic/connection-migration/</guid><description>
 &lt;p&gt;Whereas TCP identifies connections by their 4-tuple (i.e. the combination of the client&amp;rsquo;s and server&amp;rsquo;s IP address and port), QUIC uses connection IDs to demultiplex connections. This allows QUIC connections to migrate between paths.&lt;/p&gt;
 &lt;p&gt;This can be useful when a mobile phone moves away from a WiFi network, and wishes to use the cellular connection instead. Connection migration is completely transparent to the application, as the entire connection, including all streams and datagram flows, is migrated to the new path.&lt;/p&gt;
