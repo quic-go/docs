@@ -46,7 +46,7 @@ err := server.ServeListener(ln)
 Alternatively, it is also possible to pass fully established QUIC connections to the HTTP/3 server. This is useful if the QUIC serves both HTTP/3 and other protocols. Connection can then be demultiplexed using the ALPN value (via `NextProtos` in the `tls.Config`).
 ```go
 tr := quic.Transport{Conn: conn}
-tlsConf := http3.ConfigureTLSConfig(&tls.Config{})  // use your tls.Config here
+tlsConf := &tls.Config{NextProtos: []string{http3.NextProtoH3, "other-protocol"}} // use your tls.Config here
 quicConf := &quic.Config{} // QUIC connection options
 server := http3.Server{}
 ln, _ := tr.ListenEarly(tlsConf, quicConf)
