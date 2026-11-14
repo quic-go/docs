@@ -28,7 +28,7 @@ quic.Config{
 }
 ```
 
-The `context.Context` passed to this callback is never closed, and is derived from the context returned from [`quic.Config.ConnContext`]({{< relref path="connection.md#conn-context" >}}).
+For incoming connections, the `context.Context` passed to this callback is derived from [`quic.Transport.ConnContext`]({{< relref path="connection.md#conn-context" >}}), and is canceled when the connection closes or the handshake fails. For outgoing connections, it is the context passed to `Dial`.
 
 It is valid to return `nil` for the `qlogwriter.Trace` from this callback. In this case, qlogging will be disabled for this connection.
 
