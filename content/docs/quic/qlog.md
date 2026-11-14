@@ -46,6 +46,30 @@ quic.Config{
 }
 ```
 
+## Redacting IP Addresses and Ports
+
+By default, qlog logs IP addresses and ports in the following events:
+
+* `transport:connection_started`
+* `transport:parameters_set`
+
+Applications can redact sensitive addresses by wrapping a connection tracer with `qlog.RedactIPs`:
+
+```go
+tracer := qlog.RedactIPs(
+  qlog.DefaultConnectionTracer,
+  func(addr netip.AddrPort, isLocal bool) (string, bool) {
+    if isLocal {
+      return "***", true
+    }
+    // Don't redact remote addresses.
+    return "", false
+  },
+)
+```
+
+The callback receives the IP address and port, and a flag indicating whether the address belongs to the local endpoint. Returning `true` replaces the IP address with the returned string and omits the port; returning `false` preserves the original values. The example above only redacts local addresses.
+
 ## Events not associated with a Connection
 
 When listening for QUIC packets on a UDP socket, there are a couple of events that can happen before an incoming packet can be associated with a QUIC connection. For example, the QUIC packet header might be invalid, forcing us to drop the packet. Or the server might be overloaded and reject a new connection attempt.
