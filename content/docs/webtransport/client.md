@@ -45,6 +45,8 @@ If the server selects one of the offered protocols, it is available through `ses
 
 To reuse an established QUIC connection, call `Transport.NewClientConn`. The returned `ClientConn` can create multiple WebTransport sessions using `Dial`, and send regular HTTP requests using `RoundTrip`. The application is responsible for closing the QUIC connection when it is no longer needed.
 
+Establishing multiple concurrent sessions on one QUIC connection requires session flow control on both endpoints. Configure `webtransport.Config` on both `Transport.Config` and `Server.Config`, setting positive `MaxIncomingStreams`, `MaxIncomingUniStreams` and `MaxIncomingData` limits. With the default configuration, only one session can be active per connection.
+
 ## 📝 Future Work
 
 * Allow Optimistic Opening of Streams: [#136](https://github.com/quic-go/webtransport-go/issues/136)
