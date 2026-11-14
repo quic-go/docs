@@ -8,18 +8,18 @@ quic-go logs HTTP/3 events defined in [draft-ietf-quic-qlog-h3-events](https://d
 
 ## Enabling qlog for HTTP/3
 
-HTTP/3 qlogging is enabled by setting the `Tracer` callback on the `quic.Config`, just like for QUIC connections. However, to log HTTP/3 events in addition to QUIC events, the tracer needs to support the HTTP/3 event schema.
+HTTP/3 qlogging is enabled by setting the `Tracer` callback on the `quic.Config`, just like for QUIC connections. HTTP/3 events are recorded automatically whenever the connection has a qlog trace.
 
-The `http3/qlog` package provides `DefaultConnectionTracer`, which automatically includes both QUIC and HTTP/3 event schemas:
+The `qlog` package provides `DefaultConnectionTracer`, which can be used for both QUIC and HTTP/3:
 
 ```go
 import (
 	"github.com/quic-go/quic-go"
-	h3qlog "github.com/quic-go/quic-go/http3/qlog"
+	"github.com/quic-go/quic-go/qlog"
 )
 
 quic.Config{
-  Tracer: h3qlog.DefaultConnectionTracer,
+  Tracer: qlog.DefaultConnectionTracer,
 }
 ```
 
@@ -32,8 +32,13 @@ As described in the [qlog documentation]({{< relref "../quic/qlog.md" >}}), appl
 By default, qlog logs HTTP/3 `HEADERS` frames, including all header and trailer field values. Applications can redact sensitive values by wrapping a connection tracer with `h3qlog.RedactHeaders`:
 
 ```go
+import (
+	h3qlog "github.com/quic-go/quic-go/http3/qlog"
+	"github.com/quic-go/quic-go/qlog"
+)
+
 tracer := h3qlog.RedactHeaders(
-  h3qlog.DefaultConnectionTracer,
+  qlog.DefaultConnectionTracer,
   func(name, value string) string {
     switch name {
     case "Authorization", "Cookie", "Set-Cookie":
