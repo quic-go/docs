@@ -37,7 +37,7 @@ jobs:
         with:
           args: --root-dir ${{ github.workspace }}/build ./build
           fail: true
-      - uses: burnett01/rsync-deployments@c8300118e5f66a3fe187f35763d7e65848ae205a # v9
+      - uses: burnett01/rsync-deployments@b8733f9f81fe2d9c29b756e57cd373429be7bae2 # v9
         if: ${{ github.event_name == 'push' }}
         with:
           switches: -avzr --delete
